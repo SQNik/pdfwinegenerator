@@ -1,0 +1,91 @@
+[
+  {
+    "id": "collection_1761059604446_4pu9cmw9e",
+    "name": "Wina-przykladowe",
+    "description": "Wina z dostosowaną wielkością obrazów. W różnych kategoriach",
+    "wines": [
+      "470122",
+      "230119",
+      "600120",
+      "1630118",
+      "680709",
+      "111106",
+      "111102",
+      "630103",
+      "111101",
+      "555509",
+      "680706",
+      "230110",
+      "230116"
+    ],
+    "tags": [],
+    "status": "active",
+    "dynamicFields": {
+      "field_1761666965990_sifizd511": "Karta Win",
+      "field_1761664996551_94zlce2fl": "https://witrynarium.pl/images/okladki/okladka-wilczy.png",
+      "field_1761734592525_hc8ce2yat": null,
+      "field_1761734694559_ufq9yy8sj": null,
+      "field_1761734714059_t37imcg0c": null
+    },
+    "metadata": {},
+    "createdAt": "2025-10-21T15:13:24.445Z",
+    "updatedAt": "2025-10-31T10:18:14.821Z",
+    "pdfBackground": "/images/okladki/okladka-test-300dpi.jpg"
+  },
+  {
+    "id": "collection_1761743421442_umm7bc8wj",
+    "name": "Nazwa testow",
+    "description": "",
+    "wines": [
+      "600120",
+      "1630114",
+      "230104",
+      "230119",
+      "630141",
+      "181006",
+      "040626",
+      "630142"
+    ],
+    "tags": [],
+    "status": "active",
+    "dynamicFields": {
+      "field_1761666965990_sifizd511": "Karta Wina",
+      "field_1761664996551_94zlce2fl": null,
+      "field_1761734592525_hc8ce2yat": null,
+      "field_1761734694559_ufq9yy8sj": null,
+      "field_1761734714059_t37imcg0c": null
+    },
+    "metadata": {},
+    "createdAt": "2025-10-29T13:10:21.442Z",
+    "updatedAt": "2025-10-29T13:10:21.442Z"
+  },
+  {
+    "id": "collection_1761906234546_3wa5jo0dq",
+    "name": "10produktow",
+    "description": "",
+    "wines": [
+      "600120",
+      "1630114",
+      "230104",
+      "230119",
+      "181006",
+      "040626",
+      "111106",
+      "111102",
+      "630103",
+      "080441"
+    ],
+    "tags": [],
+    "status": "active",
+    "dynamicFields": {
+      "field_1761666965990_sifizd511": "Karta Win",
+      "field_1761664996551_94zlce2fl": "https://witrynarium.pl/images/okladki/okladka-wilczy.png",
+      "field_1761734592525_hc8ce2yat": null,
+      "field_1761734694559_ufq9yy8sj": null,
+      "field_1761734714059_t37imcg0c": null
+    },
+    "metadata": {},
+    "createdAt": "2025-10-31T10:23:54.546Z",
+    "updatedAt": "2025-10-31T10:23:54.546Z"
+  }
+]

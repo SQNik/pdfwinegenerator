@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="pagination" content="firstPage:4,nextPages:5">
+  <title>Karta Wina - Nagłówek + 4/5 produktów (CMYK)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: device-cmyk(0%, 0%, 0%, 0%); /* Biały w CMYK */
+      color: device-cmyk(0%, 0%, 0%, 100%); /* Czarny w CMYK */
+      font-size: 9pt;
+      line-height: 1.3;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* === PIERWSZA STRONA - NAGŁÓWEK + 4 PRODUKTY === */
+    .first-page {
+      width: 109mm;
+      height: 301mm;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+      background: {{collection.dynamicFieldsByName.kolor_okladki}};
+      background-image: url('{{collection.dynamicFieldsByName.tlo_okladki}}');
+      background-size: contain;
+    }
+
+    /* Nagłówek - 20% wysokości */
+    .page-header {
+      height: 20%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-size: cover;
+      background-position: center;
+      padding: 4mm;
+      border-bottom: 1px dashed device-cmyk(0%, 0%, 0%, 13%); /* Jasny szary */
+    }
+
+    .header-title {
+      font-size: 24pt;
+      font-weight: 700;
+      color: device-cmyk(0%, 0%, 0%, 100%); /* Czarny CMYK */
+      text-align: center;
+    }
+
+    /* Produkty na pierwszej stronie - 80% wysokości / 4 = 20% każdy */
+    .first-page-products {
+      height: 80%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .first-page-products .wine-card {
+      height: 25%; /* 80% / 4 = 20% każdy produkt */
+      flex-shrink: 0;
+    }
+
+    /* === KOLEJNE STRONY - 5 PRODUKTÓW === */
+    .products-page {
+      width: 109mm;
+      height: 301mm;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+      background: {{collection.dynamicFieldsByName.kolor_listy}};
+      background-image: url("{{collection.dynamicFieldsByName.tlo_listy}}");
+      background-size: contain;
+      background-position: top;
+    }
+
+    .products-page .wine-card {
+      height: 20%; /* 100% / 5 = 20% każdy produkt */
+      flex-shrink: 0;
+    }
+
+    /* === KARTA PRODUKTU === */
+    .wine-card {
+      display: grid;
+      grid-template-columns: 15% 85%; /* 15% obraz, 85% treść */
+      gap: 1mm;
+      padding: 6mm;
+      border: 0px solid device-cmyk(0%, 0%, 0%, 13%);
+      overflow: hidden;
+    }
+
+    /* Lewa strona - Obraz */
+    .wine-image {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding-right: 0mm;
+    }
+
+    .wine-image img {
+      max-width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+
+    /* Prawa strona - Treść */
+    .wine-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2mm;
+    }
+
+    /* Wiersz nagłówka - Nazwa i Ceny */
+    .wine-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 4mm;
+    }
+
+    .wine-title {
+      font-size: 12pt;
+      font-weight: 700;
+      line-height: 1.2;
+      color: device-cmyk(0%, 0%, 0%, 90%); /* Prawie czarny */
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+      flex: 1;
+    }
+
+    .wine-prices {
+      display: flex;
+      gap: 2mm;
+      flex-shrink: 0;
+      flex-direction: column;
+    }
+
+    .price-badge {
+      display: flex;
+      align-items: center;
+      gap: 0mm;
+      font-weight: 600;
+      white-space: nowrap;
+      justify-content: flex-end;
+    }
+
+    .price-amount {
+      text-align: right;
+      font-size: 10pt;
+      font-weight: bold;
+      color: device-cmyk(0%, 0%, 0%, 90%); /* Prawie czarny */
+      border: 1px solid device-cmyk(0%, 0%, 0%, 90%);
+      border-radius: 1mm;
+      padding: 2px 12px;
+      flex: 1;
+    }
+
+    /* Szczegóły wina */
+    .wine-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5mm;
+    }
+
+    .wine-detail-item {
+      display: block;
+      font-size: 8pt;
+      color: device-cmyk(0%, 0%, 0%, 70%); /* Ciemny szary */
+      line-height: 1.3;
+    }
+
+    .wine-detail-label {
+      font-weight: 600;
+      display: inline;
+      color: device-cmyk(0%, 0%, 0%, 100%); /* Czarny dla etykiet */
+    }
+
+    .wine-detail-value {
+      font-weight: 400;
+      display: inline;
+    }
+
+    .wine-description {
+      font-size: 8pt;
+      line-height: 1.3;
+      margin-top: 1mm;
+      color: device-cmyk(0%, 0%, 0%, 70%); /* Ciemny szary */
+      max-height: 20mm;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .wine-alcohol {
+      font-size: 6pt;
+      font-weight: 600;
+      color: device-cmyk(0%, 0%, 0%, 40%); /* Jasny szary */
+      margin-top: 1mm;
+    }
+    
+    .litry {
+      font-size: 6pt;
+      color: device-cmyk(0%, 0%, 0%, 40%); /* Jasny szary */
+      font-weight: 400;
+    }
+    
+    .icon_wine {
+      background-image: url(http://witrynarium.pl/images/icons/wine.svg);
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+      /* Cyan/niebieski w CMYK */
+      color: device-cmyk(80%, 40%, 0%, 0%);
+    }
+    
+    .icon_glass {
+      background-image: url(http://witrynarium.pl/images/icons/glass.svg);
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+      color: device-cmyk(0%, 0%, 0%, 40%); /* Jasny szary */
+    }
+
+    /* Wymuszenie nowej strony */
+    @media print {
+      .first-page,
+      .products-page {
+        page-break-after: always;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PIERWSZA STRONA - NAGŁÓWEK + 4 PRODUKTY -->
+  <div class="first-page">
+    <!-- Nagłówek z tłem z dynamicznego pola -->
+    <div class="page-header" style="background-image: url('{{collection.dynamicFieldsByName.zwykly_tekst}}');">
+      <h1 class="header-title">{{collection.dynamicFieldsByName.Tytul}}</h1>
+    </div>
+
+    <!-- Pierwsze 4 produkty -->
+    <div class="first-page-products">
+      {{#each firstPageWines}}
+      <div class="wine-card">
+        <!-- Lewa strona - Obraz -->
+        <div class="wine-image">
+          <img src="https://witrynarium.pl{{this.image}}" alt="{{this.name}}">
+        </div>
+
+        <!-- Prawa strona - Treść -->
+        <div class="wine-content">
+          <!-- Nagłówek - Nazwa i Ceny -->
+          <div class="wine-header-row">
+            <h2 class="wine-title">{{this.name}}</h2>
+            
+            <div class="wine-prices">
+              <div class="price-badge">
+                <span class="litry">150ml</span><span class="icon_glass"></span><span class="price-amount">{{this.price1}}</span>
+              </div>
+              <div class="price-badge">
+                <span class="litry">750ml</span><span class="icon_wine"></span><span class="price-amount">{{this.price2}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Szczegóły -->
+          <div class="wine-details">
+            <div class="wine-detail-item">
+              <span class="wine-detail-label">Szczep:</span>
+              <span class="wine-detail-value">{{this.szczepy}}</span>
+            </div>
+            
+            <div class="wine-detail-item">
+              <span class="wine-detail-label">Region:</span>
+              <span class="wine-detail-value">{{this.region}}</span>
+            </div>
+            
+            <div class="wine-detail-item">
+              <span class="wine-detail-label">Typ:</span>
+              <span class="wine-detail-value">{{this.type}}</span>
+            </div>
+
+            <div class="wine-detail-item">
+              <span class="wine-detail-label">Kolor:</span>
+              <span class="wine-detail-value">{{this.category}}</span>
+            </div>
+            
+            <p class="wine-description">{{this.description}}</p>
+            
+            <div class="wine-alcohol">Vol: {{this.alcohol}}</div>
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+
+  <!-- KOLEJNE STRONY - PO 5 PRODUKTÓW -->
+  {{#each restPages}}
+  <div class="products-page">
+    {{#each this}}
+    <div class="wine-card">
+      <!-- Lewa strona - Obraz -->
+      <div class="wine-image">
+        <img src="https://witrynarium.pl{{this.image}}" alt="{{this.name}}">
+      </div>
+
+      <!-- Prawa strona - Treść -->
+      <div class="wine-content">
+        <!-- Nagłówek - Nazwa i Ceny -->
+        <div class="wine-header-row">
+          <h2 class="wine-title">{{this.name}}</h2>
+          
+          <div class="wine-prices">
+            <div class="price-badge">
+              <span class="litry">150ml</span><span class="icon_glass"></span><span class="price-amount">{{this.price1}}</span>
+            </div>
+            <div class="price-badge">
+              <span class="litry">750ml</span><span class="icon_wine"></span><span class="price-amount">{{this.price2}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Szczegóły -->
+        <div class="wine-details">
+          <div class="wine-detail-item">
+            <span class="wine-detail-label">Szczep:</span>
+            <span class="wine-detail-value">{{this.szczepy}}</span>
+          </div>
+          
+          <div class="wine-detail-item">
+            <span class="wine-detail-label">Region:</span>
+            <span class="wine-detail-value">{{this.region}}</span>
+          </div>
+          
+          <div class="wine-detail-item">
+            <span class="wine-detail-label">Typ:</span>
+            <span class="wine-detail-value">{{this.type}}</span>
+          </div>
+
+          <div class="wine-detail-item">
+            <span class="wine-detail-label">Kolor:</span>
+            <span class="wine-detail-value">{{this.category}}</span>
+          </div>
+          
+          <p class="wine-description">{{this.description}}</p>
+          
+          <div class="wine-alcohol">Vol: {{this.alcohol}}</div>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  {{/each}}
+
+</body>
+</html>

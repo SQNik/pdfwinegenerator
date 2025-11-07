@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zarządzanie Kolekcjami - Wine Management System</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+    <!-- Navigation Container -->
+    <div id="navigation-container"></div>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-4">
+        <!-- Alert Container -->
+        <div id="alert-container" class="mb-3"></div>
+
+        <!-- Collections Section -->
+        <div id="collections-section">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2><i class="bi bi-folder text-primary me-2"></i> Zarządzanie Kolekcjami</h2>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" id="createCollectionBtn">
+                                <i class="bi bi-plus-lg"></i> Nowa Kolekcja
+                            </button>
+                            <button class="btn btn-outline-secondary" id="manageCollectionFieldsBtn">
+                                <i class="bi bi-gear"></i> Zarządzaj Polami
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">Wszystkie Kolekcje</h5>
+                                    <h2 class="mb-0" id="totalCollections">0</h2>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-folder fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">Aktywne Kolekcje</h5>
+                                    <h2 class="mb-0" id="activeCollections">0</h2>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-check-circle fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="card-title">Wina w Kolekcjach</h5>
+                                    <h2 class="mb-0" id="totalWinesInCollections">0</h2>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-bottle fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters and Search -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" id="collectionsSearch" placeholder="Szukaj kolekcji...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="collectionsStatusFilter">
+                        <option value="">Wszystkie statusy</option>
+                        <option value="active">Aktywne</option>
+                        <option value="draft">Szkice</option>
+                        <option value="archived">Archiwalne</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="collectionsSortBy">
+                        <option value="name">Nazwa</option>
+                        <option value="created">Data utworzenia</option>
+                        <option value="updated">Ostatnia aktualizacja</option>
+                        <option value="wines_count">Liczba win</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-secondary w-100" onclick="window.collectionsManager?.refresh()">
+                        <i class="bi bi-arrow-clockwise"></i> Odśwież
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="collectionsLoading" class="text-center py-4 d-none">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Ładowanie kolekcji...</span>
+                </div>
+            </div>
+
+            <!-- Collections Container -->
+            <div class="row" id="collectionsContainer">
+                <!-- Collections will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Collection Modal -->
+    <div class="modal fade" id="collectionModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nowa Kolekcja</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="collectionForm">
+                        <!-- Podstawowe informacje -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Podstawowe informacje</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="collectionName" class="form-label">Nazwa kolekcji <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="collectionName" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="collectionStatus" class="form-label">Status</label>
+                                            <select class="form-select" id="collectionStatus">
+                                                <option value="active">Aktywna</option>
+                                                <option value="draft">Szkic</option>
+                                                <option value="archived">Archiwalna</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="mb-3">
+                                            <label for="collectionTags" class="form-label">Tagi</label>
+                                            <input type="text" class="form-control" id="collectionTags" placeholder="Oddziel przecinkami">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label for="collectionDescription" class="form-label">Opis</label>
+                                            <textarea class="form-control" id="collectionDescription" rows="2"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Dodatkowe pola -->
+                                <div id="collectionDynamicFields">
+                                    <!-- Dynamic fields will be rendered here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Wybór win -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="bi bi-bottle me-2"></i>Wybierz wina</h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="collectionWinesSelection">
+                                    <!-- Wine selection will be rendered here -->
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-primary" id="saveCollectionBtn">
+                        <i class="bi bi-check-lg"></i> Zapisz Kolekcję
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collection Fields Management Modal -->
+    <div class="modal fade" id="collectionFieldsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Zarządzanie Polami Kolekcji</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- CollectionFieldsManager content will be injected here -->
+                    <div id="collectionFieldsManagerContainer">
+                        <!-- Loading state -->
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Ładowanie pól kolekcji...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collection Field Edit Modal (for CollectionFieldsManager) -->
+    <div class="modal fade" id="collectionFieldEditModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="collectionFieldEditModalTitle">Nowe Pole</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="collectionFieldEditForm">
+                        <input type="hidden" name="fieldId" id="collectionFieldId">
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="collectionFieldName" class="form-label">Nazwa pola *</label>
+                                    <input type="text" class="form-control" name="fieldName" id="collectionFieldName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="collectionFieldType" class="form-label">Typ pola *</label>
+                                    <select class="form-select" name="fieldType" id="collectionFieldType" required>
+                                        <option value="">Wybierz typ</option>
+                                        <option value="text">Tekst</option>
+                                        <option value="textarea">Obszar tekstu</option>
+                                        <option value="number">Liczba</option>
+                                        <option value="select">Lista wyboru</option>
+                                        <option value="boolean">Tak/Nie</option>
+                                        <option value="date">Data</option>
+                                        <option value="url">URL</option>
+                                        <option value="email">Email</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="collectionFieldPlaceholder" class="form-label">Placeholder</label>
+                                    <input type="text" class="form-control" name="fieldPlaceholder" id="collectionFieldPlaceholder">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="collectionFieldHelpText" class="form-label">Tekst pomocy</label>
+                                    <input type="text" class="form-control" name="fieldHelpText" id="collectionFieldHelpText">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="fieldRequired" id="collectionFieldRequired">
+                                    <label class="form-check-label" for="collectionFieldRequired">
+                                        Pole wymagane
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="fieldActive" id="collectionFieldActive" checked>
+                                    <label class="form-check-label" for="collectionFieldActive">
+                                        Pole aktywne
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Options for select type -->
+                        <div id="collectionFieldOptionsContainer" class="mb-3 d-none">
+                            <label for="collectionFieldOptions" class="form-label">Opcje (jedna na linię)</label>
+                            <textarea class="form-control" name="fieldOptions" id="collectionFieldOptions" rows="4" placeholder="Opcja 1&#10;Opcja 2&#10;Opcja 3"></textarea>
+                        </div>
+
+                        <!-- Validation rules -->
+                        <div class="border rounded p-3 mb-3">
+                            <h6 class="mb-3">Walidacja</h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="collectionFieldValidationMin" class="form-label">Min. wartość/długość</label>
+                                        <input type="number" class="form-control" name="validationMin" id="collectionFieldValidationMin">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="collectionFieldValidationMax" class="form-label">Max. wartość/długość</label>
+                                        <input type="number" class="form-control" name="validationMax" id="collectionFieldValidationMax">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="collectionFieldValidationPattern" class="form-label">Wzorzec (regex)</label>
+                                        <input type="text" class="form-control" name="validationPattern" id="collectionFieldValidationPattern">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="collectionFieldValidationMessage" class="form-label">Komunikat błędu</label>
+                                <input type="text" class="form-control" name="validationMessage" id="collectionFieldValidationMessage">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-primary" id="saveCollectionFieldEditBtn">
+                        <i class="bi bi-check-lg"></i> Zapisz Pole
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="d-none">
+        <div class="loading-content">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Ładowanie...</span>
+            </div>
+            <p class="mt-2">Proszę czekać...</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Application Scripts with cache busting -->
+    <script src="js/config.js?v=20251017d"></script>
+    <script src="js/config/wine-fields.js?v=20251017d"></script>
+    <script src="js/config/collection-fields.js?v=20251017d"></script>
+    <script src="js/api.js?v=20251019z"></script>
+    <script src="js/utils.js?v=20251017d"></script>
+    <script src="js/config/NavigationConfig.js?v=20251017d"></script>
+    <script src="js/components/NavigationComponent.js?v=20251017d"></script>
+    <script src="js/components/collections.js?v=20251019h"></script>
+    <script src="js/components/CollectionFieldsManager.js?v=20251017d"></script>
+    
+    <script>
+        // Initialize Collections Management Page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize navigation using global configuration
+            NavigationComponent.initGlobalNavigation('#navigation-container');
+            
+            // Initialize collection fields configuration first
+            const collectionFieldsConfig = new CollectionFieldsConfig();
+            
+            // Initialize managers
+            const collectionsManager = new CollectionsManager();
+            const collectionFieldsManager = new CollectionFieldsManager();
+            
+            // Set page-specific configuration
+            window.collectionsApp = {
+                currentSection: 'collections',
+                managers: {
+                    collections: collectionsManager,
+                    collectionFields: collectionFieldsManager
+                },
+                config: {
+                    collectionFields: collectionFieldsConfig
+                },
+                
+                // Global references for compatibility
+                collectionsManager: collectionsManager,
+                collectionFieldsManager: collectionFieldsManager,
+                
+                // Global alert handler
+                showAlert: function(message, type = 'info') {
+                    Utils.showAlert(message, type);
+                },
+                
+                // Global error handler
+                handleError: function(error) {
+                    console.error('Collections management error:', error);
+                    this.showAlert('Wystąpił błąd: ' + error.message, 'danger');
+                }
+            };
+            
+            // Global compatibility aliases
+            window.collectionsManager = collectionsManager;
+            window.collectionFieldsManager = collectionFieldsManager;
+            window.CollectionFieldsConfig = collectionFieldsConfig;
+            
+            // Initialize collection fields first
+            collectionFieldsConfig.init().then(() => {
+                // Initialize collection fields manager
+                collectionFieldsManager.init('#collectionFieldsManagerContainer', '#collectionFieldsModal', '#collectionFieldEditModal');
+                
+                // Connect field management button
+                const manageFieldsBtn = document.getElementById('manageCollectionFieldsBtn');
+                if (manageFieldsBtn) {
+                    manageFieldsBtn.addEventListener('click', function() {
+                        collectionFieldsManager.show();
+                    });
+                }
+                
+                // Initialize collections manager
+                collectionsManager.init();
+                
+                console.log('Collections Management page initialized successfully');
+            }).catch(error => {
+                console.error('Failed to initialize collection fields:', error);
+                Utils.showAlert('Błąd inicjalizacji pól kolekcji: ' + error.message, 'danger');
+            });
+        });
+    </script>
+</body>
+</html>

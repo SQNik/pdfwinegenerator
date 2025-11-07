@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CRUD - Dynamiczne Pola Kolekcji</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .log-entry { margin: 5px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background-color: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        .test-section { margin: 20px 0; padding: 20px; border: 2px solid #dee2e6; border-radius: 10px; }
+        .json-output { background-color: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">🧪 Test CRUD - System Dynamicznych Pól Kolekcji</h1>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="test-section">
+                    <h3>🔍 READ Tests</h3>
+                    <button class="btn btn-primary mb-2 w-100" onclick="testGetConfig()">GET - Pobierz konfigurację</button>
+                    <button class="btn btn-secondary mb-2 w-100" onclick="testGetStats()">GET - Pobierz statystyki</button>
+                    <input type="text" id="fieldIdInput" class="form-control mb-2" placeholder="ID pola do pobrania">
+                    <button class="btn btn-outline-primary w-100" onclick="testGetSingleField()">GET - Pobierz pojedyncze pole</button>
+                </div>
+
+                <div class="test-section">
+                    <h3>➕ CREATE Tests</h3>
+                    <div class="mb-2">
+                        <input type="text" id="newFieldName" class="form-control mb-1" placeholder="Nazwa pola">
+                        <select id="newFieldType" class="form-select mb-1">
+                            <option value="text">Text</option>
+                            <option value="textarea">Textarea</option>
+                            <option value="select">Select</option>
+                            <option value="number">Number</option>
+                        </select>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="newFieldRequired">
+                            <label class="form-check-label" for="newFieldRequired">Wymagane</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-success w-100" onclick="testCreateField()">POST - Utwórz pole</button>
+                </div>
+
+                <div class="test-section">
+                    <h3>✏️ UPDATE Tests</h3>
+                    <input type="text" id="updateFieldId" class="form-control mb-2" placeholder="ID pola do aktualizacji">
+                    <input type="text" id="updateFieldName" class="form-control mb-2" placeholder="Nowa nazwa">
+                    <button class="btn btn-warning w-100 mb-2" onclick="testUpdateField()">PUT - Aktualizuj pole</button>
+                    <button class="btn btn-info w-100" onclick="testUpdateOrder()">PUT - Zmień kolejność</button>
+                </div>
+
+                <div class="test-section">
+                    <h3>🗑️ DELETE Tests</h3>
+                    <input type="text" id="deleteFieldId" class="form-control mb-2" placeholder="ID pola do usunięcia">
+                    <button class="btn btn-danger w-100" onclick="testDeleteField()">DELETE - Usuń pole</button>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="test-section">
+                    <h3>📊 Wyniki Testów</h3>
+                    <button class="btn btn-outline-secondary btn-sm mb-3" onclick="clearLog()">Wyczyść log</button>
+                    <div id="testLog" style="max-height: 600px; overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/collection-fields';
+        let testCounter = 0;
+
+        function log(message, type = 'info') {
+            testCounter++;
+            const logDiv = document.getElementById('testLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.innerHTML = `<strong>#${testCounter}</strong> ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function logJSON(data) {
+            const logDiv = document.getElementById('testLog');
+            const jsonDiv = document.createElement('div');
+            jsonDiv.className = 'json-output';
+            jsonDiv.textContent = JSON.stringify(data, null, 2);
+            logDiv.appendChild(jsonDiv);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('testLog').innerHTML = '';
+            testCounter = 0;
+        }
+
+        async function apiCall(method, endpoint, data = null) {
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+                
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+
+                const response = await fetch(API_BASE + endpoint, options);
+                const result = await response.json();
+                
+                return {
+                    status: response.status,
+                    success: response.ok,
+                    data: result
+                };
+            } catch (error) {
+                return {
+                    status: 0,
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+
+        async function testGetConfig() {
+            log('🔍 TEST: Pobieranie konfiguracji pól...');
+            const result = await apiCall('GET', '/config');
+            
+            if (result.success) {
+                log(`✅ GET /config - SUCCESS (Status: ${result.status})`, 'success');
+                log(`📈 Liczba pól: ${result.data.data?.length || 0}`, 'success');
+                logJSON(result.data);
+            } else {
+                log(`❌ GET /config - FAILED (Status: ${result.status})`, 'error');
+                logJSON(result);
+            }
+        }
+
+        async function testGetStats() {
+            log('📊 TEST: Pobieranie statystyk użycia...');
+            const result = await apiCall('GET', '/stats');
+            
+            if (result.success) {
+                log(`✅ GET /stats - SUCCESS (Status: ${result.status})`, 'success');
+                logJSON(result.data);
+            } else {
+                log(`❌ GET /stats - FAILED (Status: ${result.status})`, 'error');
+                logJSON(result);
+            }
+        }
+
+        async function testGetSingleField() {
+            const fieldId = document.getElementById('fieldIdInput').value.trim();
+            if (!fieldId) {
+                log('⚠️ Wprowadź ID pola do pobrania', 'error');
+                return;
+            }
+
+            log(`🔍 TEST: Pobieranie pola ID: ${fieldId}...`);
+            const result = await apiCall('GET', `/config/${fieldId}`);
+            
+            if (result.success) {
+                log(`✅ GET /config/${fieldId} - SUCCESS (Status: ${result.status})`, 'success');
+                logJSON(result.data);
+            } else {
+                log(`❌ GET /config/${fieldId} - FAILED (Status: ${result.status})`, 'error');
+                logJSON(result);
+            }
+        }
+
+        async function testCreateField() {
+            const name = document.getElementById('newFieldName').value.trim();
+            const type = document.getElementById('newFieldType').value;
+            const required = document.getElementById('newFieldRequired').checked;
+
+            if (!name) {
+                log('⚠️ Wprowadź nazwę pola', 'error');
+                return;
+            }
+
+            const fieldData = {
+                name: name,
+                type: type,
+                required: required
+            };
+
+            if (type === 'select') {
+                fieldData.options = ['Opcja 1', 'Opcja 2', 'Opcja 3'];
+            }
+
+            log(`➕ TEST: Tworzenie pola "${name}" (${type})...`);
+            const result = await apiCall('POST', '/config', fieldData);
+            
+            if (result.success) {
+                log(`✅ POST /config - SUCCESS (Status: ${result.status})`, 'success');
+                log(`🆔 Utworzone pole ID: ${result.data.data?.id}`, 'success');
+                logJSON(result.data);
+                
+                // Wyczyść formularz
+                document.getElementById('newFieldName').value = '';
+                document.getElementById('newFieldRequired').checked = false;
+            } else {
+                log(`❌ POST /config - FAILED (Status: ${result.status})`, 'error');
+                logJSON(result);
+            }
+        }
+
+        async function testUpdateField() {
+            const fieldId = document.getElementById('updateFieldId').value.trim();
+            const newName = document.getElementById('updateFieldName').value.trim();
+
+            if (!fieldId || !newName) {
+                log('⚠️ Wprowadź ID pola i nową nazwę', 'error');
+                return;
+            }
+
+            const updateData = {
+                name: newName,
+                type: 'text',
+                required: false
+            };
+
+            log(`✏️ TEST: Aktualizacja pola ID: ${fieldId}...`);
+            const result = await apiCall('PUT', `/config/${fieldId}`, updateData);
+            
+            if (result.success) {
+                log(`✅ PUT /config/${fieldId} - SUCCESS (Status: ${result.status})`, 'success');
+                logJSON(result.data);
+            } else {
+                log(`❌ PUT /config/${fieldId} - FAILED (Status: ${result.status})`, 'error');
+                logJSON(result);
+            }
+        }
+
+        async function testUpdateOrder() {
+            log('🔄 TEST: Pobieranie aktualnej konfiguracji dla zmiany kolejności...');
+            const configResult = await apiCall('GET', '/config');
+            
+            if (!configResult.success) {
+                log('❌ Nie można pobrać konfiguracji do zmiany kolejności', 'error');
+                return;
+            }
+
+            const fields = configResult.data.data;
+            if (fields.length < 2) {
+                log('⚠️ Potrzeba co najmniej 2 pól do zmiany kolejności', 'error');
+                return;
+            }
+
+            const fieldIds = fields.map(f => f.id);
+            const reversedIds = [...fieldIds].reverse();
+
+            log('🔄 TEST: Zmiana kolejności pól...');
+            const result = await apiCall('PUT', '/order', { fieldIds: reversedIds });
+            
+            if (result.success) {
+                log(`✅ PUT /order - SUCCESS (Status: ${result.status})`, 'success');
+                logJSON(result.data);
+            } else {
+                log(`❌ PUT /order - FAILED (Status: ${result.status})`, 'error');
+                logJSON(result);
+            }
+        }
+
+        async function testDeleteField() {
+            const fieldId = document.getElementById('deleteFieldId').value.trim();
+            
+            if (!fieldId) {
+                log('⚠️ Wprowadź ID pola do usunięcia', 'error');
+                return;
+            }
+
+            if (!confirm(`Czy na pewno chcesz usunąć pole ID: ${fieldId}?`)) {
+                return;
+            }
+
+            log(`🗑️ TEST: Usuwanie pola ID: ${fieldId}...`);
+            const result = await apiCall('DELETE', `/config/${fieldId}`);
+            
+            if (result.success) {
+                log(`✅ DELETE /config/${fieldId} - SUCCESS (Status: ${result.status})`, 'success');
+                logJSON(result.data);
+            } else {
+                log(`❌ DELETE /config/${fieldId} - FAILED (Status: ${result.status})`, 'error');
+                logJSON(result);
+            }
+        }
+
+        // Auto-load config na starcie
+        window.addEventListener('load', function() {
+            log('🚀 Strona testowa załadowana. Rozpoczynam test początkowy...', 'info');
+            setTimeout(testGetConfig, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+
+    <div class="page products-page">
+        <div class="products-content">
+            <div class="products-grid">
+                {{#each this}}
+                <div class="product-card">
+                    <!-- Obrazek wina (góra) -->
+                    <div class="product-image">
+                        {{#if this.image}}
+                            <img src="https://witrynarium.pl/{{this.image}}" alt="{{this.name}}">
+                        {{else}}
+                            <div style="font-size: 40px; opacity: 0.3;">🍷</div>
+                        {{/if}}
+                    </div>
+
+                    <!-- Informacje o winie -->
+                    <div class="product-info">
+                        <div class="product-name">{{this.name}}</div>
+                        
+                        <div class="product-details">
+                            {{#if this.szczepy}}
+                            <div class="product-detail">
+                                <strong>Szczep:</strong> {{this.szczepy}}
+                            </div>
+                            {{/if}}
+                            
+                            {{#if this.region}}
+                            <div class="product-detail">
+                                <strong>Region:</strong> {{this.region}}
+                            </div>
+                            {{/if}}
+                            
+                            {{#if this.type}}
+                            <div class="product-detail">
+                                <strong>Typ:</strong> {{this.type}}
+                            </div>
+                            {{/if}}
+                            
+                            {{#if this.alcohol}}
+                            <div class="product-detail">
+                                <strong>Alkohol:</strong> {{this.alcohol}}
+                            </div>
+                            {{/if}}
+                        </div>
+
+                        {{#if this.description}}
+                        <div class="product-description">
+                            {{this.description}}
+                        </div>
+                        {{/if}}
+
+                        <!-- Ceny (na dole) -->
+                        <div class="product-prices">
+                            {{#if this.price1}}
+                            <div class="price-tag">
+                                <span class="price-volume">100ml</span>
+                                <span class="price-amount">{{this.price1}}zł</span>
+                            </div>
+                            {{/if}}
+                            
+                            {{#if this.price2}}
+                            <div class="price-tag">
+                                <span class="price-volume">Butelka</span>
+                                <span class="price-amount">{{this.price2}}zł</span>
+                            </div>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+                

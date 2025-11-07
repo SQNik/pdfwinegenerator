@@ -1,0 +1,1471 @@
+﻿<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Editor - Wine Management System</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
+    
+    <!-- Modern Admin Styles -->
+    <link rel="stylesheet" href="css/modern-admin.css">
+    
+    <style>
+        /* Template Editor Specific Overrides */
+        .CodeMirror {
+            height: 100% !important;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            border-radius: var(--radius-md);
+        }
+        
+        .editor-workspace {
+            display: grid;
+            grid-template-columns: 300px 1fr 600px;
+            gap: var(--space-lg);
+            height: calc(100vh - 80px);
+        }
+        
+        .editor-workspace-fullscreen {
+            grid-template-columns: 1fr;
+        }
+        
+        .templates-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100%;
+            padding-right: var(--space-xs);
+        }
+        
+        .templates-sidebar > * {
+            flex-shrink: 0;
+        }
+        
+        .templates-sidebar .modern-card {
+            min-height: auto;
+        }
+        
+        .templates-sidebar .modern-card-body {
+            max-height: none;
+        }
+        
+        /* Accordion functionality */
+        .sidebar-accordion-card .modern-card-header {
+            cursor: pointer;
+            user-select: none;
+            transition: background-color var(--transition-base);
+            position: relative;
+            padding-right: 2.5rem !important; /* Make room for icon */
+            border-radius: var(--radius-md);
+        }
+        
+        .sidebar-accordion-card .modern-card-header:hover {
+            background-color: var(--color-bg-secondary);
+        }
+        
+        .sidebar-accordion-card .modern-card-header .modern-card-title {
+            padding-right: var(--space-md);
+        }
+        
+        .sidebar-accordion-card .accordion-toggle-icon {
+            position: absolute;
+            right: var(--space-md);
+            top: var(--space-md);
+            transition: transform var(--transition-base);
+            color: var(--color-text-tertiary);
+            font-size: 0.875rem;
+            pointer-events: none;
+            line-height: 1;
+        }
+        
+        .sidebar-accordion-card.collapsed .accordion-toggle-icon {
+            transform: rotate(-90deg);
+        }
+        
+        .sidebar-accordion-card .modern-card-body {
+            transition: all var(--transition-base);
+            overflow: hidden;
+        }
+        
+        .sidebar-accordion-card.collapsed .modern-card-body {
+            max-height: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            opacity: 0;
+            margin: 0;
+        }
+        
+        .sidebar-accordion-card.collapsed .modern-card-header {
+            border-radius: var(--radius-md);
+            margin-bottom: 0;
+        }
+        
+        /* Prevent button clicks from toggling accordion */
+        .sidebar-accordion-card .modern-card-header button {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Wine/Collection Fields Containers */
+        #wineFieldsList,
+        #collectionFieldsList {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+            max-height: 300px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: var(--space-xs);
+        }
+        
+        #templatesList {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Template Card Styles - dopasowane do format-card */
+        .template-card {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border-light);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .template-card:hover {
+            border-color: var(--color-accent);
+            box-shadow: 0 2px 8px rgba(0, 150, 52, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .template-card.active {
+            border-color: var(--color-accent);
+            background: rgba(0, 150, 52, 0.03);
+        }
+        
+        .template-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .template-card-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+        
+        .template-card-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+        
+        .template-card-btn {
+            background: none;
+            border: none;
+            padding: 0.25rem;
+            color: var(--color-text-tertiary);
+            cursor: pointer;
+            transition: color var(--transition-fast);
+            font-size: 0.875rem;
+            line-height: 1;
+        }
+        
+        .template-card-btn:hover {
+            color: var(--color-accent);
+        }
+        
+        .template-card-btn.delete:hover {
+            color: #dc3545;
+        }
+        
+        .template-card-body {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+        }
+        
+        .template-card-description {
+            margin-bottom: var(--space-xs);
+            color: var(--color-text-tertiary);
+        }
+        
+        .template-card-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            margin-top: var(--space-xs);
+        }
+        
+        .template-card-spec {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.125rem 0.5rem;
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-sm);
+            font-size: 0.6875rem;
+            color: var(--color-text-secondary);
+        }
+        
+        .template-card-badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.6875rem;
+            font-weight: 500;
+        }
+        
+        .template-card-badge.active {
+            background: rgba(0, 150, 52, 0.1);
+            color: var(--color-accent);
+        }
+        
+        .template-card-badge.draft {
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-tertiary);
+        }
+        
+        .template-card-badge.archived {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-xl) var(--space-md);
+            color: var(--color-text-tertiary);
+        }
+        
+        .empty-state i {
+            color: var(--color-text-muted);
+        }
+        
+        .empty-state p {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+        }
+        
+        .empty-state small {
+            font-size: 0.75rem;
+        }
+
+        .template-card:hover {
+            border-color: var(--color-accent);
+            box-shadow: 0 2px 8px rgba(0, 150, 52, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .template-card.active {
+            border-color: var(--color-accent);
+            background: var(--color-accent-bg);
+        }
+
+        .template-card .template-thumbnail {
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .template-card .template-thumbnail i {
+            font-size: 2rem;
+            color: var(--color-text-tertiary);
+        }
+
+        .template-card .template-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .template-card .delete-template-btn {
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .template-card:hover .delete-template-btn {
+            opacity: 1;
+        }
+
+        .template-card .delete-template-btn:hover {
+            color: #dc3545 !important;
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: var(--radius-sm);
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-xl) var(--space-md);
+            color: var(--color-text-tertiary);
+            text-align: center;
+        }
+        
+        .code-editor-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            overflow: hidden;
+        }
+        
+        .editor-tabs-container {
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border-light);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .editor-tabs {
+            display: flex;
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border-light);
+            padding: 0;
+        }
+        
+        .editor-tab {
+            flex: 1;
+            padding: var(--space-md);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--color-text-tertiary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .editor-tab:hover {
+            color: var(--color-text-primary);
+            background: var(--color-bg-tertiary);
+        }
+        
+        .editor-tab.active {
+            color: var(--color-accent);
+            border-bottom-color: var(--color-accent);
+            background: var(--color-bg-primary);
+        }
+        
+        .editor-content-area {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .editor-pane {
+            display: none;
+            height: 100%;
+        }
+        
+        .editor-pane.active {
+            display: block;
+        }
+        
+        .preview-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100%;
+            padding-right: var(--space-xs);
+        }
+        
+        .preview-sidebar > * {
+            flex-shrink: 0;
+        }
+        
+        .preview-container {
+            background: #525252;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border-light);
+            overflow: hidden;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .preview-header {
+            padding: var(--space-md);
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .preview-body {
+            flex: 1;
+            position: relative;
+            background: white;
+            overflow: auto; /* Changed from hidden to auto for zoom scrolling */
+        }
+        
+        .preview-zoom-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            transform-origin: top center;
+            transition: transform 0.2s ease;
+            overflow: auto;
+            background: #525252;
+        }
+        
+        .preview-zoom-wrapper.zoom-fit {
+            align-items: center;
+        }
+        
+        #previewIframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            min-height: 600px;
+            background: #525252;
+        }
+        
+        .preview-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        .field-drag-item {
+            padding: var(--space-sm) var(--space-md);
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border-light);
+            border-radius: var(--radius-md);
+            cursor: grab;
+            transition: all var(--transition-fast);
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .field-drag-item:hover {
+            background: var(--color-accent-bg);
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+            transform: translateX(4px);
+        }
+        
+        .field-drag-item:active {
+            cursor: grabbing;
+        }
+        
+        /* Custom Format Cards */
+        .format-card {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border-light);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+            transition: all var(--transition-fast);
+        }
+        
+        .format-card:hover {
+            border-color: var(--color-accent);
+            box-shadow: 0 2px 8px rgba(0, 150, 52, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .format-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .format-card-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+        
+        .format-card-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+        
+        .format-card-btn {
+            background: none;
+            border: none;
+            padding: 0.25rem;
+            color: var(--color-text-tertiary);
+            cursor: pointer;
+            transition: color var(--transition-fast);
+            font-size: 0.875rem;
+            line-height: 1;
+        }
+        
+        .format-card-btn:hover {
+            color: var(--color-accent);
+        }
+        
+        .format-card-btn.delete:hover {
+            color: #dc3545;
+        }
+        
+        .format-card-body {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+        }
+        
+        .format-card-description {
+            margin-bottom: var(--space-xs);
+            color: var(--color-text-tertiary);
+        }
+        
+        .format-card-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            margin-top: var(--space-xs);
+        }
+        
+        .format-card-spec {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.125rem 0.5rem;
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-sm);
+            font-size: 0.6875rem;
+            color: var(--color-text-secondary);
+        }
+        
+        .format-card-badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.6875rem;
+            font-weight: 500;
+        }
+        
+        .format-card-badge.active {
+            background: rgba(0, 150, 52, 0.1);
+            color: var(--color-accent);
+        }
+        
+        .format-card-badge.inactive {
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-tertiary);
+        }
+        
+        @media (max-width: 1400px) {
+            .editor-workspace {
+                grid-template-columns: 280px 1fr 500px;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .editor-workspace {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+            }
+            
+            .templates-sidebar,
+            .preview-sidebar {
+                height: 300px;
+            }
+        }
+
+        /* 🎨 HTML Components Toolbar Styles */
+        .html-components-toolbar {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-base);
+        }
+
+        .html-components-toolbar:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .components-toolbar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--color-border-light);
+        }
+
+        .components-toolbar-title {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            color: var(--color-text-primary);
+        }
+
+        .components-toolbar-title i {
+            color: var(--color-accent);
+            font-size: 1.125rem;
+        }
+
+        .components-toolbar-subtitle {
+            font-size: 0.75rem;
+            color: var(--color-text-tertiary);
+        }
+
+        .components-toolbar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: var(--space-sm);
+        }
+
+        .component-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            padding: var(--space-md) var(--space-sm);
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border-light);
+            border-radius: var(--radius-md);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .component-btn:hover {
+            background: var(--color-accent-bg);
+            border-color: var(--color-accent-light);
+            color: var(--color-accent-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .component-btn:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .component-btn-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-accent);
+            transition: color var(--transition-fast);
+        }
+
+        .component-btn:hover .component-btn-icon {
+            color: var(--color-accent-dark);
+        }
+
+        .component-btn-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: currentColor;
+        }
+
+        .component-btn-label {
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .component-loading {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            padding: var(--space-lg);
+            color: var(--color-text-tertiary);
+        }
+
+        /* Component Modal Styles */
+        .component-modal .modern-form-group {
+            margin-bottom: var(--space-md);
+        }
+
+        .component-modal .modern-label {
+            display: block;
+            margin-bottom: var(--space-xs);
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .component-modal .modern-input,
+        .component-modal .modern-textarea,
+        .component-modal .modern-select {
+            width: 100%;
+        }
+
+        .component-preview {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border-light);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-top: var(--space-md);
+        }
+
+        .component-preview-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--space-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .component-preview-code {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border-light);
+            border-radius: var(--radius-sm);
+            padding: var(--space-sm);
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.8125rem;
+            color: var(--color-text-secondary);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <!-- Modern Header -->
+    <header class="modern-header">
+        <div class="modern-header-inner">
+            <a href="index.html" class="modern-brand">
+                <div class="modern-brand-icon">
+                    <i class="bi bi-code-square"></i>
+                </div>
+                <span>Katalog Win</span>
+            </a>
+            
+            <div class="modern-header-actions">
+                <button class="modern-btn modern-btn-ghost" data-bs-toggle="modal" data-bs-target="#logoUploadModal" title="Zarządzaj logo">
+                    <i class="bi bi-image"></i>
+                </button>
+                <button class="modern-btn modern-btn-ghost modern-btn-icon" id="fullScreenBtn" title="Full Screen">
+                    <i class="bi bi-arrows-fullscreen"></i>
+                </button>
+                <button class="modern-btn modern-btn-secondary" id="previewBtn">
+                    <i class="bi bi-eye"></i>
+                    PDF Preview
+                </button>
+                <button class="modern-btn modern-btn-primary" id="saveTemplateBtn">
+                    <i class="bi bi-check-lg"></i>
+                    Zapisz szablon
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="modern-main">
+        <!-- Editor Workspace -->
+        <div class="editor-workspace" id="editorWorkspace">
+            <!-- Templates Sidebar -->
+            <div class="templates-sidebar modern-scrollbar">
+                <div class="modern-card sidebar-accordion-card" data-accordion="templates">
+                    <div class="modern-card-header" style="padding: var(--space-md);">
+                        <i class="bi bi-chevron-down accordion-toggle-icon"></i>
+                        <h3 class="modern-card-title" style="font-size: 0.9375rem; margin-bottom: var(--space-sm);">Szablony</h3>
+                        <button class="modern-btn modern-btn-primary modern-btn-sm w-100" id="newTemplateBtn">
+                            <i class="bi bi-plus-lg"></i>
+                            Nowy szablon
+                        </button>
+                    </div>
+                    <div class="modern-card-body" style="padding: var(--space-md);">
+                        <!-- Search -->
+                        <div class="modern-search-box" style="margin-bottom: var(--space-md);">
+                            <i class="bi bi-search modern-search-icon"></i>
+                            <input type="text" class="modern-search-input" id="templateSearch" placeholder="Szukaj szablonów...">
+                        </div>
+                        
+                        <!-- Category Filter -->
+                        <select class="modern-select" id="categoryFilter" style="margin-bottom: var(--space-md); font-size: 0.8125rem;">
+                            <option value="">Wszystkie kategorie</option>
+                        </select>
+                        
+                        <!-- Templates List -->
+                        <div id="templatesList"></div>
+                    </div>
+                </div>
+                
+                <!-- Wine Fields -->
+                <div class="modern-card sidebar-accordion-card" data-accordion="wine-fields">
+                    <div class="modern-card-header" style="padding: var(--space-md);">
+                        <i class="bi bi-chevron-down accordion-toggle-icon"></i>
+                        <h3 class="modern-card-title" style="font-size: 0.9375rem;">Pola wina</h3>
+                        <p class="modern-card-subtitle" style="font-size: 0.75rem; margin: 0;">Przeciągnij do edytora</p>
+                    </div>
+                    <div class="modern-card-body" style="padding: var(--space-md);">
+                        <div id="wineFieldsList">
+                            <!-- Wine fields will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Collection Fields -->
+                <div class="modern-card sidebar-accordion-card" data-accordion="collection-fields">
+                    <div class="modern-card-header" style="padding: var(--space-md);">
+                        <i class="bi bi-chevron-down accordion-toggle-icon"></i>
+                        <h3 class="modern-card-title" style="font-size: 0.9375rem;">Pola kolekcji</h3>
+                        <p class="modern-card-subtitle" style="font-size: 0.75rem; margin: 0;">Przeciągnij do edytora</p>
+                    </div>
+                    <div class="modern-card-body" style="padding: var(--space-md);">
+                        <div id="collectionFieldsList">
+                            <!-- Collection fields will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Custom PDF Formats -->
+                <div class="modern-card sidebar-accordion-card" data-accordion="pdf-formats">
+                    <div class="modern-card-header" style="padding: var(--space-md);">
+                        <i class="bi bi-chevron-down accordion-toggle-icon"></i>
+                        <h3 class="modern-card-title" style="font-size: 0.9375rem; margin-bottom: var(--space-sm);">Formaty PDF</h3>
+                        <button class="modern-btn modern-btn-primary modern-btn-sm w-100" id="addCustomFormatBtn">
+                            <i class="bi bi-plus-lg"></i>
+                            Dodaj format
+                        </button>
+                    </div>
+                    <div class="modern-card-body" style="padding: var(--space-md);">
+                        <div id="customFormatsAlerts"></div>
+                        <div id="customFormatsSection">
+                            <div class="modern-loading">
+                                <div class="spinner-border text-muted" role="status">
+                                    <span class="visually-hidden">Ładowanie...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Editor -->
+            <div class="code-editor-container">
+                <!-- Toolbar -->
+                <div class="modern-toolbar">
+                    <div class="modern-toolbar-group">
+                        <button class="modern-toolbar-btn" id="undoBtn" title="Cofnij (Ctrl+Z)">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                        </button>
+                        <button class="modern-toolbar-btn" id="redoBtn" title="Ponów (Ctrl+Y)">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                    <div class="modern-toolbar-group">
+                        <button class="modern-toolbar-btn" id="formatCodeBtn" title="Formatuj kod">
+                            <i class="bi bi-code-slash"></i>
+                        </button>
+                    </div>
+                    <div class="modern-toolbar-group">
+                        <button class="modern-toolbar-btn" id="refreshTemplatesBtn" title="Odśwież listę">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 🎨 KOMPONENTY HTML - Rozszerzalny pasek narzędzi -->
+                <div class="html-components-toolbar" id="htmlComponentsToolbar">
+                    <div class="components-toolbar-header">
+                        <span class="components-toolbar-title">
+                            <i class="bi bi-puzzle"></i>
+                            Komponenty HTML
+                        </span>
+                        <span class="components-toolbar-subtitle">Kliknij, aby wstawić do kodu</span>
+                    </div>
+                    <div class="components-toolbar-grid" id="componentsGrid">
+                        <!-- Komponenty będą generowane dynamicznie przez ComponentsManager -->
+                        <div class="component-loading">
+                            <div class="spinner-border spinner-border-sm text-muted" role="status">
+                                <span class="visually-hidden">Ładowanie komponentów...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Editor Tabs -->
+                <div class="editor-tabs-container">
+                    <div class="editor-tabs">
+                        <button class="editor-tab active" data-editor="html">
+                            <i class="bi bi-filetype-html"></i> HTML
+                        </button>
+                        <button class="editor-tab" data-editor="css">
+                            <i class="bi bi-filetype-css"></i> CSS
+                        </button>
+                        <button class="editor-tab" data-editor="js">
+                            <i class="bi bi-filetype-js"></i> JavaScript
+                        </button>
+                    </div>
+                    
+                    <div class="editor-content-area">
+                        <div class="editor-pane active" id="htmlEditorPane">
+                            <textarea id="htmlEditor"></textarea>
+                        </div>
+                        <div class="editor-pane" id="cssEditorPane">
+                            <textarea id="cssEditor"></textarea>
+                        </div>
+                        <div class="editor-pane" id="jsEditorPane">
+                            <textarea id="jsEditor"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Sidebar -->
+            <div class="preview-sidebar">
+                <div class="preview-container">
+                    <div class="preview-header">
+                        <h3 class="modern-card-title" style="font-size: 0.9375rem; margin: 0;">Podgląd na żywo</h3>
+                        <div style="display: flex; gap: var(--space-xs); align-items: center;">
+                            <!-- Zoom Controls -->
+                            <div style="display: flex; align-items: center; gap: var(--space-xs); margin-right: var(--space-sm); border-right: 1px solid var(--color-border-light); padding-right: var(--space-sm);">
+                                <button class="modern-btn modern-btn-ghost modern-btn-sm" id="zoomOutBtn" title="Pomniejsz (-)">
+                                    <i class="bi bi-zoom-out"></i>
+                                </button>
+                                <span id="zoomLevel" style="font-size: 0.75rem; color: var(--color-text-secondary); min-width: 50px; text-align: center; font-weight: 500;">100%</span>
+                                <button class="modern-btn modern-btn-ghost modern-btn-sm" id="zoomInBtn" title="Powiększ (+)">
+                                    <i class="bi bi-zoom-in"></i>
+                                </button>
+                                <button class="modern-btn modern-btn-ghost modern-btn-sm" id="zoomFitBtn" title="Dopasuj do okna">
+                                    <i class="bi bi-arrows-angle-contract"></i>
+                                </button>
+                                <button class="modern-btn modern-btn-ghost modern-btn-sm" id="zoomResetBtn" title="Reset (100%)">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </button>
+                            </div>
+                            <button class="modern-btn modern-btn-ghost modern-btn-sm" id="refreshPreviewBtn" title="Odśwież">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                            <button class="modern-btn modern-btn-ghost modern-btn-sm" id="previewOptionsBtn" title="Opcje">
+                                <i class="bi bi-gear"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="preview-body" id="previewBody">
+                        <div class="preview-zoom-wrapper" id="previewZoomWrapper">
+                            <iframe id="previewIframe"></iframe>
+                        </div>
+                        <div class="preview-loading" id="previewLoading" style="display: none;">
+                            <div class="spinner-border text-muted" role="status">
+                                <span class="visually-hidden">Ładowanie...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: New Template -->
+    <div class="modal fade" id="newTemplateModal" tabindex="-1">
+        <div class="modal-dialog modern-modal-content">
+            <div class="modal-content" style="border-radius: var(--radius-xl); border: none;">
+                <div class="modern-modal-header">
+                    <h5 class="modern-modal-title">Nowy szablon HTML</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modern-modal-body">
+                    <div class="modern-form-group">
+                        <label class="modern-label">Nazwa szablonu *</label>
+                        <input type="text" class="modern-input" id="templateName" placeholder="np. Etykieta wina elegancka">
+                    </div>
+                    <div class="modern-form-group">
+                        <label class="modern-label">Opis</label>
+                        <textarea class="modern-textarea" id="templateDescription" rows="3" placeholder="Krótki opis szablonu..."></textarea>
+                    </div>
+                    <div class="modern-form-group">
+                        <label class="modern-label">Kategoria</label>
+                        <select class="modern-select" id="templateCategory">
+                            <option value="general">Ogólne</option>
+                        </select>
+                    </div>
+                    <div class="modern-form-group" style="margin-bottom: 0;">
+                        <label class="modern-label">Status</label>
+                        <select class="modern-select" id="templateStatus">
+                            <option value="draft">Szkic</option>
+                            <option value="active">Aktywny</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modern-modal-footer">
+                    <button type="button" class="modern-btn modern-btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="modern-btn modern-btn-primary" id="createTemplateBtn">
+                        <i class="bi bi-plus-lg"></i>
+                        Utwórz szablon
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Template Metadata -->
+    <div class="modal fade" id="editTemplateModal" tabindex="-1">
+        <div class="modal-dialog modern-modal-content">
+            <div class="modal-content" style="border-radius: var(--radius-xl); border: none;">
+                <div class="modern-modal-header">
+                    <h5 class="modern-modal-title">Edytuj szablon</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modern-modal-body">
+                    <div class="modern-form-group">
+                        <label class="modern-label">Nazwa szablonu *</label>
+                        <input type="text" class="modern-input" id="editTemplateName" placeholder="np. Etykieta wina elegancka">
+                    </div>
+                    <div class="modern-form-group">
+                        <label class="modern-label">Opis</label>
+                        <textarea class="modern-textarea" id="editTemplateDescription" rows="3" placeholder="Krótki opis szablonu..."></textarea>
+                    </div>
+                    <div class="modern-form-group">
+                        <label class="modern-label">Kategoria</label>
+                        <select class="modern-select" id="editTemplateCategory">
+                            <option value="general">Ogólne</option>
+                        </select>
+                    </div>
+                    <div class="modern-form-group" style="margin-bottom: 0;">
+                        <label class="modern-label">Status</label>
+                        <select class="modern-select" id="editTemplateStatus">
+                            <option value="draft">Szkic</option>
+                            <option value="active">Aktywny</option>
+                            <option value="archived">Archiwum</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modern-modal-footer">
+                    <button type="button" class="modern-btn modern-btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="modern-btn modern-btn-primary" id="saveTemplateMetaBtn">
+                        <i class="bi bi-check-lg"></i>
+                        Zapisz zmiany
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Preview Options -->
+    <div class="modal fade" id="previewOptionsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: var(--radius-xl); border: none;">
+                <div class="modern-modal-header">
+                    <h5 class="modern-modal-title">Opcje podglądu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modern-modal-body">
+                    <div class="modern-form-group">
+                        <label class="modern-label">Format PDF</label>
+                        <select class="modern-select" id="previewFormat">
+                            <option value="A4">A4</option>
+                            <option value="A5" selected>A5</option>
+                            <option value="Letter">Letter</option>
+                        </select>
+                    </div>
+                    <div class="modern-form-group">
+                        <label class="modern-label">Typ podglądu</label>
+                        <select class="modern-select" id="previewType">
+                            <option value="wine">Szablon wina</option>
+                            <option value="collection">Szablon kolekcji</option>
+                        </select>
+                    </div>
+                    <div class="modern-form-group" id="winePreviewOptions">
+                        <label class="modern-label">Przykładowe wino</label>
+                        <select class="modern-select" id="sampleWine">
+                            <option value="">Losowe wino</option>
+                        </select>
+                    </div>
+                    <div class="modern-form-group" id="collectionPreviewOptions" style="display: none;">
+                        <label class="modern-label">Przykładowa kolekcja</label>
+                        <select class="modern-select" id="sampleCollection">
+                            <option value="">Przykładowa kolekcja</option>
+                        </select>
+                    </div>
+                    <div class="modern-form-group">
+                        <label class="modern-label">
+                            <input type="checkbox" class="modern-checkbox" id="previewBackground" checked>
+                            <span style="margin-left: var(--space-xs);">Drukuj tło i kolory</span>
+                        </label>
+                    </div>
+                    
+                    <div class="modern-divider"></div>
+                    <h6 style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-md); color: var(--color-text-primary);">
+                        🎨 Personalizacja kolorów
+                    </h6>
+                    
+                    <div class="modern-form-group">
+                        <label class="modern-label">Kolor tła</label>
+                        <div style="display: flex; gap: var(--space-xs);">
+                            <input type="color" class="form-control form-control-color" id="previewBgColor" value="#f5f5f5" style="width: 60px; height: 38px; border-radius: var(--radius-md);">
+                            <input type="text" class="modern-input" id="previewBgColorHex" value="#f5f5f5" placeholder="#f5f5f5">
+                        </div>
+                        <small class="modern-text-tertiary" style="font-size: 0.75rem;">Ustaw kolor tła dla iframe preview</small>
+                    </div>
+                    
+                    <div class="modern-form-group">
+                        <label class="modern-label">Kolor linków</label>
+                        <div style="display: flex; gap: var(--space-xs);">
+                            <input type="color" class="form-control form-control-color" id="previewLinkColor" value="#0d6efd" style="width: 60px; height: 38px; border-radius: var(--radius-md);">
+                            <input type="text" class="modern-input" id="previewLinkColorHex" value="#0d6efd" placeholder="#0d6efd">
+                        </div>
+                        <small class="modern-text-tertiary" style="font-size: 0.75rem;">Ustaw kolor linków i elementów interaktywnych</small>
+                    </div>
+                    
+                    <button type="button" class="modern-btn modern-btn-secondary w-100" id="resetColorsBtn">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Resetuj kolory
+                    </button>
+                </div>
+                <div class="modern-modal-footer">
+                    <button type="button" class="modern-btn modern-btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                    <button type="button" class="modern-btn modern-btn-primary" id="applyPreviewOptionsBtn">Zastosuj</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Custom PDF Format -->
+    <div class="modal fade" id="customFormatModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modern-modal-content">
+            <div class="modal-content" style="border-radius: var(--radius-xl); border: none;">
+                <div class="modern-modal-header">
+                    <h5 class="modern-modal-title" id="customFormatModalTitle">Dodaj nowy format PDF</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="customFormatForm" novalidate>
+                    <div class="modern-modal-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <!-- Basic Information -->
+                                <h6 class="mb-3" style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-primary);">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Podstawowe informacje
+                                </h6>
+                                
+                                <div class="modern-form-group">
+                                    <label class="modern-label">Nazwa formatu *</label>
+                                    <input type="text" class="modern-input" id="formatName" required 
+                                           placeholder="np. Etykieta wina mała">
+                                    <div class="invalid-feedback">Podaj nazwę formatu</div>
+                                </div>
+                                
+                                <div class="modern-form-group">
+                                    <label class="modern-label">Opis</label>
+                                    <textarea class="modern-textarea" id="formatDescription" rows="2" 
+                                              placeholder="Opcjonalny opis formatu..."></textarea>
+                                </div>
+                                
+                                <!-- Dimensions -->
+                                <h6 class="mb-3 mt-4" style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-primary);">
+                                    <i class="bi bi-arrows-angle-expand me-1"></i>
+                                    Wymiary strony
+                                </h6>
+                                
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="modern-form-group">
+                                            <label class="modern-label">Szerokość *</label>
+                                            <input type="number" class="modern-input" id="formatWidth" required 
+                                                   min="1" step="0.1" placeholder="210">
+                                            <div class="invalid-feedback">Podaj szerokość</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="modern-form-group">
+                                            <label class="modern-label">Wysokość *</label>
+                                            <input type="number" class="modern-input" id="formatHeight" required 
+                                                   min="1" step="0.1" placeholder="297">
+                                            <div class="invalid-feedback">Podaj wysokość</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="modern-form-group">
+                                            <label class="modern-label">Jednostka *</label>
+                                            <select class="modern-select" id="formatUnit" required>
+                                                <option value="mm">mm</option>
+                                                <option value="pt">pt</option>
+                                                <option value="px">px</option>
+                                                <option value="in">in</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="modern-form-group">
+                                    <label class="modern-label">Orientacja</label>
+                                    <select class="modern-select" id="formatOrientation">
+                                        <option value="portrait">Pionowa (Portrait)</option>
+                                        <option value="landscape">Pozioma (Landscape)</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Margins -->
+                                <h6 class="mb-3 mt-4" style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-primary);">
+                                    <i class="bi bi-border-outer me-1"></i>
+                                    Marginesy (w jednostkach formatu)
+                                </h6>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="modern-form-group">
+                                            <label class="modern-label">Góra</label>
+                                            <input type="number" class="modern-input" id="marginTop" 
+                                                   min="0" step="0.1" value="10">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="modern-form-group">
+                                            <label class="modern-label">Prawo</label>
+                                            <input type="number" class="modern-input" id="marginRight" 
+                                                   min="0" step="0.1" value="10">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="modern-form-group">
+                                            <label class="modern-label">Dół</label>
+                                            <input type="number" class="modern-input" id="marginBottom" 
+                                                   min="0" step="0.1" value="10">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="modern-form-group">
+                                            <label class="modern-label">Lewo</label>
+                                            <input type="number" class="modern-input" id="marginLeft" 
+                                                   min="0" step="0.1" value="10">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Status -->
+                                <div class="modern-form-group" style="margin-bottom: 0;">
+                                    <label class="modern-label d-flex align-items-center" style="cursor: pointer;">
+                                        <input type="checkbox" class="form-check-input me-2" id="formatActive" checked>
+                                        <span>Format aktywny</span>
+                                    </label>
+                                    <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">
+                                        Aktywne formaty są widoczne w selektorach
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <!-- Preview Column -->
+                            <div class="col-md-4">
+                                <h6 class="mb-3" style="font-size: 0.875rem; font-weight: 600; color: var(--color-text-primary);">
+                                    <i class="bi bi-eye me-1"></i>
+                                    Podgląd
+                                </h6>
+                                <div id="formatPreview" style="min-height: 280px; display: flex; align-items: center; justify-content: center; background: var(--color-bg-secondary); border-radius: var(--radius-md); padding: var(--space-lg);">
+                                    <div class="text-center text-muted">
+                                        <i class="bi bi-file-earmark-text" style="font-size: 2rem;"></i>
+                                        <p class="mb-0 mt-2" style="font-size: 0.75rem;">Wprowadź wymiary</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modern-modal-footer">
+                        <button type="button" class="modern-btn modern-btn-secondary" data-bs-dismiss="modal">
+                            Anuluj
+                        </button>
+                        <button type="submit" class="modern-btn modern-btn-primary">
+                            <i class="bi bi-check-lg"></i>
+                            Zapisz format
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/htmlmixed/htmlmixed.min.js"></script>
+
+    <!-- 🎨 Modal: HTML Component Configuration -->
+    <div class="modal fade" id="componentConfigModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modern-modal-content component-modal">
+            <div class="modal-content" style="border-radius: var(--radius-xl); border: none;">
+                <div class="modern-modal-header">
+                    <h5 class="modern-modal-title">
+                        <i class="bi bi-gear me-2"></i>
+                        Konfiguracja komponentu: <span id="componentModalTitle">Komponent</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modern-modal-body">
+                    <!-- Dynamic form will be generated here by ComponentsManager -->
+                    <div id="componentConfigForm">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-muted" role="status">
+                                <span class="visually-hidden">Ładowanie...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preview area -->
+                    <div class="component-preview" id="componentPreview" style="display: none;">
+                        <div class="component-preview-title">Podgląd shortcode:</div>
+                        <div class="component-preview-code" id="componentPreviewCode"></div>
+                    </div>
+                </div>
+                <div class="modern-modal-footer">
+                    <button type="button" class="modern-btn modern-btn-ghost" data-bs-dismiss="modal">
+                        Anuluj
+                    </button>
+                    <button type="button" class="modern-btn modern-btn-primary" id="insertComponentBtn">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Wstaw do edytora
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/branding.js"></script>
+    <script src="js/api.js"></script>
+    <!-- 🎨 HTML Components System -->
+    <script src="js/config/html-components.js"></script>
+    <script src="js/components/ComponentsManager.js"></script>
+    <script src="js/components/CustomFormatsManager.js"></script>
+    <script src="js/components/TemplateEditor.js?v=20251028d"></script>
+    
+    <script>
+        // Initialize Template Editor
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize logo modal
+            BrandingManager.initModal();
+            
+            // 🎨 Initialize HTML Components Manager
+            if (window.ComponentsManager) {
+                window.componentsManager = new ComponentsManager();
+                console.log('✅ ComponentsManager initialized');
+            }
+            
+            // Initialize sidebar accordion
+            initSidebarAccordion();
+            
+            // TemplateEditor is already initialized in TemplateEditor.js
+            // Just wait for it to be ready
+            
+            // Editor tab switching
+            document.querySelectorAll('.editor-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const editorType = this.dataset.editor;
+                    
+                    // Update tabs
+                    document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update panes
+                    document.querySelectorAll('.editor-pane').forEach(p => p.classList.remove('active'));
+                    document.getElementById(editorType + 'EditorPane').classList.add('active');
+                    
+                    // Refresh CodeMirror
+                    if (window.templateEditor) {
+                        const editor = window.templateEditor[editorType + 'Editor'];
+                        if (editor) {
+                            setTimeout(() => editor.refresh(), 10);
+                        }
+                    }
+                });
+            });
+            
+            // Fullscreen toggle
+            document.getElementById('fullScreenBtn').addEventListener('click', function() {
+                const workspace = document.getElementById('editorWorkspace');
+                workspace.classList.toggle('editor-workspace-fullscreen');
+                
+                const icon = this.querySelector('i');
+                if (workspace.classList.contains('editor-workspace-fullscreen')) {
+                    icon.className = 'bi bi-fullscreen-exit';
+                } else {
+                    icon.className = 'bi bi-arrows-fullscreen';
+                }
+            });
+        });
+        
+        // Sidebar Accordion functionality
+        function initSidebarAccordion() {
+            const accordionCards = document.querySelectorAll('.sidebar-accordion-card');
+            
+            // Load saved states from localStorage
+            const savedStates = JSON.parse(localStorage.getItem('sidebarAccordionStates') || '{}');
+            
+            accordionCards.forEach(card => {
+                const accordionId = card.dataset.accordion;
+                const header = card.querySelector('.modern-card-header');
+                const body = card.querySelector('.modern-card-body');
+                
+                // Restore saved state (default: expanded)
+                if (savedStates[accordionId] === 'collapsed') {
+                    card.classList.add('collapsed');
+                }
+                
+                // Add click handler to header (but not to buttons inside)
+                header.addEventListener('click', function(e) {
+                    // Ignore clicks on buttons and their children
+                    if (e.target.closest('button')) {
+                        return;
+                    }
+                    
+                    // Toggle collapsed state
+                    card.classList.toggle('collapsed');
+                    
+                    // Save state to localStorage
+                    const isCollapsed = card.classList.contains('collapsed');
+                    savedStates[accordionId] = isCollapsed ? 'collapsed' : 'expanded';
+                    localStorage.setItem('sidebarAccordionStates', JSON.stringify(savedStates));
+                });
+            });
+        }
+    </script>
+</body>
+</html>

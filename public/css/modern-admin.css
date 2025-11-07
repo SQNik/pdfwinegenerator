@@ -1,0 +1,1254 @@
+/**
+ * Modern Minimalist Admin Panel Design
+ * Inspired by Tailwind UI & Material Design
+ * Color Palette: Whites, Grays, with Purple Accent
+ * Font: Poppins
+ */
+
+/* ============================================
+   1. BASE & TYPOGRAPHY
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Color Palette - Minimalist Gray Scale */
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f8f9fb;
+    --color-bg-tertiary: #f1f3f6;
+    
+    /* Text Colors */
+    --color-text-primary: #1a202c;
+    --color-text-secondary: #4a5568;
+    --color-text-tertiary: #718096;
+    --color-text-muted: #a0aec0;
+    
+    /* Accent Color - Green */
+    --color-accent: #009634;
+    --color-accent-light: #10b981;
+    --color-accent-dark: #047857;
+    --color-accent-bg: #d1fae5;
+    
+    /* Borders & Dividers */
+    --color-border-light: #e2e8f0;
+    --color-border-medium: #cbd5e0;
+    
+    /* Shadows */
+    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* Border Radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    
+    /* Spacing */
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    
+    /* Transitions */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+body {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   2. LAYOUT STRUCTURE
+   ============================================ */
+
+.modern-admin-wrapper {
+    min-height: 100vh;
+    background-color: var(--color-bg-secondary);
+}
+
+.modern-header {
+    background-color: var(--color-bg-primary);
+    border-bottom: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-xs);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+.modern-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-xl);
+    max-width: 1920px;
+    margin: 0 auto;
+}
+
+.modern-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.modern-brand:hover {
+    color: var(--color-accent);
+}
+
+.modern-brand-icon {
+    width: 100px;
+    height: 50px;
+    background: transparent;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-primary);
+    font-size: 1.25rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.modern-brand-icon i {
+    transition: opacity var(--transition-fast);
+}
+
+.modern-brand-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: transparent;
+}
+
+.modern-brand-icon.has-logo i {
+    display: none;
+}
+
+.modern-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+/* ============================================
+   3. SIDEBAR NAVIGATION
+   ============================================ */
+
+.modern-sidebar {
+    background-color: var(--color-bg-primary);
+    border-right: 1px solid var(--color-border-light);
+    height: calc(100vh - 73px);
+    position: sticky;
+    top: 73px;
+    overflow-y: auto;
+    width: 280px;
+    flex-shrink: 0;
+}
+
+.modern-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modern-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modern-sidebar::-webkit-scrollbar-thumb {
+    background: var(--color-border-medium);
+    border-radius: 3px;
+}
+
+.modern-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-tertiary);
+}
+
+.modern-sidebar-section {
+    padding: var(--space-lg) var(--space-md);
+}
+
+.modern-sidebar-title {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-sm);
+    padding: 0 var(--space-sm);
+}
+
+.modern-sidebar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.modern-sidebar-item {
+    position: relative;
+}
+
+.modern-sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.modern-sidebar-link:hover {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+}
+
+.modern-sidebar-link.active {
+    background-color: var(--color-accent-bg);
+    color: var(--color-accent);
+}
+
+.modern-sidebar-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background-color: var(--color-accent);
+    border-radius: 0 2px 2px 0;
+}
+
+.modern-sidebar-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   4. MAIN CONTENT AREA
+   ============================================ */
+
+.modern-main {
+    flex: 1;
+    padding: var(--space-xl);
+    max-width: 1920px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.modern-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.modern-page-header {
+    margin-bottom: var(--space-xl);
+}
+
+.modern-page-title {
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-xs);
+}
+
+.modern-page-subtitle {
+    font-size: 0.9375rem;
+    color: var(--color-text-tertiary);
+    font-weight: 400;
+}
+
+/* ============================================
+   5. CARDS & PANELS
+   ============================================ */
+
+.modern-card {
+    background-color: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-xs);
+    overflow: hidden;
+    transition: all var(--transition-base);
+}
+
+.modern-card:hover {
+    box-shadow: var(--shadow-sm);
+    border-color: var(--color-border-medium);
+}
+
+.modern-card-header {
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--color-border-light);
+    background-color: var(--color-bg-primary);
+}
+
+.modern-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.modern-card-subtitle {
+    font-size: 0.8125rem;
+    color: var(--color-text-tertiary);
+    margin-top: 0.25rem;
+}
+
+.modern-card-body {
+    padding: var(--space-lg);
+}
+
+.modern-card-footer {
+    padding: var(--space-lg);
+    border-top: 1px solid var(--color-border-light);
+    background-color: var(--color-bg-secondary);
+}
+
+/* ============================================
+   6. BUTTONS
+   ============================================ */
+
+.modern-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.5;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.modern-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.modern-btn-primary {
+    background-color: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+
+.modern-btn-primary:hover {
+    background-color: var(--color-accent-dark);
+    border-color: var(--color-accent-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.modern-btn-secondary {
+    background-color: white;
+    color: var(--color-text-primary);
+    border-color: var(--color-border-medium);
+}
+
+.modern-btn-secondary:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-border-medium);
+}
+
+.modern-btn-ghost {
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    border-color: transparent;
+}
+
+.modern-btn-ghost:hover {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+}
+
+.modern-btn-sm {
+    padding: 0.375rem 0.875rem;
+    font-size: 0.8125rem;
+}
+
+.modern-btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+.modern-btn-icon {
+    padding: 0.625rem;
+    width: 36px;
+    height: 36px;
+}
+
+.modern-btn-icon.active {
+    background-color: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+
+.modern-btn-icon.active:hover {
+    background-color: var(--color-accent-dark);
+    border-color: var(--color-accent-dark);
+}
+
+/* ============================================
+   7. FORMS & INPUTS
+   ============================================ */
+
+.modern-form-group {
+    margin-bottom: var(--space-lg);
+}
+
+.modern-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-xs);
+}
+
+.modern-input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.modern-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.modern-input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.modern-select {
+    width: 100%;
+    padding: 0.625rem 2.5rem 0.625rem 0.875rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-primary);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23718096' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    appearance: none;
+}
+
+.modern-select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.modern-textarea {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    resize: vertical;
+    min-height: 100px;
+}
+
+.modern-textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.modern-checkbox,
+.modern-radio {
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.modern-checkbox:checked,
+.modern-radio:checked {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+/* ============================================
+   8. TABLES
+   ============================================ */
+
+.modern-table-container {
+    background-color: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-light);
+    overflow: hidden;
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modern-table thead {
+    background-color: var(--color-bg-secondary);
+}
+
+.modern-table th {
+    padding: var(--space-md);
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-tertiary);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.modern-table td {
+    padding: var(--space-md);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.modern-table tbody tr {
+    transition: background-color var(--transition-fast);
+}
+
+.modern-table tbody tr:hover {
+    background-color: var(--color-bg-secondary);
+}
+
+.modern-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ============================================
+   9. BADGES & PILLS
+   ============================================ */
+
+.modern-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    border-radius: var(--radius-md);
+    white-space: nowrap;
+}
+
+.modern-badge-gray {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+}
+
+.modern-badge-purple {
+    background-color: var(--color-accent-bg);
+    color: var(--color-accent);
+}
+
+.modern-badge-success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.modern-badge-warning {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.modern-badge-danger {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.modern-badge-secondary {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+}
+
+.badge-category {
+    background-color: var(--color-accent) !important;
+    color: white !important;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+/* ============================================
+   10. EDITOR SPECIFIC STYLES
+   ============================================ */
+
+.modern-editor-layout {
+    display: flex;
+    gap: var(--space-lg);
+    min-height: calc(100vh - 200px);
+}
+
+.modern-templates-panel {
+    width: 320px;
+    flex-shrink: 0;
+}
+
+.modern-editor-panel {
+    flex: 1;
+    min-width: 0;
+}
+
+.modern-preview-panel {
+    width: 480px;
+    flex-shrink: 0;
+}
+
+.modern-template-item {
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-sm);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.modern-template-item:hover {
+    border-color: var(--color-accent-light);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+}
+
+.modern-template-item.active {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent-bg);
+}
+
+.modern-template-thumbnail {
+    width: 100%;
+    height: 160px;
+    background-color: var(--color-bg-tertiary);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-sm);
+    overflow: hidden;
+}
+
+.modern-template-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.modern-template-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.modern-template-meta {
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+}
+
+.modern-code-editor {
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-xs);
+}
+
+.modern-preview-frame {
+    width: 100%;
+    height: 100%;
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    background-color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
+   11. SEARCH & FILTERS
+   ============================================ */
+
+.modern-search-box {
+    position: relative;
+    margin-bottom: var(--space-lg);
+}
+
+.modern-search-icon {
+    position: absolute;
+    left: var(--space-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+    pointer-events: none;
+}
+
+.modern-search-input {
+    width: 100%;
+    padding: 0.625rem 0.875rem 0.625rem 2.75rem;
+    font-size: 0.875rem;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.modern-search-input:focus {
+    outline: none;
+    background-color: var(--color-bg-primary);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+/* ============================================
+   12. TOOLBAR
+   ============================================ */
+
+.modern-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-md);
+    background-color: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.modern-toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding-right: var(--space-md);
+    border-right: 1px solid var(--color-border-light);
+}
+
+.modern-toolbar-group:last-child {
+    border-right: none;
+}
+
+.modern-toolbar-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.modern-toolbar-btn:hover {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+}
+
+.modern-toolbar-btn.active {
+    background-color: var(--color-accent-bg);
+    color: var(--color-accent);
+}
+
+/* ============================================
+   13. MODALS
+   ============================================ */
+
+.modern-modal-content {
+    border: none;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+}
+
+.modern-modal-header {
+    padding: var(--space-xl);
+    border-bottom: 1px solid var(--color-border-light);
+    background-color: var(--color-bg-primary);
+}
+
+.modern-modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.modern-modal-body {
+    padding: var(--space-xl);
+}
+
+.modern-modal-footer {
+    padding: var(--space-xl);
+    border-top: 1px solid var(--color-border-light);
+    background-color: var(--color-bg-secondary);
+}
+
+/* ============================================
+   14. UTILITIES
+   ============================================ */
+
+.modern-divider {
+    height: 1px;
+    background-color: var(--color-border-light);
+    margin: var(--space-lg) 0;
+}
+
+.modern-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modern-icon-lg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.modern-text-primary {
+    color: var(--color-text-primary) !important;
+}
+
+.modern-text-secondary {
+    color: var(--color-text-secondary) !important;
+}
+
+.modern-text-tertiary {
+    color: var(--color-text-tertiary) !important;
+}
+
+.modern-text-muted {
+    color: var(--color-text-muted) !important;
+}
+
+.modern-text-accent {
+    color: var(--color-accent) !important;
+}
+
+.modern-bg-accent {
+    background-color: var(--color-accent) !important;
+}
+
+.modern-bg-accent-light {
+    background-color: var(--color-accent-bg) !important;
+}
+
+/* ============================================
+   15. ANIMATIONS
+   ============================================ */
+
+@keyframes modernFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modern-fade-in {
+    animation: modernFadeIn var(--transition-smooth) ease-out;
+}
+
+/* ============================================
+   16. RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1200px) {
+    .modern-preview-panel {
+        width: 400px;
+    }
+}
+
+@media (max-width: 992px) {
+    .modern-editor-layout {
+        flex-direction: column;
+    }
+    
+    .modern-templates-panel,
+    .modern-preview-panel {
+        width: 100%;
+    }
+    
+    .modern-sidebar {
+        width: 240px;
+    }
+}
+
+@media (max-width: 768px) {
+    .modern-main {
+        padding: var(--space-md);
+    }
+    
+    .modern-page-title {
+        font-size: 1.5rem;
+    }
+    
+    .modern-sidebar {
+        position: fixed;
+        left: -280px;
+        transition: left var(--transition-smooth);
+        z-index: 1040;
+    }
+    
+    .modern-sidebar.show {
+        left: 0;
+    }
+    
+    /* Responsive grid columns - force fewer columns on mobile */
+    #wines-cards-container,
+    #collections-cards-container {
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+    /* Tablet: max 2 columns */
+    #wines-cards-container,
+    #collections-cards-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: var(--space-md);
+    }
+    
+    /* Dostosowania dla tabletów */
+    #wines-cards-container .modern-card {
+        font-size: 0.9rem;
+    }
+    
+    #wines-cards-container .modern-card h6 {
+        font-size: 0.95rem;
+    }
+}
+
+@media (min-width: 993px) and (max-width: 1200px) {
+    /* Small desktop: max 3 columns */
+    #wines-cards-container[style*="repeat(4"],
+    #wines-cards-container[style*="repeat(5"],
+    #wines-cards-container[style*="repeat(6"],
+    #collections-cards-container[style*="repeat(4"],
+    #collections-cards-container[style*="repeat(5"],
+    #collections-cards-container[style*="repeat(6"] {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+/* ============================================
+   17. LOADING & EMPTY STATES
+   ============================================ */
+
+.modern-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl);
+    color: var(--color-text-tertiary);
+}
+
+.modern-empty-state {
+    text-align: center;
+    padding: var(--space-xl) * 2;
+}
+
+.modern-empty-icon {
+    font-size: 3rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-lg);
+}
+
+.modern-empty-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-xs);
+}
+
+.modern-empty-description {
+    font-size: 0.9375rem;
+    color: var(--color-text-tertiary);
+}
+
+/* ============================================
+   18. CUSTOM SCROLLBARS
+   ============================================ */
+
+.modern-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.modern-scrollbar::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-sm);
+}
+
+.modern-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-border-medium);
+    border-radius: var(--radius-sm);
+}
+
+.modern-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-tertiary);
+}
+
+/* ============================================
+   WINE CARDS IMPROVEMENTS
+   ============================================ */
+
+/* Poprawki dla kart win */
+#wines-cards-container .modern-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+}
+
+#wines-cards-container .modern-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Lepsze style dla obrazów w kartach */
+#wines-cards-container .modern-card div[style*="background-image"] {
+    transition: transform 0.3s ease;
+}
+
+#wines-cards-container .modern-card:hover div[style*="background-image"] {
+    transform: scale(1.05);
+}
+
+/* Lepsze style dla przycisków overlay */
+#wines-cards-container .modern-card div[style*="linear-gradient"] {
+    transition: opacity 0.3s ease;
+}
+
+/* Badge styles w kartach */
+#wines-cards-container .modern-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Lepsze rozłożenie treści w kartach */
+#wines-cards-container .modern-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN FOR WINES PAGE
+   ============================================ */
+
+/* Wines page layout */
+.wines-container {
+    display: flex;
+    min-height: calc(100vh - 120px);
+    gap: var(--space-lg);
+}
+
+.sidebar {
+    flex: 0 0 280px;
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    height: fit-content;
+    position: sticky;
+    top: var(--space-lg);
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.controls-bar {
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+    border: 1px solid var(--color-border-light);
+}
+
+/* Responsywność dla kontrolek */
+@media (max-width: 1200px) {
+    .controls-bar > div:first-child {
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+    }
+    
+    .controls-bar > div:last-child {
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+        justify-content: flex-start;
+    }
+    
+    #gridColumnsControl {
+        order: 3;
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+/* Responsywność dla tabletów */
+@media (max-width: 992px) {
+    .wines-container {
+        gap: var(--space-md);
+    }
+    
+    .sidebar {
+        flex: 0 0 260px;
+    }
+}
+
+/* Responsywność dla mobilnych */
+@media (max-width: 768px) {
+    .wines-container {
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+    
+    .sidebar {
+        flex: none;
+        position: static;
+    }
+    
+    .controls-bar {
+        padding: var(--space-sm);
+    }
+    
+    .controls-bar > div {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: var(--space-sm) !important;
+    }
+    
+    .controls-bar > div > div {
+        justify-content: center;
+    }
+    
+    #winesResultsInfo {
+        text-align: center;
+        white-space: normal !important;
+    }
+    
+    /* Upraszczamy paginację na mobile */
+    .pagination .page-link {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .pagination .page-item:not(.active):not(.disabled) {
+        display: none;
+    }
+    
+    .pagination .page-item.active,
+    .pagination .page-item.disabled,
+    .pagination .page-item:first-child,
+    .pagination .page-item:last-child,
+    .pagination .page-item:nth-child(2),
+    .pagination .page-item:nth-last-child(2) {
+        display: flex;
+    }
+}
+
+/* Responsywność dla bardzo małych ekranów */
+@media (max-width: 576px) {
+    .wine-card,
+    .modern-card {
+        min-width: 100% !important;
+    }
+    
+    .sidebar {
+        padding: var(--space-md);
+    }
+    
+    /* Upraszczamy kontrolki na bardzo małych ekranach */
+    .controls-bar .d-flex {
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+    
+    .controls-bar button {
+        font-size: 0.875rem;
+    }
+    
+    /* Zmniejszamy padding dla kart win */
+    .modern-card-body {
+        padding: var(--space-sm) !important;
+    }
+    
+    /* Karty win - lepsze responsywne style */
+    #wines-cards-container .modern-card {
+        max-width: 100%;
+    }
+    
+    /* Upraszczamy karty na mobile */
+    #wines-cards-container .modern-card .modern-card-body {
+        padding: var(--space-sm);
+    }
+    
+    #wines-cards-container .modern-card h6 {
+        font-size: 0.875rem;
+        margin-bottom: var(--space-xs);
+    }
+    
+    /* Zmniejszamy obrazy na mobile */
+    #wines-cards-container .modern-card div[style*="padding-top: 100%"] {
+        padding-top: 75% !important;
+    }
+}

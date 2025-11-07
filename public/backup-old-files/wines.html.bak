@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zarządzanie Winami - Wine Management System</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+    <!-- Navigation Container -->
+    <div id="navigation-container"></div>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-4">
+        <!-- Alert Container -->
+        <div id="alert-container" class="mb-3"></div>
+
+        <!-- Wine Management Section -->
+        <div id="wines-section">
+            <!-- Controls Section -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <h1 class="h3 mb-0">
+                                <i class="bi bi-bottle text-primary me-2"></i>Zarządzanie Winami
+                            </h1>
+                        </div>
+                        <div class="col-md-8 text-end">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-primary" id="addWineBtn">
+                                    <i class="bi bi-plus-circle me-2"></i>Dodaj Wino
+                                </button>
+                                <button type="button" class="btn btn-success" id="importWinesBtn">
+                                    <i class="bi bi-upload me-2"></i>Import
+                                </button>
+                                <button type="button" class="btn btn-info" id="exportWinesBtn">
+                                    <i class="bi bi-download me-2"></i>Eksport
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wine Fields Management Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-sliders me-2"></i>Zarządzanie Polami Win
+                        </h5>
+                        <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#fieldsSection" aria-expanded="false">
+                            <i class="bi bi-chevron-down"></i> Pokaż/Ukryj
+                        </button>
+                    </div>
+                </div>
+                <div class="collapse" id="fieldsSection">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="btn-group">
+                                <button class="btn btn-primary" id="addFieldBtn" data-bs-toggle="modal" data-bs-target="#wineFieldModal">
+                                    <i class="bi bi-plus-lg"></i> Dodaj Pole
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="wineFieldsManager.exportConfiguration()">
+                                    <i class="bi bi-download"></i> Eksportuj
+                                </button>
+                                <button class="btn btn-outline-warning" onclick="wineFieldsManager.resetConfiguration()">
+                                    <i class="bi bi-arrow-clockwise"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Fields Configuration Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Klucz</th>
+                                        <th>Etykieta</th>
+                                        <th>Typ</th>
+                                        <th>Wymagane</th>
+                                        <th>Tabela</th>
+                                        <th>Formularz</th>
+                                        <th>Karty</th>
+                                        <th>Grupa</th>
+                                        <th>Akcje</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="wine-fields-table-body">
+                                    <!-- Fields will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Preview Section -->
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Podgląd Formularza</h6>
+                                    </div>
+                                    <div class="card-body" id="form-preview">
+                                        <!-- Form preview will be rendered here -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Podgląd Tabeli</h6>
+                                    </div>
+                                    <div class="card-body" id="table-preview">
+                                        <!-- Table preview will be rendered here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input type="text" class="form-control" id="searchWines" placeholder="Szukaj win...">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">Wszystkie kategorie</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select" id="typeFilter">
+                                <option value="">Wszystkie typy</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-outline-secondary w-100" id="clearFilters">
+                                <i class="bi bi-x-circle"></i> Wyczyść
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="btn-group w-100" role="group" aria-label="Tryb wyświetlania">
+                                <input type="radio" class="btn-check" name="viewMode" id="tableView" autocomplete="off">
+                                <label class="btn btn-outline-secondary" for="tableView" title="Widok tabeli">
+                                    <i class="bi bi-table"></i> Tabela
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="viewMode" id="cardView" autocomplete="off">
+                                <label class="btn btn-outline-secondary" for="cardView" title="Widok kart">
+                                    <i class="bi bi-grid-3x3-gap"></i> Karty
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Info -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="text-muted" id="winesResultsInfo">
+                    <!-- Results info will be generated here -->
+                </div>
+                <div class="text-muted">
+                    <small>Elementy na stronę: 
+                        <select class="form-select form-select-sm d-inline-block w-auto" id="pageSizeSelect" title="Elementy na stronę">
+                            <option value="20">20</option>
+                            <option value="50" selected>50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </small>
+                </div>
+            </div>
+
+            <!-- Wine Display Container -->
+            <div id="wines-display">
+                <!-- Table View -->
+                <div id="table-view" class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="winesTable">
+                                <thead id="winesTableHead">
+                                    <!-- Dynamic headers will be generated here -->
+                                </thead>
+                                <tbody id="winesTableBody">
+                                    <!-- Wine rows will be generated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card View -->
+                <div id="card-view" class="d-none">
+                    <div class="row" id="wines-cards-container">
+                        <!-- Wine cards will be generated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Wine pagination" class="mt-4">
+                <ul class="pagination justify-content-center" id="wines-pagination">
+                    <!-- Pagination will be generated here -->
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Wine Form Modal -->
+    <div class="modal fade" id="wineModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="wineModalTitle">Dodaj Wino</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="wineForm">
+                    <div class="modal-body">
+                        <div id="wineFormFields">
+                            <!-- Dynamic form fields will be generated here -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        <button type="submit" class="btn btn-primary" id="saveWineBtn">
+                            <i class="bi bi-check-circle me-2"></i>Zapisz
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Import Win</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Import Type Selection -->
+                    <div class="mb-4">
+                        <label class="form-label">Źródło danych</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="importSource" id="importFile" value="file" checked>
+                            <label class="btn btn-outline-primary" for="importFile">
+                                <i class="bi bi-file-earmark-arrow-up me-2"></i>Plik CSV
+                            </label>
+                            
+                            <input type="radio" class="btn-check" name="importSource" id="importGoogleSheets" value="googlesheets">
+                            <label class="btn btn-outline-primary" for="importGoogleSheets">
+                                <i class="bi bi-google me-2"></i>Google Sheets
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- File Import Section -->
+                    <div id="fileImportSection" class="import-section">
+                        <div class="mb-3">
+                            <label for="csvFileInput" class="form-label">Wybierz plik CSV</label>
+                            <input type="file" class="form-control" id="csvFileInput" accept=".csv">
+                            <div class="form-text">Plik CSV z nagłówkami odpowiadającymi polom win</div>
+                        </div>
+                    </div>
+
+                    <!-- Google Sheets Import Section -->
+                    <div id="googleSheetsImportSection" class="import-section d-none">
+                        <div class="mb-3">
+                            <label for="googleSheetsUrl" class="form-label">URL Google Sheets (CSV export)</label>
+                            <input type="url" class="form-control" id="googleSheetsUrl" placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv">
+                            <div class="form-text">
+                                Użyj linku eksportu CSV z Google Sheets: Plik → Pobierz → Wartości rozdzielone przecinkami (.csv)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Import Options -->
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="clearBeforeImport" checked>
+                            <label class="form-check-label" for="clearBeforeImport">
+                                Wyczyść istniejące wina przed importem
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="validateFields" checked>
+                            <label class="form-check-label" for="validateFields">
+                                Waliduj pola przed importem
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Import Preview -->
+                    <div id="importPreview" class="d-none">
+                        <h6>Podgląd importu:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr id="previewHeaders"></tr>
+                                </thead>
+                                <tbody id="previewData"></tbody>
+                            </table>
+                        </div>
+                        <div class="alert alert-info" id="importStats"></div>
+                    </div>
+
+                    <!-- Import Progress -->
+                    <div id="importProgress" class="d-none">
+                        <h6>Postęp importu:</h6>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div id="importMessages"></div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Uwaga:</strong> Import z opcją "Wyczyść istniejące wina" zastąpi wszystkie obecne dane. 
+                        CSV musi zawierać nagłówki odpowiadające kluczom pól (np. "name", "region", "type").
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-primary" id="startImportBtn">
+                        <i class="bi bi-upload me-2"></i>Importuj
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="d-none">
+        <div class="loading-content">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Ładowanie...</span>
+            </div>
+            <p class="mt-2">Proszę czekać...</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+            });
+    </div>
+
+    <!-- Wine Field Management Modal -->
+    <div class="modal fade" id="wineFieldModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Zarządzanie Polem Win</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="wineFieldForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="wineFieldKey" class="form-label">Klucz pola *</label>
+                                    <input type="text" class="form-control" id="wineFieldKey" required 
+                                           placeholder="np. abv">
+                                    <div class="form-text">Unikalna nazwa pola (bez spacji, polskie znaki)</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="wineFieldLabel" class="form-label">Etykieta *</label>
+                                    <input type="text" class="form-control" id="wineFieldLabel" required 
+                                           placeholder="np. ABV (%)">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="wineFieldType" class="form-label">Typ pola *</label>
+                                    <select class="form-select" id="wineFieldType" required>
+                                        <option value="">Wybierz typ</option>
+                                        <option value="text">Tekst</option>
+                                        <option value="number">Liczba</option>
+                                        <option value="select">Lista rozwijana</option>
+                                        <option value="textarea">Wielolinijowy tekst</option>
+                                        <option value="url">URL</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="wineFieldGroup" class="form-label">Grupa</label>
+                                    <select class="form-select" id="wineFieldGroup">
+                                        <option value="basic">Podstawowe</option>
+                                        <option value="details">Szczegóły</option>
+                                        <option value="technical">Techniczne</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="wineFieldPlaceholder" class="form-label">Placeholder</label>
+                                    <input type="text" class="form-control" id="wineFieldPlaceholder" 
+                                           placeholder="np. Wprowadź wartość">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Opcje walidacji</label>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="number" class="form-control" id="wineFieldValidationMin" 
+                                                   placeholder="Min">
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" class="form-control" id="wineFieldValidationMax" 
+                                                   placeholder="Max">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3" id="wineFieldOptionsContainer" style="display: none;">
+                                    <label class="form-label">Opcje (dla select)</label>
+                                    
+                                    <!-- Lista opcji -->
+                                    <div id="optionsList" class="mb-2">
+                                        <!-- Opcje będą generowane dynamicznie -->
+                                    </div>
+                                    
+                                    <!-- Dodawanie nowej opcji -->
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="newOptionInput" 
+                                               placeholder="Wprowadź nową opcję">
+                                        <button class="btn btn-outline-primary" type="button" id="addOptionBtn">
+                                            <i class="fas fa-plus"></i> Dodaj
+                                        </button>
+                                    </div>
+                                    <div class="form-text">Dodawaj opcje dla pola wyboru</div>
+                                    
+                                    <!-- Ukryte pole dla kompatybilności -->
+                                    <textarea class="form-control d-none" id="wineFieldOptions" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Kolejność wyświetlania</label>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="number" class="form-control" id="wineFieldFormOrder" 
+                                                   placeholder="Formularz" step="0.1">
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" class="form-control" id="wineFieldTableOrder" 
+                                                   placeholder="Tabela" step="0.1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <h6>Wyświetlanie w:</h6>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="wineFieldDisplayTable">
+                                    <label class="form-check-label" for="wineFieldDisplayTable">Tabela</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="wineFieldDisplayForm" checked>
+                                    <label class="form-check-label" for="wineFieldDisplayForm">Formularz</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="wineFieldDisplayCards">
+                                    <label class="form-check-label" for="wineFieldDisplayCards">Karty</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="wineFieldRequired">
+                                    <label class="form-check-label" for="wineFieldRequired">Wymagane</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-primary" id="saveWineFieldBtn">Zapisz Pole</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap and Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Application Scripts -->
+    <script src="js/config.js?v=20251017e"></script>
+    <script src="js/config/wine-fields.js?v=20251017e"></script>
+    <script src="js/utils.js?v=20251017e"></script>
+    <script src="js/api.js?v=20251017e"></script>
+    <script src="js/config/NavigationConfig.js?v=20251017e"></script>
+    <script src="js/components/NavigationComponent.js?v=20251017e"></script>
+    <script src="js/components/wines.js?v=20251017e"></script>
+    
+    <script>
+        // Initialize Wine Management Page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize navigation using global configuration
+            NavigationComponent.initGlobalNavigation('#navigation-container');
+            // Wait for managers to be created by wines.js
+            setTimeout(() => {
+                // Set page-specific configuration using already created managers
+                window.wineApp = {
+                    currentSection: 'wines',
+                    managers: {
+                        wines: window.wineManager,
+                        fields: window.wineFieldsManager
+                    },
+                    
+                    // Global alert handler
+                    showAlert: function(message, type = 'info') {
+                        Utils.showAlert(message, type);
+                    },
+                    
+                    // Global error handler
+                    handleError: function(error) {
+                        console.error('Wine management error:', error);
+                        this.showAlert('Wystąpił błąd: ' + error.message, 'danger');
+                    }
+                };
+                
+                console.log('Wine Management page configuration completed');
+            }, 100);
+        });
+    </script>
+</body>
+</html>
