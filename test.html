@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Pobierz PDF kolekcji</title>
+</head>
+<body>
+  <button id="downloadPdfBtn">Pobierz PDF kolekcji 10produktow</button>
+
+  <script>
+    document.getElementById('downloadPdfBtn').onclick = async function () {
+      const response = await fetch('http://localhost:3001/api/template-editor/templates/A4-skladane_V_CMYK/generate-collection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          collectionId: '10produktow',
+          format: 'A4',
+          flatten: true
+        })
+      });
+
+      const result = await response.json();
+      if (result.success && result.data && result.data.downloadUrl) {
+        const pdfUrl = 'http://localhost:3001' + result.data.downloadUrl;
+        window.location.href = pdfUrl; // automatyczne pobranie PDF
+      } else {
+        alert('Błąd generowania PDF: ' + (result.error || 'Nieznany błąd'));
+      }
+    };
+  </script>
+</body>
+</html>
