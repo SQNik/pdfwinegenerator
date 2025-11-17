@@ -1,4 +1,0 @@
-name,region,type,alcohol,description,category,szczepy,vol,catalogNumber,image
-"Test Wine 1","Toskania","Wytrawne","13.5%","Opis testowego wina 1","Czerwone","Sangiovese","750ml","TEST001","/images/test1.jpg"
-"Test Wine 2","Bordeaux","Półwytrawne","12%","Opis testowego wina 2","Białe","Chardonnay","750ml","TEST002","/images/test2.jpg"
-"Test Wine 3","Burgund","Wytrawne","11.5%","Opis testowego wina 3","Różowe","Pinot Noir","750ml","TEST003","/images/test3.jpg"

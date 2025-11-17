@@ -2547,22 +2547,19 @@ class CollectionsManager {
                 throw new Error(`Błąd podczas generowania PDF: ${errorText}`);
             }
 
-            // Handle file download
-            const blob = await response.blob();
-            const filename = `${collection.name}_${selectedTemplate}_${new Date().toISOString().split('T')[0]}.pdf`;
-            
-            // Create download link
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
+            // Parse JSON response
+            const result = await response.json();
+            console.log('Generate PDF response:', result);
+
+            if (!result.success || !result.data || !result.data.pdf_url) {
+                throw new Error('Serwer nie zwrócił URL do pliku PDF');
+            }
+
+            // Open PDF in same window
+            window.location.href = result.data.pdf_url;
 
             // Show success message and close modal
-            this.showNotification('PDF został wygenerowany i pobrany', 'success');
+            this.showNotification('PDF został wygenerowany pomyślnie', 'success');
             this.hideModal('pdfModal');
 
         } catch (error) {
