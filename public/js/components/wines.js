@@ -907,6 +907,11 @@ class WineManager {
         const modalTitle = document.querySelector('#wineModal .modal-title');
         const saveButton = document.getElementById('saveWineBtn');
 
+        if (!modalTitle || !saveButton) {
+            console.error('WineManager: Modal elements not found');
+            return;
+        }
+
         if (this.isEditMode && this.editingWine) {
             // Edit mode set by editWine() function
             modalTitle.textContent = 'Edytuj Wino';
@@ -2093,43 +2098,7 @@ class WineFieldsManager {
     }
 }
 
-// Initialize wine manager when DOM is loaded
-let wineManager;
-let wineFieldsManager;
-
-async function initializeManagers() {
-    console.log('Initializing wine management system...');
-    
-    // Initialize fields manager first
-    wineFieldsManager = new WineFieldsManager();
-    window.wineFieldsManager = wineFieldsManager;
-    console.log('WineFieldsManager created');
-    
-    // Wait for fields to be loaded from server
-    let attempts = 0;
-    while (attempts < 50 && (!wineFieldsManager.fields || wineFieldsManager.fields.length === 0)) {
-        console.log(`Waiting for fields... attempt ${attempts + 1}, fields count: ${wineFieldsManager.fields?.length || 0}`);
-        await new Promise(resolve => setTimeout(resolve, 100));
-        attempts++;
-    }
-    
-    console.log(`Fields loaded after ${attempts} attempts, count: ${wineFieldsManager.fields?.length || 0}`);
-    
-    // Check if we have category field
-    const categoryField = wineFieldsManager.fields?.find(f => f.key === 'category');
-    console.log('Category field found:', categoryField ? 'YES' : 'NO');
-    if (categoryField) {
-        console.log('Category options:', categoryField.options);
-    }
-    
-    // Initialize wine manager after fields are ready
-    wineManager = new WineManager();
-    window.wineManager = wineManager;
-    console.log('WineManager created and initialized');
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeManagers);
-} else {
-    initializeManagers();
-}
+// Export classes for external initialization
+// Initialization is now handled in wines.html
+window.WineManager = WineManager;
+window.WineFieldsManager = WineFieldsManager;

@@ -145,11 +145,11 @@ const generateTableHeaders = () => {
 const generateTableRow = (wine) => {
   const tableFields = getTableFields();
   let row = `
-    <td>
-      <button class="btn btn-sm btn-outline-primary me-1" onclick="wineManager.editWine('${wine.id}')">
+    <td style="white-space: nowrap;">
+      <button class="btn btn-sm btn-outline-primary me-1" onclick="window.wineApp.managers.wines.editWine('${wine.id}')" title="Edytuj">
         <i class="bi bi-pencil"></i>
       </button>
-      <button class="btn btn-sm btn-outline-danger" onclick="wineManager.deleteWine('${wine.id}')">
+      <button class="btn btn-sm btn-outline-danger" onclick="window.wineApp.managers.wines.deleteWine('${wine.id}')" title="Usuń">
         <i class="bi bi-trash"></i>
       </button>
     </td>`;
@@ -159,18 +159,16 @@ const generateTableRow = (wine) => {
     
     // Format specific field types and fields
     if (field.key === 'name') {
-      // Name with description preview
+      // Name only, no description preview
       const name = window.Utils ? Utils.escapeHTML(value) : value;
-      const desc = wine.description ? 
-        `<br><small class="text-muted">${window.Utils ? Utils.escapeHTML(wine.description.substring(0, 50)) : wine.description.substring(0, 50)}${wine.description.length > 50 ? '...' : ''}</small>` : '';
-      value = `<strong>${name}</strong>${desc}`;
+      value = `<strong>${name}</strong>`;
     } else if (field.key === 'image') {
       // Image thumbnail
       if (value) {
         const imageUrl = window.Utils ? Utils.getWineImageUrl(value) : value;
-        value = `<img src="${imageUrl}" alt="Wine" class="wine-table-thumbnail" style="height: 150px; width: auto; object-fit: cover; border-radius: 4px;" onerror="this.src='/images/default-wine.jpg'">`;
+        value = `<img src="${imageUrl}" alt="Wine" class="wine-table-thumbnail" style="height: 80px; width: auto; object-fit: cover; border-radius: 4px;" onerror="this.src='/images/default-wine.jpg'">`;
       } else {
-        value = `<img src="/images/default-wine.jpg" alt="No image" class="wine-table-thumbnail" style="height: 150px; width: auto; object-fit: cover; border-radius: 4px;">`;
+        value = `<img src="/images/default-wine.jpg" alt="No image" class="wine-table-thumbnail" style="height: 80px; width: auto; object-fit: cover; border-radius: 4px;">`;
       }
     } else if (field.key === 'category') {
       // Capitalize first letter for display while keeping lowercase value in data
@@ -186,6 +184,18 @@ const generateTableRow = (wine) => {
       } else {
         value = value.toString();
       }
+    } else if (field.key === 'description' && value) {
+      // Trim description to 4 lines with ellipsis
+      const escapedValue = window.Utils ? Utils.escapeHTML(value) : value;
+      value = `<div style="
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 300px;
+        line-height: 1.4;
+      ">${escapedValue}</div>`;
     } else if (value) {
       value = window.Utils ? Utils.escapeHTML(value) : value;
     } else {
