@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="editable-fields" content="enabled">
+    <title>Karta Win z Edytowalnymi Cenami</title>
+    <style>
+        @page {
+            size: 210mm 297mm; /* A4 */
+            margin: 15mm;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 10pt;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20mm;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5mm;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24pt;
+            color: #721c24;
+        }
+        
+        .header p {
+            margin: 3mm 0 0 0;
+            color: #666;
+            font-size: 11pt;
+        }
+        
+        .wine-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .wine-table th {
+            background: #721c24;
+            color: white;
+            padding: 3mm;
+            text-align: left;
+            font-size: 10pt;
+        }
+        
+        .wine-table td {
+            padding: 3mm;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        .wine-row {
+            page-break-inside: avoid;
+        }
+        
+        .wine-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 11pt;
+        }
+        
+        .wine-code {
+            color: #999;
+            font-size: 9pt;
+            margin-top: 1mm;
+        }
+        
+        .wine-details {
+            color: #666;
+            font-size: 9pt;
+            line-height: 1.4;
+            margin-top: 2mm;
+        }
+        
+        .wine-category {
+            display: inline-block;
+            padding: 1mm 3mm;
+            background: #f0f0f0;
+            border-radius: 2mm;
+            font-size: 8pt;
+            margin-right: 2mm;
+        }
+        
+        /* EDYTOWALNE POLE CENY */
+        .editable-price-field {
+            position: relative;
+            display: inline-block;
+            min-width: 60px;
+            height: 20px;
+            background: #fffef0; /* Lekko żółte tło */
+            border: 1px solid #999;
+            border-radius: 2px;
+            padding: 2px 5px;
+            text-align: right;
+            font-size: 10pt;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .editable-price-field::before {
+            content: '✎'; /* Ikona ołówka */
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            font-size: 8pt;
+            color: #999;
+        }
+        
+        .price-placeholder {
+            color: #bbb;
+            font-style: italic;
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 10mm;
+            left: 15mm;
+            right: 15mm;
+            text-align: center;
+            font-size: 8pt;
+            color: #999;
+            border-top: 1px solid #ddd;
+            padding-top: 3mm;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAGŁÓWEK -->
+    <div class="header">
+        <h1>{{collection.name}}</h1>
+        <p>{{collection.description}}</p>
+        <p style="font-size: 9pt; color: #999;">
+            Wypełnij ceny w polach edytowalnych • Zapisz PDF po wypełnieniu
+        </p>
+    </div>
+    
+    <!-- TABELA WIN -->
+    <table class="wine-table">
+        <thead>
+            <tr>
+                <th style="width: 8%;">Kod</th>
+                <th style="width: 52%;">Nazwa i Opis</th>
+                <th style="width: 20%;">Szczegóły</th>
+                <th style="width: 20%;">Cena</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each wines}}
+            <tr class="wine-row">
+                <!-- KOD -->
+                <td>
+                    <div style="font-weight: bold; font-size: 10pt;">
+                        {{this.catalogNumber}}
+                    </div>
+                </td>
+                
+                <!-- NAZWA I OPIS -->
+                <td>
+                    <div class="wine-name">{{this.name}}</div>
+                    <div class="wine-details">{{this.description}}</div>
+                </td>
+                
+                <!-- SZCZEGÓŁY -->
+                <td>
+                    <div class="wine-category" style="background: #f8d7da; color: #721c24;">
+                        {{this.category}}
+                    </div>
+                    <div style="margin-top: 2mm; font-size: 9pt;">
+                        <div><strong>Region:</strong> {{this.region}}</div>
+                        <div><strong>Szczepy:</strong> {{this.szczepy}}</div>
+                        <div><strong>Alkohol:</strong> {{this.alcohol}}</div>
+                        <div><strong>Poj.:</strong> {{this.poj}}</div>
+                    </div>
+                </td>
+                
+                <!-- EDYTOWALNA CENA -->
+                <td style="text-align: right;">
+                    <div class="editable-price-field"
+                         data-editable-price="wine_{{this.catalogNumber}}_price"
+                         data-price-x="470"
+                         data-price-y="{{math @index '*' 95 '+' 145}}"
+                         data-price-width="75"
+                         data-price-height="22">
+                        <span class="price-placeholder">_____ zł</span>
+                    </div>
+                    
+                    <!-- Pole dla ceny hurtowej (opcjonalne) -->
+                    <div style="margin-top: 3mm; font-size: 8pt; color: #666;">
+                        Hurtowa:
+                        <div class="editable-price-field"
+                             style="min-width: 50px; font-size: 8pt;"
+                             data-editable-price="wine_{{this.catalogNumber}}_wholesale"
+                             data-price-x="485"
+                             data-price-y="{{math @index '*' 95 '+' 165}}"
+                             data-price-width="60"
+                             data-price-height="18">
+                            <span class="price-placeholder">____ zł</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    
+    <!-- STOPKA -->
+    <div class="footer">
+        Karta win wygenerowana {{date}} • Ceny do uzupełnienia • {{collection.name}}
+    </div>
+    
+    <!-- SKRYPT POMOCNICZY (tylko w development) -->
+    <script>
+        // Ten skrypt pomaga wyznaczać pozycje pól - usunąć w produkcji
+        if (window.location.hostname === 'localhost') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('=== POZYCJE PÓL EDYTOWALNYCH ===');
+                
+                const priceFields = document.querySelectorAll('[data-editable-price]');
+                
+                priceFields.forEach((field, index) => {
+                    const rect = field.getBoundingClientRect();
+                    const name = field.getAttribute('data-editable-price');
+                    
+                    console.log(`Pole ${index + 1}: ${name}`, {
+                        x: Math.round(rect.left),
+                        y: Math.round(rect.top),
+                        width: Math.round(rect.width),
+                        height: Math.round(rect.height)
+                    });
+                    
+                    // Automatycznie ustaw atrybuty jeśli brakuje
+                    if (!field.hasAttribute('data-price-x')) {
+                        field.setAttribute('data-price-x', Math.round(rect.left));
+                        field.setAttribute('data-price-y', Math.round(rect.top));
+                        field.setAttribute('data-price-width', Math.round(rect.width));
+                        field.setAttribute('data-price-height', Math.round(rect.height));
+                        
+                        console.log(`  ✅ Auto-set coordinates for ${name}`);
+                    }
+                });
+                
+                console.log('=== KONIEC LISTY ===');
+            });
+        }
+    </script>
+</body>
+</html>

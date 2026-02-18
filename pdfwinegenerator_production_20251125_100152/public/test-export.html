@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Export API</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Test Eksportu Kolekcji JSON</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Test 1: Scalone kolekcje z pełnymi danymi win</h5>
+                    </div>
+                    <div class="card-body">
+                        <button id="testMerged" class="btn btn-primary">Testuj API scalonych kolekcji</button>
+                        <div id="mergedResult" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Test 2: Eksport pojedynczej kolekcji</h5>
+                    </div>
+                    <div class="card-body">
+                        <button id="testExport" class="btn btn-success">Testuj eksport JSON</button>
+                        <div id="exportResult" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Demo JSON dla pierwszej kolekcji</h5>
+                    </div>
+                    <div class="card-body">
+                        <button id="downloadDemo" class="btn btn-info">Pobierz przykładowy JSON</button>
+                        <pre id="jsonPreview" class="mt-3" style="max-height: 400px; overflow-y: auto;"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('testMerged').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('mergedResult');
+            resultDiv.innerHTML = '<div class="spinner-border" role="status"></div> Ładowanie...';
+            
+            try {
+                const response = await fetch('/api/collections/export/merged');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const firstCollection = data.data[0];
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <strong>✅ Sukces!</strong><br>
+                            Liczba kolekcji: ${data.data.length}<br>
+                            Pierwsza kolekcja: "${firstCollection.name}"<br>
+                            Liczba win: ${firstCollection.wineCount}<br>
+                            Pełne obiekty win: ${firstCollection.wines.length}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="alert alert-danger">❌ Błąd: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="alert alert-danger">❌ Błąd połączenia: ${error.message}</div>`;
+            }
+        });
+        
+        document.getElementById('testExport').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('exportResult');
+            resultDiv.innerHTML = '<div class="spinner-border" role="status"></div> Ładowanie...';
+            
+            try {
+                const collectionId = 'collection_1760696863906_s12awxd32';
+                const response = await fetch(`/api/collections/${collectionId}/export`);
+                
+                if (response.ok) {
+                    const contentType = response.headers.get('Content-Type');
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    
+                    const data = await response.json();
+                    
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <strong>✅ Eksport działa!</strong><br>
+                            Status: ${response.status}<br>
+                            Content-Type: ${contentType}<br>
+                            Kolekcja: "${data.collection.name}"<br>
+                            Liczba win: ${data.wines.length}<br>
+                            Data eksportu: ${new Date(data.exportInfo.exportedAt).toLocaleString('pl-PL')}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="alert alert-danger">❌ Błąd HTTP: ${response.status}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="alert alert-danger">❌ Błąd: ${error.message}</div>`;
+            }
+        });
+        
+        document.getElementById('downloadDemo').addEventListener('click', async () => {
+            const previewDiv = document.getElementById('jsonPreview');
+            previewDiv.innerHTML = 'Ładowanie...';
+            
+            try {
+                const collectionId = 'collection_1760696863906_s12awxd32';
+                const response = await fetch(`/api/collections/${collectionId}/export`);
+                const data = await response.json();
+                
+                // Show preview
+                previewDiv.textContent = JSON.stringify(data, null, 2);
+                
+                // Download file
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `collection-demo-${Date.now()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                alert('Plik JSON został pobrany!');
+            } catch (error) {
+                previewDiv.textContent = `Błąd: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

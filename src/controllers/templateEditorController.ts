@@ -162,6 +162,7 @@ export class TemplateEditorController {
         version: '1.0.0',
         status: templateData.status || 'draft',
         metadata: templateData.metadata || {},
+        ...(templateData.pdfSettings && { pdfSettings: templateData.pdfSettings }),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -850,6 +851,14 @@ export class TemplateEditorController {
         });
         return;
       }
+      
+      // DEBUG: Log template pdfSettings
+      logger.info('🔍 Template object:', { 
+        id: template.id,
+        name: template.name,
+        hasPdfSettings: !!template.pdfSettings,
+        pdfSettings: template.pdfSettings
+      });
 
       // Use CollectionDataBuilder for unified data preparation
       const collectionData = await this.collectionDataBuilder.prepareCollectionData(
@@ -857,41 +866,70 @@ export class TemplateEditorController {
         customTitle
       );
 
-      // Handle custom format or use standard format
+      // Build PDF options from template settings (priority) or request parameters (fallback)
       let pdfOptions: any = {
         printBackground: true,
         displayHeaderFooter: false
       };
 
-      const formatValue = format || 'A4';
-      
-      // Check if format is custom format (starts with 'custom:')
-      if (formatValue.startsWith('custom:')) {
-        const customFormatId = formatValue.replace('custom:', '');
+      // Use template pdfSettings if available, otherwise use request format
+      if (template.pdfSettings) {
+        logger.info('📄 Using PDF settings from template:', JSON.stringify(template.pdfSettings, null, 2));
         
-        try {
-          // Get custom format from dataStore
-          const customFormats = await this.dataStore.getCustomFormats();
-          const customFormat = customFormats.find(f => f.id === customFormatId);
-          
-          if (customFormat) {
-            pdfOptions.customFormat = customFormat;
-            // Custom format margins will be used from customFormat.margins - DON'T override
-            logger.info(`📄 Using custom format: ${customFormat.name} with margins: ${customFormat.margins.top}/${customFormat.margins.right}/${customFormat.margins.bottom}/${customFormat.margins.left}${customFormat.unit}`);
-          } else {
-            logger.warn(`⚠️ Custom format not found: ${customFormatId}, fallback to A4`);
-            pdfOptions.format = 'A4';
-            // No margin specified - PDFService will use format's default
-          }
-        } catch (error) {
-          logger.error(`❌ Error loading custom format: ${customFormatId}`, error);
-          pdfOptions.format = 'A4';
-          // No margin specified - PDFService will use format's default
+        // Handle custom format from template
+        if (template.pdfSettings.customFormat) {
+          pdfOptions.customFormat = template.pdfSettings.customFormat;
+          logger.info(`📐 Custom format: ${template.pdfSettings.customFormat.width}x${template.pdfSettings.customFormat.height}${template.pdfSettings.customFormat.unit}`);
+        } else if (template.pdfSettings.format) {
+          pdfOptions.format = template.pdfSettings.format;
+          logger.info(`📄 Standard format: ${template.pdfSettings.format}`);
+        }
+        
+        // Apply margins from template
+        if (template.pdfSettings.margins) {
+          pdfOptions.margin = template.pdfSettings.margins;
+          logger.info(`📏 Margins: ${JSON.stringify(template.pdfSettings.margins)}`);
+        }
+        
+        // Apply orientation from template
+        if (template.pdfSettings.orientation) {
+          pdfOptions.orientation = template.pdfSettings.orientation;
+          logger.info(`🔄 Orientation: ${template.pdfSettings.orientation}`);
+        }
+        
+        // Apply printBackground from template
+        if (template.pdfSettings.printBackground !== undefined) {
+          pdfOptions.printBackground = template.pdfSettings.printBackground;
         }
       } else {
-        // Standard format - no margin override, let PDFService decide
-        logger.info(`📄 Using standard format: ${formatValue}`);
-        pdfOptions.format = formatValue;
+        // Fallback to request format if template has no pdfSettings
+        const formatValue = format || 'A4';
+        
+        // Check if format is custom format (starts with 'custom:')
+        if (formatValue.startsWith('custom:')) {
+          const customFormatId = formatValue.replace('custom:', '');
+          
+          try {
+            // Get custom format from dataStore
+            const customFormats = await this.dataStore.getCustomFormats();
+            const customFormat = customFormats.find(f => f.id === customFormatId);
+            
+            if (customFormat) {
+              pdfOptions.customFormat = customFormat;
+              logger.info(`📄 Using custom format: ${customFormat.name} with margins: ${customFormat.margins.top}/${customFormat.margins.right}/${customFormat.margins.bottom}/${customFormat.margins.left}${customFormat.unit}`);
+            } else {
+              logger.warn(`⚠️ Custom format not found: ${customFormatId}, fallback to A4`);
+              pdfOptions.format = 'A4';
+            }
+          } catch (error) {
+            logger.error(`❌ Error loading custom format: ${customFormatId}`, error);
+            pdfOptions.format = 'A4';
+          }
+        } else {
+          // Standard format
+          logger.info(`📄 Using standard format from request: ${formatValue}`);
+          pdfOptions.format = formatValue;
+        }
       }
 
       // Add flatten option if requested
@@ -918,6 +956,38 @@ export class TemplateEditorController {
       const sanitizedTemplateName = template.name.replace(/[^a-zA-Z0-9]/g, '_');
       const timestamp = new Date().toISOString().split('T')[0];
       const filename = `${sanitizedCollectionName}_${sanitizedTemplateName}_${timestamp}.pdf`;
+
+      // Save PDF to file system
+      const fs = require('fs').promises;
+      const path = require('path');
+      const pdfsDir = path.join(__dirname, '../../public/pdfs/collections');
+      
+      // Create directory if it doesn't exist
+      await fs.mkdir(pdfsDir, { recursive: true });
+      
+      const filePath = path.join(pdfsDir, filename);
+      await fs.writeFile(filePath, pdfBuffer);
+      
+      const publicUrl = `/pdfs/collections/${filename}`;
+      logger.info('✅ PDF saved to:', publicUrl);
+
+      // Update collection with PDF URL
+      try {
+        const collection = await this.dataStore.getCollection(collectionId);
+        if (collection) {
+          collection.lastGeneratedPdf = {
+            url: publicUrl,
+            filename: filename,
+            templateId: id,
+            templateName: template.name,
+            generatedAt: new Date().toISOString()
+          };
+          await this.dataStore.updateCollection(collectionId, collection);
+          logger.info('✅ Collection updated with PDF URL');
+        }
+      } catch (updateError) {
+        logger.warn('⚠️ Failed to update collection with PDF URL:', updateError);
+      }
 
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `inline; filename="${filename}"`); // zmieniono z 'attachment' na 'inline' - PDF otworzy się w przeglądarce

@@ -103,10 +103,18 @@ export interface Collection {
   wines: string[]; // 🏷️ Array of wine CATALOG NUMBERS (biznesowe identyfikatory)
   tags?: string[];
   status: 'active' | 'archived' | 'draft';
+  coverImage?: string; // URL/path to cover image
   dynamicFields: Record<string, unknown>; // Dynamic field values
   metadata?: Record<string, any>;
   createdAt: string;
   updatedAt: string;
+  lastGeneratedPdf?: {
+    url: string;
+    filename: string;
+    templateId: string;
+    templateName: string;
+    generatedAt: string;
+  };
 }
 
 // PDF Generator Types
@@ -227,6 +235,18 @@ export interface PDFTemplate {
   description?: string;
   htmlContent?: string; // 🎨 HTML template content (for new HTML-based templates)
   printSettings: PDFPrintSettings;
+  pdfSettings?: {
+    format?: string; // 'A4', 'A5', 'Letter', lub ID custom formatu
+    customFormat?: CustomPDFFormat; // Niestandardowy format
+    margins?: {
+      top?: string;    // np. '10mm', '0.5in'
+      right?: string;
+      bottom?: string;
+      left?: string;
+    };
+    orientation?: 'portrait' | 'landscape';
+    printBackground?: boolean;
+  };
   sections: {
     front: PDFSection;
     content: PDFSection & {
@@ -320,6 +340,18 @@ export interface HTMLTemplate {
   version: string;
   status: 'draft' | 'active' | 'archived';
   metadata?: Record<string, any>;
+  pdfSettings?: {
+    format?: string; // 'A4', 'A5', 'Letter', lub ID custom formatu
+    customFormat?: CustomPDFFormat; // Niestandardowy format
+    margins?: {
+      top?: string;    // np. '10mm', '0.5in'
+      right?: string;
+      bottom?: string;
+      left?: string;
+    };
+    orientation?: 'portrait' | 'landscape';
+    printBackground?: boolean;
+  };
   createdAt: string;
   updatedAt: string;
   createdBy?: string;
@@ -436,6 +468,18 @@ export interface HTMLTemplateCreate {
   tags?: string[];
   status?: 'draft' | 'active' | 'archived';
   metadata?: Record<string, any>;
+  pdfSettings?: {
+    format?: string; // 'A4', 'A5', 'Letter', lub ID custom formatu
+    customFormat?: CustomPDFFormat; // Niestandardowy format
+    margins?: {
+      top?: string;    // np. '10mm', '0.5in'
+      right?: string;
+      bottom?: string;
+      left?: string;
+    };
+    orientation?: 'portrait' | 'landscape';
+    printBackground?: boolean;
+  };
 }
 
 export interface HTMLTemplateUpdate {
@@ -452,6 +496,18 @@ export interface HTMLTemplateUpdate {
   tags?: string[];
   status?: 'draft' | 'active' | 'archived';
   metadata?: Record<string, any>;
+  pdfSettings?: {
+    format?: string; // 'A4', 'A5', 'Letter', lub ID custom formatu
+    customFormat?: CustomPDFFormat; // Niestandardowy format
+    margins?: {
+      top?: string;    // np. '10mm', '0.5in'
+      right?: string;
+      bottom?: string;
+      left?: string;
+    };
+    orientation?: 'portrait' | 'landscape';
+    printBackground?: boolean;
+  };
 }
 
 export interface TemplateFieldMapping {

@@ -723,7 +723,7 @@
       "cover"
     ],
     "version": "1.0.0",
-    "status": "active",
+    "status": "draft",
     "metadata": {
       "layout": "grid",
       "columns": 2,
@@ -731,7 +731,10 @@
       "itemsPerPage": 10
     },
     "createdAt": "2025-10-28T19:00:00.000Z",
-    "updatedAt": "2025-10-31T12:17:09.761Z"
+    "updatedAt": "2025-11-25T07:43:21.540Z",
+    "pdfSettings": {
+      "printBackground": true
+    }
   },
   {
     "id": "0c82c90d-5808-40c5-baf5-26ef679d86ff",
@@ -769,13 +772,16 @@
         "restPages"
       ]
     },
-    "status": "active",
+    "status": "draft",
     "createdAt": "2025-10-29T12:10:10.672Z",
-    "updatedAt": "2025-10-29T14:22:49.521Z",
+    "updatedAt": "2025-11-25T07:43:11.775Z",
     "cssContent": "",
     "jsContent": "",
     "placeholders": [],
-    "category": "general"
+    "category": "general",
+    "pdfSettings": {
+      "printBackground": true
+    }
   },
   {
     "id": "header-4plus5-cmyk-2025",
@@ -796,13 +802,16 @@
       "colorSpace": "CMYK",
       "printReady": true
     },
-    "status": "active",
+    "status": "draft",
     "createdAt": "2025-10-29T15:01:03.193Z",
-    "updatedAt": "2025-10-29T15:01:03.194Z",
+    "updatedAt": "2025-11-21T11:50:45.639Z",
     "cssContent": "",
     "jsContent": "",
     "placeholders": [],
-    "category": "print"
+    "category": "",
+    "pdfSettings": {
+      "printBackground": true
+    }
   },
   {
     "id": "d94bfe7e-4bd0-43ea-bcbf-07faa47cfb90",
@@ -818,9 +827,237 @@
     "isPublic": false,
     "tags": [],
     "version": "1.0.0",
-    "status": "active",
+    "status": "draft",
     "metadata": {},
     "createdAt": "2025-10-31T10:29:20.236Z",
-    "updatedAt": "2025-10-31T10:38:43.164Z"
+    "updatedAt": "2025-11-21T11:50:21.030Z",
+    "pdfSettings": {
+      "printBackground": true
+    }
+  },
+  {
+    "id": "23306bdf-d566-4d9f-82c4-62c0fded45e2",
+    "name": "Lista win z podziaL,em na kategorie",
+    "description": "Szablon wyL>wietlaj�.cy wina pogrupowane wedL,ug kategorii (czerwone, biaL,e, rAlLLowe, musuj�.ce)",
+    "category": "general",
+    "htmlContent": "<!DOCTYPE html>\n<html lang=\"pl\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Karta Win - PodziaL, na Kategorie</title>\n  <link href=\"https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap\" rel=\"stylesheet\">\n  <style>\n    * {\n      margin: 0;\n      padding: 0;\n      box-sizing: border-box;\n    }\n\n    body {\n      font-family: 'Poppins', sans-serif;\n      background: #fff;\n      padding: 10mm;\n      font-size: 10pt;\n      line-height: 1.4;\n    }\n\n    /* NagL,Alwek kategorii */\n    .category-header {\n      background: #000;\n      color: #fff;\n      padding: 8mm 6mm;\n      margin: 6mm 0 4mm 0;\n      text-align: center;\n      font-size: 18pt;\n      font-weight: 700;\n      text-transform: uppercase;\n      letter-spacing: 2px;\n    }\n\n    .category-header:first-child {\n      margin-top: 0;\n    }\n\n    /* Lista win w kategorii */\n    .wine-list {\n      display: flex;\n      flex-direction: column;\n      gap: 4mm;\n      margin-bottom: 6mm;\n    }\n\n    /* Karta pojedynczego wina */\n    .wine-card {\n      display: grid;\n      grid-template-columns: 60px 1fr auto;\n      gap: 4mm;\n      padding: 4mm;\n      border: 1px solid #e0e0e0;\n      background: #fff;\n    }\n\n    /* Obrazek wina */\n    .wine-image {\n      display: flex;\n      align-items: flex-start;\n      justify-content: center;\n    }\n\n    .wine-image img {\n      max-width: 100%;\n      height: auto;\n      max-height: 80px;\n      object-fit: contain;\n    }\n\n    /* TreL>�? wina */\n    .wine-content {\n      display: flex;\n      flex-direction: column;\n      gap: 2mm;\n    }\n\n    .wine-title {\n      font-size: 12pt;\n      font-weight: 700;\n      color: #1a1a1a;\n      line-height: 1.2;\n      margin-bottom: 1mm;\n    }\n\n    .wine-info {\n      font-size: 9pt;\n      color: #333;\n      line-height: 1.3;\n    }\n\n    .wine-info strong {\n      font-weight: 600;\n      color: #000;\n    }\n\n    .wine-description {\n      font-size: 8pt;\n      color: #555;\n      line-height: 1.4;\n      margin-top: 1mm;\n    }\n\n    .wine-alcohol {\n      font-size: 7pt;\n      color: #999;\n      margin-top: 1mm;\n    }\n\n    /* Ceny */\n    .wine-prices {\n      display: flex;\n      flex-direction: column;\n      gap: 2mm;\n      align-items: flex-end;\n      justify-content: flex-start;\n    }\n\n    .price-row {\n      display: flex;\n      align-items: center;\n      gap: 2mm;\n    }\n\n    .price-label {\n      font-size: 8pt;\n      color: #666;\n      white-space: nowrap;\n    }\n\n    .price-amount {\n      font-size: 10pt;\n      font-weight: 700;\n      color: #1a1a1a;\n      border: 1px solid #000;\n      border-radius: 2mm;\n      padding: 2mm 4mm;\n      min-width: 50px;\n      text-align: center;\n    }\n\n    /* PodziaL, stron */\n    .page-break {\n      page-break-after: always;\n    }\n\n    @media print {\n      body {\n        padding: 0;\n      }\n      .category-header {\n        page-break-inside: avoid;\n      }\n      .wine-card {\n        page-break-inside: avoid;\n      }\n    }\n  </style>\n</head>\n<body>\n\n  {{#if collection.dynamicFieldsByName.tytul}}\n  <h1 style=\"text-align: center; font-size: 24pt; margin-bottom: 10mm;\">{{collection.dynamicFieldsByName.tytul}}</h1>\n  {{/if}}\n\n  {{#each collection.winesByCategory}}\n    <div class=\"category-header\">{{@key}}</div>\n    <div class=\"wine-list\">\n      {{#each this}}\n      <div class=\"wine-card\">\n        <!-- Obrazek -->\n        <div class=\"wine-image\">\n          <img src=\"https://witrynarium.pl{{this.image}}\" alt=\"{{this.name}}\">\n        </div>\n\n        <!-- TreL>�? -->\n        <div class=\"wine-content\">\n          <h2 class=\"wine-title\">{{this.name}}</h2>\n          \n          <div class=\"wine-info\"><strong>Szczep:</strong> {{this.szczepy}}</div>\n          <div class=\"wine-info\"><strong>Region:</strong> {{this.region}}</div>\n          <div class=\"wine-info\"><strong>Typ:</strong> {{this.type}}</div>\n          \n          {{#if this.description}}\n          <p class=\"wine-description\">{{this.description}}</p>\n          {{/if}}\n          \n          {{#if this.alcohol}}\n          <div class=\"wine-alcohol\">Vol: {{this.alcohol}}</div>\n          {{/if}}\n        </div>\n\n        <!-- Ceny -->\n        <div class=\"wine-prices\">\n          {{#if this.price1}}\n          <div class=\"price-row\">\n            <span class=\"price-label\">150ml</span>\n            <span class=\"price-amount\">{{this.price1}}</span>\n          </div>\n          {{/if}}\n          \n          {{#if this.price2}}\n          <div class=\"price-row\">\n            <span class=\"price-label\">750ml</span>\n            <span class=\"price-amount\">{{this.price2}}</span>\n          </div>\n          {{/if}}\n        </div>\n      </div>\n      {{/each}}\n    </div>\n  {{/each}}\n\n</body>\n</html>",
+    "cssContent": "",
+    "jsContent": "",
+    "thumbnailUrl": "",
+    "placeholders": [],
+    "sampleData": {},
+    "isPublic": true,
+    "tags": [
+      "kategorie",
+      "lista",
+      "grupowanie"
+    ],
+    "version": "1.0.0",
+    "status": "draft",
+    "metadata": {},
+    "createdAt": "2025-11-20T19:25:11.561Z",
+    "updatedAt": "2025-11-21T11:50:14.853Z",
+    "pdfSettings": {
+      "format": "A4",
+      "orientation": "portrait",
+      "margins": {
+        "top": "10mm",
+        "right": "10mm",
+        "bottom": "10mm",
+        "left": "10mm"
+      },
+      "printBackground": true
+    }
+  },
+  {
+    "id": "4082fd40-ccd5-4df1-bffa-23d652ef5c26",
+    "name": "A4 składane w V",
+    "description": "Szablon A4 składany w V z podziałem na 2 kolumny po 5 produktów",
+    "category": "general",
+    "htmlContent": "<!DOCTYPE html>\n<html lang=\"pl\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Karta Wina - 2 kolumny x 5 produktów</title>\n  <link href=\"https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap\" rel=\"stylesheet\">\n  <style>\n    * {\n      margin: 0;\n      padding: 0;\n      box-sizing: border-box;\n    }\n\n    body {\n      font-family: 'Poppins', sans-serif;\n      background: #fff;\n      font-size: 10pt;\n      line-height: 1.4;\n      margin: 0;\n      padding: 0;\n    }\n\n    /* === OKŁADKA - PEŁNA STRONA === */\n    .cover-page {\n      width: 100%;\n      height: 100vh;\n      background-size: cover;\n      background-position: center;\n      page-break-after: always;\n      display: flex;\n      gap:4mm;\n      align-items: center;\n      justify-content: center;\n      background:{{collection.dynamicFieldsByName.kolor_okladki}};\n      background-image: url(https://witrynarium.pl{{collection.dynamicFieldsByName.okladka}});\n      background-size:contain;\n      \n    }\n\n    /* === STRONA PRODUKTÓW - GRID 2 KOLUMNY x 5 WIERSZY === */\n    .products-page {\n      width: 214mm;\n      height: 301mm;\n      padding: 6mm 0;\n      page-break-after: always;\n      display: grid;\n      grid-template-columns: 1fr 1fr; /* 2 równe kolumny */\n      grid-template-rows: repeat(5, 1fr); /* 5 równych wierszy */\n      grid-auto-flow: column; /* 🔥 WYPEŁNIAJ KOLUMNAMI: lewa 1-5, prawa 6-10 */\n      gap: 0;\n      background:{{collection.dynamicFieldsByName.kolor_listy}};\n      background-image: url(\"{{collection.dynamicFieldsByName.tlo_listy}}\");\n      background-size: contain;\n      background-position: top;\n    }\n\n    /* === KARTA PRODUKTU - IDEALNIE 1/5 WYSOKOŚCI KOLUMNY === */\n    .wine-card {\n      display: grid;\n      grid-template-columns: 15% 85%; /* 15% obraz, 85% treść */\n      gap: 1mm;\n      padding: 6mm;\n      border: 0px solid #ddd;\n      overflow: hidden;\n    }\n\n    /* Lewa strona - Obraz */\n    .wine-image {\n      display: flex;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-right: 0mm;\n    }\n\n    .wine-image img {\n      max-width: 100%;\n      height: auto;\n      object-fit: cover;\n    }\n\n    /* Prawa strona - Treść */\n    .wine-content {\n      display: flex;\n      flex-direction: column;\n      gap: 2mm;\n    }\n\n    /* Wiersz nagłówka - Nazwa i Ceny */\n    .wine-header-row {\n      display: flex;\n      justify-content: space-between;\n      align-items: flex-start;\n      gap: 4mm;\n    }\n\n    .wine-title {\n      font-size: 12pt;\n      font-weight: 700;\n      line-height: 1.2;\n      color: #1a1a1a;\n      text-transform: uppercase;\n      letter-spacing: -0.5px;\n      flex: 1;\n    }\n\n    .wine-prices {\n      display: flex;\n      gap: 2mm;\n      flex-shrink: 0;\n      flex-direction: column;\n    }\n\n    .price-badge {\n      display: flex;\n      align-items: center;\n      gap: 0mm;\n      font-weight: 600;\n      white-space: nowrap;\n      justify-content: flex-end;\n    }\n\n    .price-amount {\n      text-align: right;\n      font-size: 10pt;\n       font-weight: bold;\n      color: #1a1a1a;\n      border: 1px solid #1a1a1a;\n      border-radius: 1mm;\n      padding: 2px 12px;\n      flex:1;\n    }\n\n    /* Szczegóły wina */\n    .wine-details {\n      display: flex;\n      flex-direction: column;\n      gap: 0.5mm;\n    }\n\n    .wine-detail-item {\n      display: block;\n      font-size: 8pt;\n      color: #333333;\n      line-height: 1.3;\n    }\n\n    .wine-detail-label {\n      font-weight: 600;\n      display: inline;\n       color: #000000;\n    }\n\n    .wine-detail-value {\n      font-weight: 400;\n      display: inline;\n    }\n\n    .wine-description {\n      font-size: 8pt;\n      line-height: 1.3;\n      margin-top:1mm;\n     \n      color: #333333;\n      max-height: 20mm;\n      overflow: hidden;\n      text-overflow: ellipsis;\n      display: -webkit-box;\n      -webkit-line-clamp: 3;\n      -webkit-box-orient: vertical;\n    }\n\n    .wine-alcohol {\n      font-size: 6pt;\n      font-weight: 600;\n      color: #999999;\n      margin-top:1mm;\n    }\n    \n       .litry {\n      font-size: 6pt;\n      color: #999999;\n          font-weight: 400;\n    }\n    \n    .icon_wine {\n  background-image: url(http://witrynarium.pl/images/icons/wine.svg);\n  width: 24px;\n  height: 24px;\n  display: inline-block;\n      color: #999999;\n     \n}\n        .icon_glass {\n  background-image: url(http://witrynarium.pl/images/icons/glass.svg);\n  width: 24px;\n  height: 24px;\n  display: inline-block;\n      color: #999999;\n}\n    \n    .col{\n    width: 100%;    \n    height: 100%;\n    display: flex;\n        flex:1;\n    flex-direction: column;\n    align-content: center;\n    align-items: center;\n    justify-content: flex-end;\n      padding-left:4mm;\n      padding-right:4mm;\n      padding-top:8mm;\n      padding-bottom:8mm;\n      background-size:contain;\n      background-repeat: no-repeat;\n      \n    }\n    \n   \n    .logonorth{\n    background-image: url('https://witrynarium.pl/images/branding/logo.png');\n      background-size:contain;\n      background-repeat: no-repeat;\n      width:100px;\n      height:50px;\n    }\n \n    .footer{\n     width: 100%;\n    height: 10%;\n    text-align: center;\n    display: flex;\n    flex-direction: column;\n    align-content: center;\n    align-items: center;\n      justify-content: flex-start;\n    }\n    \n     .middle{\n     width: 100%;\n    height: 85%;\n    text-align: center;\n    display: flex;\n    flex-direction: column;\n    align-content: center;\n    align-items: center;\n       justify-content: center;\n    }\n    \n     .header{\n     width: 100%;\n    height: 5%;\n    text-align: center;\n    display: flex;\n    flex-direction: column;\n    align-content: center;\n    align-items: center;\n    }\n    \n    \n\n    /* Wymuszenie nowej strony dla kolejnych grup */\n    @media print {\n      .products-page {\n        page-break-after: always;\n      }\n    }\n  </style>\n</head>\n<body>\n\n  <!-- OKŁADKA -->\n  <div class=\"cover-page\" style=\"\">\n<div class=\"col\">\n  <div class=\"header\"></div>\n  <div class=\"middle\"><h1></h1></div>\n  <div class=\"footer\">\n  <div class=\"logonorth\"></div>\n  <span class=\"www\" style=\"color:#ffffff;\">www.northcoast.pl</span>\n    </div>\n  </div>\n  \n    <div class=\"col\">\n      <div class=\"header\"></div>\n   <div class=\"middle\"><h1></h1></div>\n  <div class=\"footer\">      <h1 style=\"color:#333333;\">{{collection.dynamicFieldsByName.Tytul}}</h1>    </div>\n  </div>\n  </div>\n  \n\n  <!-- STRONY Z PRODUKTAMI - Backend podzieli wina na grupy po 10 -->\n  {{#each winePages}}\n  <div class=\"products-page\">\n    {{#each this}}\n    <div class=\"wine-card\">\n      <!-- Lewa strona - Obraz -->\n      <div class=\"wine-image\">\n        <img src=\"https://witrynarium.pl{{this.image}}\" alt=\"{{this.name}}\">\n      </div>\n\n      <!-- Prawa strona - Treść -->\n      <div class=\"wine-content\">\n        <!-- Nagłówek - Nazwa i Ceny -->\n        <div class=\"wine-header-row\">\n          <h2 class=\"wine-title\">{{this.name}}</h2>\n          \n          <div class=\"wine-prices\">\n            <div class=\"price-badge\">\n              <span class=\"litry\">150ml</span><span class=\"icon_glass\"></span><span class=\"price-amount\" style=\"\">{{this.price1}}</span>\n            </div>\n            <div class=\"price-badge\">\n              <span class=\"litry\">750ml</span><span class=\"icon_wine\"></span><span class=\"price-amount\">{{this.price2}}</span>\n            </div>\n          </div>\n        </div>\n\n        <!-- Szczegóły -->\n        <div class=\"wine-details\">\n          <div class=\"wine-detail-item\">\n            <span class=\"wine-detail-label\">Szczep:</span>\n            <span class=\"wine-detail-value\">{{this.szczepy}}</span>\n          </div>\n          \n          <div class=\"wine-detail-item\">\n            <span class=\"wine-detail-label\">Region:</span>\n            <span class=\"wine-detail-value\">{{this.region}}</span>\n          </div>\n          \n          <div class=\"wine-detail-item\">\n            <span class=\"wine-detail-label\">Typ:</span>\n            <span class=\"wine-detail-value\">{{this.type}}</span>\n          </div>\n\n          <div class=\"wine-detail-item\">\n            <span class=\"wine-detail-label\">Kolor:</span>\n            <span class=\"wine-detail-value\">{{this.category}}</span>\n          </div>\n          \n          <p class=\"wine-description\">{{this.description}}</p>\n          \n          <div class=\"wine-alcohol\">Vol: {{this.alcohol}}</div>\n        </div>\n      </div>\n    </div>\n    {{/each}}\n  </div>\n  {{/each}}\n\n</body>\n</html>\n",
+    "cssContent": "",
+    "jsContent": "",
+    "thumbnailUrl": "",
+    "placeholders": [],
+    "sampleData": {},
+    "isPublic": true,
+    "tags": [
+      "A4",
+      "składane",
+      "V",
+      "2kolumny"
+    ],
+    "version": "1.0.0",
+    "status": "active",
+    "metadata": {},
+    "createdAt": "2025-11-20T19:37:04.937Z",
+    "updatedAt": "2025-11-25T05:01:11.040Z",
+    "pdfSettings": {
+      "customFormat": {
+        "width": 214,
+        "height": 301,
+        "unit": "mm"
+      },
+      "orientation": "portrait",
+      "margins": {
+        "top": "0mm",
+        "right": "0mm",
+        "bottom": "0mm",
+        "left": "0mm"
+      },
+      "printBackground": true
+    }
+  },
+  {
+    "id": "2a33410e-6621-4af1-a21c-25be2d7aada4",
+    "name": "Karta wkładka",
+    "description": "",
+    "category": "general",
+    "htmlContent": "<!DOCTYPE html>\n<html lang=\"pl\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"pagination\" content=\"firstPage:4,nextPages:5\">\n  <title>Karta Wina - Nagłówek + 4/5 produktów</title>\n  <link href=\"https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap\" rel=\"stylesheet\">\n  <style>\n    * {\n      margin: 0;\n      padding: 0;\n      box-sizing: border-box;\n    }\n\n    body {\n      font-family: 'Poppins', sans-serif;\n      background: #fff;\n      color: device-cmyk(0%, 0%, 0%, 100%);\n      font-size: 9pt;\n      line-height: 1.3;\n      margin: 0;\n      padding: 0;\n    }\n\n    /* === PIERWSZA STRONA - NAGŁÓWEK + 4 PRODUKTY === */\n    .first-page {\n      width: 109mm;\n      height: 301mm;\n      page-break-after: always;\n      display: flex;\n      flex-direction: column;\n    background:{{collection.dynamicFieldsByName.kolor_okladki}};\n      background-image: url('{{collection.dynamicFieldsByName.tlo_okladki}}');\n      background-size:contain;\n    }\n\n    /* Nagłówek - 20% wysokości */\n    .page-header {\n      height: 20%;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      background-size: cover;\n      background-position: center;\n      padding: 4mm;\n      border-bottom: 1px dashed #ddd;\n    }\n\n    .header-title {\n      font-size: 24pt;\n      font-weight: 700;\n      color: device-cmyk(0%, 0%, 0%, 100%);\n      text-align: center;\n      \n    }\n\n    /* Produkty na pierwszej stronie - 80% wysokości / 4 = 20% każdy */\n    .first-page-products {\n      height: 80%;\n      display: flex;\n      flex-direction: column;\n    }\n\n    .first-page-products .wine-card {\n      height: 25%; /* 80% / 4 = 20% każdy produkt */\n      flex-shrink: 0;\n    }\n\n    /* === KOLEJNE STRONY - 5 PRODUKTÓW === */\n    .products-page {\n      width: 109mm;\n      height: 301mm;\n      page-break-after: always;\n      display: flex;\n      flex-direction: column;\n        background:{{collection.dynamicFieldsByName.kolor_listy}};\n      background-image: url(\"{{collection.dynamicFieldsByName.tlo_listy}}\");\n      background-size: contain;\n      background-position: top;\n    }\n\n    .products-page .wine-card {\n      height: 20%; /* 100% / 5 = 20% każdy produkt */\n      flex-shrink: 0;\n    }\n\n    /* === KARTA PRODUKTU === */\n    .wine-card {\n      display: grid;\n      grid-template-columns: 15% 85%; /* 15% obraz, 85% treść */\n      gap: 1mm;\n      padding: 6mm;\n      border: 0px solid #ddd;\n      overflow: hidden;\n    }\n\n    /* Lewa strona - Obraz */\n    .wine-image {\n      display: flex;\n      align-items: flex-start;\n      justify-content: flex-start;\n      padding-right: 0mm;\n    }\n\n    .wine-image img {\n      max-width: 100%;\n      height: auto;\n      object-fit: cover;\n    }\n\n    /* Prawa strona - Treść */\n    .wine-content {\n      display: flex;\n      flex-direction: column;\n      gap: 2mm;\n    }\n\n    /* Wiersz nagłówka - Nazwa i Ceny */\n    .wine-header-row {\n      display: flex;\n      justify-content: space-between;\n      align-items: flex-start;\n      gap: 4mm;\n    }\n\n    .wine-title {\n      font-size: 12pt;\n      font-weight: 700;\n      line-height: 1.2;\n      color: device-cmyk(0%, 0%, 0%, 100%);\n      text-transform: uppercase;\n      letter-spacing: -0.5px;\n      flex: 1;\n    }\n\n    .wine-prices {\n      display: flex;\n      gap: 2mm;\n      flex-shrink: 0;\n      flex-direction: column;\n    }\n\n    .price-badge {\n      display: flex;\n      align-items: center;\n      gap: 0mm;\n      font-weight: 600;\n      white-space: nowrap;\n      justify-content: flex-end;\n    }\n\n    .price-amount {\n      text-align: right;\n      font-size: 10pt;\n       font-weight: bold;\n      color: device-cmyk(0%, 0%, 0%, 100%);\n      border: 1px solid #1a1a1a;\n      border-radius: 1mm;\n      padding: 2px 12px;\n      flex:1;\n    }\n\n    /* Szczegóły wina */\n    .wine-details {\n      display: flex;\n      flex-direction: column;\n      gap: 0.5mm;\n    }\n\n    .wine-detail-item {\n      display: block;\n      font-size: 8pt;\n      color: device-cmyk(0%, 0%, 0%, 80%);\n      line-height: 1.3;\n    }\n\n    .wine-detail-label {\n      font-weight: 600;\n      display: inline;\n       color: device-cmyk(0%, 0%, 0%, 100%);\n    }\n\n    .wine-detail-value {\n      font-weight: 400;\n      display: inline;\n    }\n\n    .wine-description {\n      font-size: 8pt;\n      line-height: 1.3;\n      margin-top:1mm;\n     \n      color: device-cmyk(0%, 0%, 0%, 80%);\n      max-height: 20mm;\n      overflow: hidden;\n      text-overflow: ellipsis;\n      display: -webkit-box;\n      -webkit-line-clamp: 3;\n      -webkit-box-orient: vertical;\n    }\n\n    .wine-alcohol {\n      font-size: 6pt;\n      font-weight: 600;\n      color: device-cmyk(0%, 0%, 0%, 60%);\n      margin-top:1mm;\n    }\n    \n       .litry {\n      font-size: 6pt;\n      color: device-cmyk(0%, 0%, 0%, 60%);\n          font-weight: 400;\n    }\n    \n    .icon_wine {\n  background-image: url(http://witrynarium.pl/images/icons/wine.svg);\n  width: 24px;\n  height: 24px;\n  display: inline-block;\n      color: device-cmyk(0%, 0%, 0%, 60%);\n     \n}\n        .icon_glass {\n  background-image: url(http://witrynarium.pl/images/icons/glass.svg);\n  width: 24px;\n  height: 24px;\n  display: inline-block;\n      color: device-cmyk(0%, 0%, 0%, 60%);\n}\n\n    /* Wymuszenie nowej strony */\n    @media print {\n      .first-page,\n      .products-page {\n        page-break-after: always;\n      }\n    }\n  </style>\n</head>\n<body>\n\n  <!-- PIERWSZA STRONA - NAGŁÓWEK + 4 PRODUKTY -->\n  <div class=\"first-page\">\n    <!-- Nagłówek z tłem z dynamicznego pola -->\n    <div class=\"page-header\" style=\"background-image: url('{{collection.dynamicFieldsByName.zwykly_tekst}}');\">\n      <h1 class=\"header-title\">{{collection.dynamicFieldsByName.Tytul}}</h1>\n    </div>\n\n    <!-- Pierwsze 4 produkty -->\n    <div class=\"first-page-products\">\n      {{#each firstPageWines}}\n      <div class=\"wine-card\">\n      <!-- Lewa strona - Obraz -->\n      <div class=\"wine-image\">\n        <img src=\"https://witrynarium.pl{{this.image}}\" alt=\"{{this.name}}\">\n      </div>\n\n      <!-- Prawa strona - Treść -->\n      <div class=\"wine-content\">\n        <!-- Nagłówek - Nazwa i Ceny -->\n        <div class=\"wine-header-row\">\n          <h2 class=\"wine-title\">{{this.name}}</h2>\n          \n          <div class=\"wine-prices\">\n            <div class=\"price-badge\">\n              <span class=\"litry\">150ml</span><span class=\"icon_glass\"></span><span class=\"price-amount\" style=\"\">39zł</span>\n            </div>\n            <div class=\"price-badge\">\n              <span class=\"litry\">750ml</span><span class=\"icon_wine\"></span><span class=\"price-amount\">139zł</span>\n            </div>\n          </div>\n        </div>\n\n        <!-- Szczegóły -->\n        <div class=\"wine-details\">\n          <div class=\"wine-detail-item\">\n            <span class=\"wine-detail-label\">Szczep:</span>\n            <span class=\"wine-detail-value\">{{this.szczepy}}</span>\n          </div>\n          \n          <div class=\"wine-detail-item\">\n            <span class=\"wine-detail-label\">Region:</span>\n            <span class=\"wine-detail-value\">{{this.region}}</span>\n          </div>\n          \n          <div class=\"wine-detail-item\">\n            <span class=\"wine-detail-label\">Typ:</span>\n            <span class=\"wine-detail-value\">{{this.type}}</span>\n          </div>\n\n          <div class=\"wine-detail-item\">\n            <span class=\"wine-detail-label\">Kolor:</span>\n            <span class=\"wine-detail-value\">{{this.category}}</span>\n          </div>\n          \n          <p class=\"wine-description\">{{this.description}}</p>\n          \n          <div class=\"wine-alcohol\">Vol: {{this.alcohol}}</div>\n        </div>\n      </div>\n    </div>\n      {{/each}}\n    </div>\n  </div>\n\n  <!-- KOLEJNE STRONY - PO 5 PRODUKTÓW -->\n  {{#each restPages}}\n  <div class=\"products-page\">\n    {{#each this}}\n   <div class=\"wine-card\">\n      <!-- Lewa strona - Obraz -->\n      <div class=\"wine-image\">\n        <img src=\"https://witrynarium.pl{{this.image}}\" alt=\"{{this.name}}\">\n      </div>\n\n      <!-- Prawa strona - Treść -->\n      <div class=\"wine-content\">\n        <!-- Nagłówek - Nazwa i Ceny -->\n        <div class=\"wine-header-row\">\n          <h2 class=\"wine-title\">{{this.name}}</h2>\n          \n          <div class=\"wine-prices\">\n            <div class=\"price-badge\">\n              <span class=\"litry\">150ml</span><span class=\"icon_glass\"></span><span class=\"price-amount\" style=\"\">39zł</span>\n            </div>\n            <div class=\"price-badge\">\n              <span class=\"litry\">750ml</span><span class=\"icon_wine\"></span><span class=\"price-amount\">139zł</span>\n            </div>\n          </div>\n        </div>\n\n        <!-- Szczegóły -->\n        <div class=\"wine-details\">\n          <div class=\"wine-detail-item\">\n            <span class=\"wine-detail-label\">Szczep:</span>\n            <span class=\"wine-detail-value\">{{this.szczepy}}</span>\n          </div>\n          \n          <div class=\"wine-detail-item\">\n            <span class=\"wine-detail-label\">Region:</span>\n            <span class=\"wine-detail-value\">{{this.region}}</span>\n          </div>\n          \n          <div class=\"wine-detail-item\">\n            <span class=\"wine-detail-label\">Typ:</span>\n            <span class=\"wine-detail-value\">{{this.type}}</span>\n          </div>\n\n          <div class=\"wine-detail-item\">\n            <span class=\"wine-detail-label\">Kolor:</span>\n            <span class=\"wine-detail-value\">{{this.category}}</span>\n          </div>\n          \n          <p class=\"wine-description\">{{this.description}}</p>\n          \n          <div class=\"wine-alcohol\">Vol: {{this.alcohol}}</div>\n        </div>\n      </div>\n    </div>\n    {{/each}}\n  </div>\n  {{/each}}\n\n</body>\n</html>\n",
+    "cssContent": "/* Dodatkowe style CSS */\n.wine-card:hover {\n    transform: translateY(-2px);\n    box-shadow: 0 8px 15px rgba(0,0,0,0.15);\n    transition: all 0.3s ease;\n}\n\n@media print {\n    body {\n        background: white;\n    }\n    \n    .wine-card {\n        box-shadow: none;\n        border: 1px solid #ddd;\n    }\n}",
+    "jsContent": "",
+    "thumbnailUrl": "",
+    "placeholders": [],
+    "sampleData": {},
+    "isPublic": false,
+    "tags": [],
+    "version": "1.0.0",
+    "status": "active",
+    "metadata": {},
+    "pdfSettings": {
+      "customFormat": {
+        "width": 105,
+        "height": 301,
+        "unit": "mm"
+      },
+      "margins": {
+        "top": "0mm",
+        "right": "0mm",
+        "bottom": "0mm",
+        "left": "0mm"
+      },
+      "printBackground": true
+    },
+    "createdAt": "2025-11-21T11:53:35.217Z",
+    "updatedAt": "2025-11-21T11:54:01.683Z"
+  },
+  {
+    "id": "f97ed712-f93a-48d8-af84-9ff778043b28",
+    "name": "Edytowalny",
+    "description": "",
+    "category": "general",
+    "htmlContent": "<!DOCTYPE html>\n<html lang=\"pl\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <meta name=\"editable-fields\" content=\"enabled\">\n    <title>Karta Win z Edytowalnymi Cenami</title>\n    <style>\n        @page {\n            size: 210mm 297mm; /* A4 */\n            margin: 15mm;\n        }\n        \n        body {\n            margin: 0;\n            padding: 0;\n            font-family: 'Segoe UI', Arial, sans-serif;\n            font-size: 10pt;\n        }\n        \n        .header {\n            text-align: center;\n            margin-bottom: 20mm;\n            border-bottom: 2px solid #333;\n            padding-bottom: 5mm;\n        }\n        \n        .header h1 {\n            margin: 0;\n            font-size: 24pt;\n            color: #721c24;\n        }\n        \n        .header p {\n            margin: 3mm 0 0 0;\n            color: #666;\n            font-size: 11pt;\n        }\n        \n        .wine-table {\n            width: 100%;\n            border-collapse: collapse;\n        }\n        \n        .wine-table th {\n            background: #721c24;\n            color: white;\n            padding: 3mm;\n            text-align: left;\n            font-size: 10pt;\n        }\n        \n        .wine-table td {\n            padding: 3mm;\n            border-bottom: 1px solid #ddd;\n            vertical-align: top;\n        }\n        \n        .wine-row {\n            page-break-inside: avoid;\n        }\n        \n        .wine-name {\n            font-weight: bold;\n            color: #333;\n            font-size: 11pt;\n        }\n        \n        .wine-code {\n            color: #999;\n            font-size: 9pt;\n            margin-top: 1mm;\n        }\n        \n        .wine-details {\n            color: #666;\n            font-size: 9pt;\n            line-height: 1.4;\n            margin-top: 2mm;\n        }\n        \n        .wine-category {\n            display: inline-block;\n            padding: 1mm 3mm;\n            background: #f0f0f0;\n            border-radius: 2mm;\n            font-size: 8pt;\n            margin-right: 2mm;\n        }\n        \n        /* EDYTOWALNE POLE CENY */\n        .editable-price-field {\n            position: relative;\n            display: inline-block;\n            min-width: 60px;\n            height: 20px;\n            background: #fffef0; /* Lekko żółte tło */\n            border: 1px solid #999;\n            border-radius: 2px;\n            padding: 2px 5px;\n            text-align: right;\n            font-size: 10pt;\n            font-family: 'Courier New', monospace;\n        }\n        \n        .editable-price-field::before {\n            content: '✎'; /* Ikona ołówka */\n            position: absolute;\n            left: 2px;\n            top: 2px;\n            font-size: 8pt;\n            color: #999;\n        }\n        \n        .price-placeholder {\n            color: #bbb;\n            font-style: italic;\n        }\n        \n        .footer {\n            position: fixed;\n            bottom: 10mm;\n            left: 15mm;\n            right: 15mm;\n            text-align: center;\n            font-size: 8pt;\n            color: #999;\n            border-top: 1px solid #ddd;\n            padding-top: 3mm;\n        }\n    </style>\n</head>\n<body>\n    <!-- NAGŁÓWEK -->\n    <div class=\"header\">\n        <h1>{{collection.name}}</h1>\n        <p>{{collection.description}}</p>\n        <p style=\"font-size: 9pt; color: #999;\">\n            Wypełnij ceny w polach edytowalnych • Zapisz PDF po wypełnieniu\n        </p>\n    </div>\n    \n    <!-- TABELA WIN -->\n    <table class=\"wine-table\">\n        <thead>\n            <tr>\n                <th style=\"width: 8%;\">Kod</th>\n                <th style=\"width: 52%;\">Nazwa i Opis</th>\n                <th style=\"width: 20%;\">Szczegóły</th>\n                <th style=\"width: 20%;\">Cena</th>\n            </tr>\n        </thead>\n        <tbody>\n           {{#each winePages}}\n            {{#each this}}\n            <tr class=\"wine-row\">\n                <!-- KOD -->\n                <td>\n                    <div style=\"font-weight: bold; font-size: 10pt;\">\n                        {{this.catalogNumber}}\n                    </div>\n                </td>\n                \n                <!-- NAZWA I OPIS -->\n                <td>\n                    <div class=\"wine-name\">{{this.name}}</div>\n                    <div class=\"wine-details\">{{this.description}}</div>\n                </td>\n                \n                <!-- SZCZEGÓŁY -->\n                <td>\n                    <div class=\"wine-category\" style=\"background: #f8d7da; color: #721c24;\">\n                        {{this.category}}\n                    </div>\n                    <div style=\"margin-top: 2mm; font-size: 9pt;\">\n                        <div><strong>Region:</strong> {{this.region}}</div>\n                        <div><strong>Szczepy:</strong> {{this.szczepy}}</div>\n                        <div><strong>Alkohol:</strong> {{this.alcohol}}</div>\n                        <div><strong>Poj.:</strong> {{this.poj}}</div>\n                    </div>\n                </td>\n                \n                <!-- EDYTOWALNA CENA -->\n                <td style=\"text-align: right;\">\n                    <div class=\"editable-price-field\"\n                         data-editable-price=\"wine_{{this.catalogNumber}}_price\"\n                         data-price-x=\"470\"\n                         data-price-y=\"{{math @index '*' 95 '+' 145}}\"\n                         data-price-width=\"75\"\n                         data-price-height=\"22\">\n                        <span class=\"price-placeholder\">_____ zł</span>\n                    </div>\n                    \n                    <!-- Pole dla ceny hurtowej (opcjonalne) -->\n                    <div style=\"margin-top: 3mm; font-size: 8pt; color: #666;\">\n                        Hurtowa:\n                        <div class=\"editable-price-field\"\n                             style=\"min-width: 50px; font-size: 8pt;\"\n                             data-editable-price=\"wine_{{this.catalogNumber}}_wholesale\"\n                             data-price-x=\"485\"\n                             data-price-y=\"{{math @index '*' 95 '+' 165}}\"\n                             data-price-width=\"60\"\n                             data-price-height=\"18\">\n                            <span class=\"price-placeholder\">____ zł</span>\n                        </div>\n                    </div>\n                </td>\n            </tr>\n            {{/each}} {{/each}}\n        </tbody>\n    </table>\n    \n    <!-- STOPKA -->\n    <div class=\"footer\">\n        Karta win wygenerowana {{date}} • Ceny do uzupełnienia • {{collection.name}}\n    </div>\n    \n    <!-- SKRYPT POMOCNICZY (tylko w development) -->\n    <script>\n        // Ten skrypt pomaga wyznaczać pozycje pól - usunąć w produkcji\n        if (window.location.hostname === 'localhost') {\n            document.addEventListener('DOMContentLoaded', function() {\n                console.log('=== POZYCJE PÓL EDYTOWALNYCH ===');\n                \n                const priceFields = document.querySelectorAll('[data-editable-price]');\n                \n                priceFields.forEach((field, index) => {\n                    const rect = field.getBoundingClientRect();\n                    const name = field.getAttribute('data-editable-price');\n                    \n                    console.log(`Pole ${index + 1}: ${name}`, {\n                        x: Math.round(rect.left),\n                        y: Math.round(rect.top),\n                        width: Math.round(rect.width),\n                        height: Math.round(rect.height)\n                    });\n                    \n                    // Automatycznie ustaw atrybuty jeśli brakuje\n                    if (!field.hasAttribute('data-price-x')) {\n                        field.setAttribute('data-price-x', Math.round(rect.left));\n                        field.setAttribute('data-price-y', Math.round(rect.top));\n                        field.setAttribute('data-price-width', Math.round(rect.width));\n                        field.setAttribute('data-price-height', Math.round(rect.height));\n                        \n                        console.log(`  ✅ Auto-set coordinates for ${name}`);\n                    }\n                });\n                \n                console.log('=== KONIEC LISTY ===');\n            });\n        }\n    </script>\n</body>\n</html>\n",
+    "cssContent": "/* Dodatkowe style CSS */\n.wine-card:hover {\n    transform: translateY(-2px);\n    box-shadow: 0 8px 15px rgba(0,0,0,0.15);\n    transition: all 0.3s ease;\n}\n\n@media print {\n    body {\n        background: white;\n    }\n    \n    .wine-card {\n        box-shadow: none;\n        border: 1px solid #ddd;\n    }\n}",
+    "jsContent": "",
+    "thumbnailUrl": "",
+    "placeholders": [],
+    "sampleData": {},
+    "isPublic": false,
+    "tags": [],
+    "version": "1.0.0",
+    "status": "active",
+    "metadata": {},
+    "pdfSettings": {
+      "printBackground": true
+    },
+    "createdAt": "2025-11-21T13:53:22.455Z",
+    "updatedAt": "2026-02-16T13:07:36.501Z"
+  },
+  {
+    "id": "4238c437-8a37-4827-98be-700ff6a3585c",
+    "name": "NOWY TESTOWY OFERTA",
+    "description": "",
+    "category": "general",
+    "htmlContent": "<!DOCTYPE html>\n<html lang=\"pl\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>{{wine.name}}</title>\n    <style>\n\n    </style>\n</head>\n<body>\n  <h1> Oferta numer {{collection.dynamicFieldsByName.numeroferty}}</h1>\n    {{#each winePages}}\n {{#each this}}\n    <div class=\"wine-card\">\n        <h1 class=\"wine-title\">{{this.name}}</h1>\n        \n        <div class=\"wine-info\">\n            <div class=\"wine-field\">\n                <div class=\"field-label\">Nr katalogowy:</div>\n                <div class=\"field-value\">{{this.catalogNumber}}</div>\n            </div>\n            \n            <div class=\"wine-field\">\n                <div class=\"field-label\">Typ:</div>\n                <div class=\"field-value\">{{this.type}}</div>\n            </div>\n            \n            <div class=\"wine-field\">\n                <div class=\"field-label\">Kategoria:</div>\n                <div class=\"field-value\">{{this.category}}</div>\n            </div>\n            \n            <div class=\"wine-field\">\n                <div class=\"field-label\">Region:</div>\n                <div class=\"field-value\">{{this.region}}</div>\n            </div>\n            \n            <div class=\"wine-field\">\n                <div class=\"field-label\">Szczep:</div>\n                <div class=\"field-value\">{{this.szczepy}}</div>\n            </div>\n            \n            <div class=\"wine-field\">\n                <div class=\"field-label\">Alkohol:</div>\n                <div class=\"field-value\">{{this.alcohol}}</div>\n            </div>\n        </div>\n        \n        <div class=\"wine-field\">\n            <div class=\"field-label\">Opis:</div>\n            <div class=\"field-value\">{{this.description}}</div>\n        </div>\n    </div>\n  {{/each}} {{/each}}\n</body>\n</html>",
+    "cssContent": "/* Dodatkowe style CSS */\n.wine-card:hover {\n    transform: translateY(-2px);\n    box-shadow: 0 8px 15px rgba(0,0,0,0.15);\n    transition: all 0.3s ease;\n}\n\n        body {\n            font-family: Arial, sans-serif;\n            margin: 0;\n            padding: 20px;\n            background: #f5f5f5;\n        }\n        .wine-card {\n            background: white;\n            border-radius: 10px;\n            padding: 30px;\n            box-shadow: 0 4px 6px rgba(0,0,0,0.1);\n            max-width: 600px;\n            margin: 0 auto;\n        }\n        .wine-title {\n            color: #8B0000;\n            font-size: 2rem;\n            font-weight: bold;\n            text-align: center;\n            margin-bottom: 20px;\n        }\n        .wine-info {\n            display: grid;\n            grid-template-columns: 1fr 1fr;\n            gap: 15px;\n            margin: 20px 0;\n        }\n        .wine-field {\n            padding: 10px;\n            background: #f8f9fa;\n            border-radius: 5px;\n        }\n        .field-label {\n            font-weight: bold;\n            color: #495057;\n            margin-bottom: 5px;\n        }\n        .field-value {\n            color: #212529;\n            font-size: 1.1rem;\n        }\n\n\n@media print {\n    body {\n        background: white;\n    }\n    \n    .wine-card {\n        box-shadow: none;\n        border: 1px solid #ddd;\n    }\n}",
+    "jsContent": "",
+    "thumbnailUrl": "",
+    "placeholders": [
+      {
+        "id": "0a17bb74-5e1e-44be-a498-e31be6a7279b",
+        "name": "wine.name",
+        "label": "Nazwa",
+        "type": "text",
+        "required": false,
+        "group": "wine"
+      }
+    ],
+    "sampleData": {},
+    "isPublic": false,
+    "tags": [],
+    "version": "1.0.0",
+    "status": "active",
+    "metadata": {},
+    "pdfSettings": {
+      "printBackground": false
+    },
+    "createdAt": "2026-02-16T12:28:06.296Z",
+    "updatedAt": "2026-02-16T13:01:16.176Z"
+  },
+  {
+    "id": "83d6c543-14f6-482a-9462-d6ed1d33de61",
+    "name": "Oferta z okladka",
+    "description": "",
+    "category": "general",
+    "htmlContent": "<!DOCTYPE html>\n<html lang=\"pl\">\n<head>\n<meta charset=\"UTF-8\" />\n\n<style>\n@page { size: A4; margin: 0; }\n\nhtml, body {\n  margin: 0;\n  padding: 0;\n  font-family: Arial, sans-serif;\n}\n\n/* ✅ 1 strona A4 - FLEX */\n.page {\n  width: 210mm;\n  height: 297mm;\n  display: flex;\n  flex-direction: column;\n  page-break-after: always;\n  break-after: page;\n  box-sizing: border-box;\n}\n\n/* Header - stała wysokość */\n.header {\n  background: #eeeeee;\n  height: 30mm;\n  flex-shrink: 0;\n  display: flex;\n  align-items: center;\n  padding: 0 15mm;\n  font-size: 18pt;\n  font-weight: 700;\n  box-sizing: border-box;\n}\n\n/* ✅ Wiersz z winem */\n.wine-row {\n  flex: 1;\n  display: grid;\n  grid-template-columns: 40mm 1fr; /* obrazek + treść */\n  gap: 8mm;\n  padding: 8mm 15mm;\n  border-top: 0.3mm solid #000;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n\n/* Pudełko na obraz — stały rozmiar */\n.wine-imgbox{\n  width: 40mm;\n  height: 73mm;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n/* Obraz ma się zmieścić w pudełku w całości */\n.wine-imgbox img{\n  max-width: 100%;\n  max-height: 100%;\n  width: auto;\n  height: auto;\n  object-fit: contain;\n  display: block;\n}\n\n/* Teksty */\n.wine-title {\n  margin: 0 0 2mm 0;\n  font-size: 13pt;\n}\n\n.wine-meta {\n  margin: 0 0 1.5mm 0;\n  font-size: 10pt;\n}\n\n.wine-desc {\n  margin: 2mm 0 0 0;\n  font-size: 9.5pt;\n  line-height: 1.25;\n}\n\n/* ✅ Kontener \"Oferta z dnia\" na okładce */\n.cover-date {\n  flex-shrink: 0;\n  padding: 8mm 15mm;\n  border-top: 0.3mm solid #000;\n  box-sizing: border-box;\n}\n.cover-date .label{\n  font-size: 12pt;\n  font-weight: 700;\n  margin: 0;\n}\n.cover-date .value{\n  font-size: 12pt;\n  margin: 2mm 0 0 0;\n}\n</style>\n</head>\n\n<body>\n\n<!-- =========================\n     OKŁADKA (pierwsza strona)\n     ========================= -->\n\n<div class=\"page\">\n  <div class=\"header\">Wina: Oferta</div>\n\n  <div class=\"cover-date\">\n    <p class=\"label\">Oferta z dnia</p>\n    <!-- Podmień na swoje pole z datą, jeśli masz w danych (np. {{collection.offerDate}}) -->\n    <p class=\"value\">{{collection.offerDate}}</p>\n  </div>\n\n  <!-- 2 produkty na okładce: bierzemy pierwsze dwa z pierwszej kategorii/strony -->\n  {{#with (lookup collection.winesByCategory 0) as |firstCat|}}\n    {{#with (lookup firstCat.pages 0) as |firstPage|}}\n\n      {{#with (lookup firstPage 0) as |p|}}\n        <div class=\"wine-row\">\n          <div class=\"wine-imgbox\">\n            <img src=\"https://witrynarium.pl{{p.image}}\" alt=\"\">\n          </div>\n          <div>\n            <p class=\"wine-meta\"><strong>Nr kat:</strong> {{p.catalogNumber}}</p>\n            <h3 class=\"wine-title\">{{p.name}}</h3>\n            <p class=\"wine-meta\"><strong>Rodzaj wina i pojemność: </strong> {{p.category}} | {{p.type}} | {{p.poj}}</p>\n            <p class=\"wine-meta\"><strong>Producent:</strong> {{p.region}}</p>\n            <p class=\"wine-meta\"><strong>Szczep:</strong> {{p.szczepy}}</p>\n            <p class=\"wine-meta\"><strong>Region:</strong> {{p.region}}</p>\n            <p class=\"wine-meta\"><strong>Alk:</strong> {{p.alcohol}}</p>\n            <p class=\"wine-desc\">{{p.description}}</p>\n            <p class=\"wine-meta\"><strong>Cena:</strong> {{p.price1}}</p>\n          </div>\n        </div>\n      {{/with}}\n\n      {{#with (lookup firstPage 1) as |p|}}\n        <div class=\"wine-row\">\n          <div class=\"wine-imgbox\">\n            <img src=\"https://witrynarium.pl{{p.image}}\" alt=\"\">\n          </div>\n          <div>\n            <p class=\"wine-meta\"><strong>Nr kat:</strong> {{p.catalogNumber}}</p>\n            <h3 class=\"wine-title\">{{p.name}}</h3>\n            <p class=\"wine-meta\"><strong>Rodzaj wina i pojemność: </strong> {{p.category}} | {{p.type}} | {{p.poj}}</p>\n            <p class=\"wine-meta\"><strong>Producent:</strong> {{p.region}}</p>\n            <p class=\"wine-meta\"><strong>Szczep:</strong> {{p.szczepy}}</p>\n            <p class=\"wine-meta\"><strong>Region:</strong> {{p.region}}</p>\n            <p class=\"wine-meta\"><strong>Alk:</strong> {{p.alcohol}}</p>\n            <p class=\"wine-desc\">{{p.description}}</p>\n            <p class=\"wine-meta\"><strong>Cena:</strong> {{p.price1}}</p>\n          </div>\n        </div>\n      {{/with}}\n\n    {{/with}}\n  {{/with}}\n</div>\n\n\n<!-- =========================\n     STRONY KATEGORII (jak było)\n     ========================= -->\n\n{{#each collection.winesByCategory}}\n  {{#each pages}}\n    <div class=\"page\">\n      <div class=\"header\">Wina: {{category}}</div>\n\n      {{#each this}}\n        <div class=\"wine-row\">\n          <div class=\"wine-imgbox\">\n            <img src=\"https://witrynarium.pl{{this.image}}\" alt=\"\">\n          </div>\n          <div>\n            <p class=\"wine-meta\"><strong>Nr kat:</strong> {{this.catalogNumber}}</p>\n            <h3 class=\"wine-title\">{{this.name}}</h3>\n            <p class=\"wine-meta\"><strong>Rodzaj wina i pojemność: </strong> {{this.category}} | {{this.type}} | {{this.poj}}</p>\n            <p class=\"wine-meta\"><strong>Producent:</strong> {{this.region}}</p>\n            <p class=\"wine-meta\"><strong>Szczep:</strong> {{this.szczepy}}</p>\n            <p class=\"wine-meta\"><strong>Region:</strong> {{this.region}}</p>\n            <p class=\"wine-meta\"><strong>Alk:</strong> {{this.alcohol}}</p>\n            <p class=\"wine-desc\">{{this.description}}</p>\n            <p class=\"wine-meta\"><strong>Cena:</strong> {{this.price1}}</p>\n          </div>\n        </div>\n      {{/each}}\n\n    </div>\n  {{/each}}\n{{/each}}\n\n</body>\n</html>\n",
+    "cssContent": "/* Dodatkowe style CSS */\n.wine-card:hover {\n    transform: translateY(-2px);\n    box-shadow: 0 8px 15px rgba(0,0,0,0.15);\n    transition: all 0.3s ease;\n}\n\n@media print {\n    body {\n        background: white;\n    }\n    \n    .wine-card {\n        box-shadow: none;\n        border: 1px solid #ddd;\n    }\n}",
+    "jsContent": "",
+    "thumbnailUrl": "",
+    "placeholders": [],
+    "sampleData": {},
+    "isPublic": false,
+    "tags": [],
+    "version": "1.0.0",
+    "status": "active",
+    "metadata": {},
+    "pdfSettings": {
+      "printBackground": true
+    },
+    "createdAt": "2026-02-16T13:28:17.418Z",
+    "updatedAt": "2026-02-17T15:55:57.736Z"
+  },
+  {
+    "id": "cf5a977e-d95a-44fc-9a60-bbbdbbc2a180",
+    "name": "Header10proc-3x30proc",
+    "description": "",
+    "category": "general",
+    "htmlContent": "<!DOCTYPE html>\n<html lang=\"pl\">\n<head>\n<meta charset=\"UTF-8\">\n\n<style>\n@page {\n    size: A4;\n    margin: 0mm;\n}\n\nbody {\n    margin: 0;\n    font-family: Arial, sans-serif;\n}\n\n/* Każda strona */\n.page {\n    width: 210mm;\n    height: 297mm;\n    display: grid;\n    grid-template-rows: 30mm 89mm 89mm 89mm;\n    break-after: page;\n    box-sizing: border-box;\n}\n\n/* Header */\n.header {\n    background: #eeeeee;\n    display: flex;\n    align-items: center;\n    padding: 0 15mm;\n    font-size: 18pt;\n    font-weight: bold;\n}\n\n/* Rząd z winem */\n.row {\n    display: flex;\n    padding: 10mm 15mm;\n    border-top: 1px solid #000;\n    box-sizing: border-box;\n    break-inside: avoid;\n}\n\n/* Kolumna obrazka */\n.image-col {\n    width: 30%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n/* Obrazek */\n.product-image {\n    max-width: 100%;\n    max-height: 70mm;\n    object-fit: contain;\n}\n\n/* Kolumna treści */\n.content-col {\n    width: 70%;\n    padding-left: 10mm;\n}\n\nh4 {\n    margin: 0 0 5mm 0;\n    font-size: 14pt;\n}\n\np {\n    margin: 2mm 0;\n    font-size: 10pt;\n}\n  \n\n</style>\n\n</head>\n<body>\n\n{{#each collection.winesByCategory}}\n \n    <div class=\"page\">\n        <div class=\"header\">\n            {{category}}\n        </div>\n\n        {{#each wines}}\n        <div class=\"row\">\n\n            <div class=\"image-col\">\n                <img class=\"product-image\"\n                     src=\"https://witrynarium.pl{{this.image}}\">\n            </div>\n\n            <div class=\"content-col\">\n              <p><strong>Nr. Kat:</strong> {{this.catalogNumber}}</p>\n                <h4>{{this.name}}</h4>\n                <p><strong>Rodzaj:</strong> {{this.type}} / {{this.category}}</p>\n                <p><strong>Producent:</strong> {{this.producent}}</p>\n                <p><strong>Szczep:</strong> {{this.szczepy}}</p>\n                <p><strong>Region:</strong> {{this.region}}</p>\n                <p>{{this.description}}</p>\n            </div>\n\n        </div>\n        {{/each}}\n\n    </div>\n\n\n{{/each}}\n\n</body>\n</html>\n",
+    "cssContent": "/* Dodatkowe style CSS */\n",
+    "jsContent": "await page.pdf({\n  format: 'A4',\n  printBackground: true,\n  preferCSSPageSize: true\n});\n",
+    "thumbnailUrl": "",
+    "placeholders": [],
+    "sampleData": {},
+    "isPublic": false,
+    "tags": [],
+    "version": "1.0.0",
+    "status": "active",
+    "metadata": {},
+    "pdfSettings": {
+      "printBackground": true
+    },
+    "createdAt": "2026-02-17T10:21:58.950Z",
+    "updatedAt": "2026-02-17T12:41:54.642Z"
+  },
+  {
+    "id": "d8111491-a947-4234-bf95-06a09560e96e",
+    "name": "3 produkty i header",
+    "description": "",
+    "category": "general",
+    "htmlContent": "<!DOCTYPE html>\n<html lang=\"pl\">\n<head>\n<meta charset=\"UTF-8\" />\n\n<style>\n@page { size: A4; margin: 0; }\n\nhtml, body {\n  margin: 0;\n  padding: 0;\n  font-family: Arial, sans-serif;\n}\n\n/* ✅ 1 strona A4 - FLEX zamiast grid-template-rows */\n.page {\n  width: 210mm;\n  height: 297mm;\n  display: flex;\n  flex-direction: column;\n  page-break-after: always;\n  break-after: page;\n  box-sizing: border-box;\n}\n\n/* Header - stała wysokość */\n.header {\n  background: #eeeeee;\n  height: 30mm;\n  flex-shrink: 0;\n  display: flex;\n  align-items: center;\n  padding: 0 15mm;\n  font-size: 18pt;\n  font-weight: 700;\n  box-sizing: border-box;\n}\n\n/* ✅ Wiersz z winem - każdy zajmuje 1/3 pozostałej wysokości */\n.wine-row {\n  flex: 1;\n  display: grid;\n  grid-template-columns: 40mm 1fr; /* obrazek + treść */\n  gap: 8mm;\n  padding: 8mm 15mm;\n  border-top: 0.3mm solid #000;\n  box-sizing: border-box;\n  overflow: hidden;       /* ✅ zabezpiecza przed “wypychem” na kolejną stronę */\n}\n\n/* Pudełko na obraz — stały rozmiar, żeby zawsze było w całości */\n.wine-imgbox{\n  width: 40mm;           /* tyle co kolumna obrazka */\n  height: 73mm;          /* dopasowane do layoutu (możemy skorygować) */\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n/* Obraz ma się zmieścić w pudełku w całości */\n.wine-imgbox img{\n  max-width: 100%;\n  max-height: 100%;\n  width: auto;\n  height: auto;\n  object-fit: contain;\n  display: block;\n}\n\n\n/* Teksty */\n.wine-title {\n  margin: 0 0 2mm 0;\n  font-size: 13pt;\n}\n\n.wine-meta {\n  margin: 0 0 1.5mm 0;\n  font-size: 10pt;\n}\n\n.wine-desc {\n  margin: 2mm 0 0 0;\n  font-size: 9.5pt;\n  line-height: 1.25;\n}\n</style>\n</head>\n\n<body>\n\n{{#each collection.winesByCategory}}\n  {{#each pages}}\n    <div class=\"page\">\n      <div class=\"header\">Wina: {{category}}</div>\n\n      {{#each this}}\n        <div class=\"wine-row\">\n          <div class=\"wine-imgbox\">\n    <img src=\"https://witrynarium.pl{{this.image}}\" alt=\"\">\n  </div>\n          <div>\n            <p class=\"wine-meta\"><strong>Nr kat:</strong> {{this.catalogNumber}}</p>\n            <h3 class=\"wine-title\">{{this.name}}</h3>\n            <p class=\"wine-meta\"><strong>Rodzaj wina i pojemność: </strong> {{this.category}} | {{this.type}} | {{this.poj}}</p>\n            <p class=\"wine-meta\"><strong>Producent:</strong> {{this.region}}</p>\n            <p class=\"wine-meta\"><strong>Szczep:</strong> {{this.szczepy}}</p>\n            <p class=\"wine-meta\"><strong>Region:</strong> {{this.region}}</p>\n            <p class=\"wine-meta\"><strong>Alk:</strong> {{this.alcohol}}</p>\n            <p class=\"wine-desc\">{{this.description}}</p>\n            <p class=\"wine-meta\"><strong>Cena:</strong> {{this.price1}}</p>\n          </div>\n        </div>\n      {{/each}}\n\n    </div>\n  {{/each}}\n{{/each}}\n\n</body>\n</html>\n",
+    "cssContent": "/* Dodatkowe style CSS */\n",
+    "jsContent": "",
+    "thumbnailUrl": "",
+    "placeholders": [],
+    "sampleData": {},
+    "isPublic": false,
+    "tags": [],
+    "version": "1.0.0",
+    "status": "active",
+    "metadata": {},
+    "pdfSettings": {
+      "printBackground": true
+    },
+    "createdAt": "2026-02-17T11:38:36.829Z",
+    "updatedAt": "2026-02-17T15:55:24.949Z"
   }
 ]

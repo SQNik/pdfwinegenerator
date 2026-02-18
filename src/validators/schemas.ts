@@ -125,6 +125,7 @@ export const collectionSchema = Joi.object({
   status: Joi.string().valid('active', 'archived', 'draft').default('active'),
   dynamicFields: Joi.object().pattern(Joi.string(), Joi.any()).default({}),
   metadata: Joi.object().pattern(Joi.string(), Joi.any()).default({}),
+  coverImage: Joi.string().allow('', null).optional(), // URL/path to cover image
   createdAt: Joi.string().isoDate().required(),
   updatedAt: Joi.string().isoDate().required()
 });

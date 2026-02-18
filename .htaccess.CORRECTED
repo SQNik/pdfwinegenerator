@@ -1,0 +1,41 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/srv52568/domains/ratunek.it"
+PassengerBaseURI "/"
+PassengerNodejs "/home/srv52568/nodevenv/domains/ratunek.it/22/bin/node"
+PassengerAppType node
+PassengerStartupFile dist/server.js
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+
+# Enable rewrite engine
+RewriteEngine On
+
+# Preserve original request in header
+RewriteCond %{REQUEST_URI} !^/\.well-known/
+RewriteCond %{HTTP:Upgrade} websocket [NC]
+RewriteCond %{HTTP:Connection} upgrade [NC]
+RewriteRule .* ws://127.0.0.1:3001%{REQUEST_URI} [P,L]
+
+# Proxy all requests to Node.js app
+RewriteCond %{REQUEST_URI} !^/\.well-known/
+RewriteRule ^(.*)$ http://127.0.0.1:3001/$1 [P,L]
+
+# Enable proxy
+ProxyPreserveHost On
+ProxyPass /.well-known/ !
+ProxyPass / http://127.0.0.1:3001/
+ProxyPassReverse / http://127.0.0.1:3001/
+
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION BEGIN
+<IfModule Litespeed>
+SetEnv CORS_CREDENTIALS true
+SetEnv CORS_ORIGIN https://pdf.wsparcie-24.pl,https://ratunek.it
+SetEnv ENABLE_COMPRESSION true
+SetEnv ENABLE_ETAG true
+SetEnv LOG_LEVEL info
+SetEnv NODE_ENV production
+SetEnv PORT 3001
+SetEnv RATE_LIMIT_WINDOW_MS 900000
+SetEnv RATE_LIMIT_MAX_REQUESTS 10000
+SetEnv STATIC_CACHE_MAX_AGE 86400
+</IfModule>
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION END

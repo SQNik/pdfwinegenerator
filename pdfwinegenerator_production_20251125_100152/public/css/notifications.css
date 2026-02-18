@@ -1,0 +1,295 @@
+/**
+ * Notification Styles
+ * Modern toast notification styling
+ */
+
+.notification-container {
+    position: fixed;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    pointer-events: none;
+    max-width: 420px;
+    width: 100%;
+}
+
+/* Position variants */
+.notification-top-right {
+    top: var(--space-lg);
+    right: var(--space-lg);
+}
+
+.notification-top-left {
+    top: var(--space-lg);
+    left: var(--space-lg);
+}
+
+.notification-bottom-right {
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+}
+
+.notification-bottom-left {
+    bottom: var(--space-lg);
+    left: var(--space-lg);
+}
+
+.notification-top-center {
+    top: var(--space-lg);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.notification-bottom-center {
+    bottom: var(--space-lg);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Notification item */
+.notification {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    padding: var(--space-md);
+    border-left: 4px solid;
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+/* Left-side notifications slide from left */
+.notification-top-left .notification,
+.notification-bottom-left .notification {
+    transform: translateX(-100%);
+}
+
+.notification-top-center .notification,
+.notification-bottom-center .notification {
+    transform: translateY(-100%);
+}
+
+/* Show animation */
+.notification-show {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+}
+
+/* Hide animation */
+.notification-hide {
+    opacity: 0;
+    transform: translateX(100%) scale(0.8);
+}
+
+.notification-top-left .notification-hide,
+.notification-bottom-left .notification-hide {
+    transform: translateX(-100%) scale(0.8);
+}
+
+.notification-top-center .notification-hide,
+.notification-bottom-center .notification-hide {
+    transform: translateY(-100%) scale(0.8);
+}
+
+/* Notification types */
+.notification-success {
+    border-left-color: #10b981;
+}
+
+.notification-success .notification-icon {
+    color: #10b981;
+}
+
+.notification-error {
+    border-left-color: #ef4444;
+}
+
+.notification-error .notification-icon {
+    color: #ef4444;
+}
+
+.notification-warning {
+    border-left-color: #f59e0b;
+}
+
+.notification-warning .notification-icon {
+    color: #f59e0b;
+}
+
+.notification-info {
+    border-left-color: #3b82f6;
+}
+
+.notification-info .notification-icon {
+    color: #3b82f6;
+}
+
+/* Notification components */
+.notification-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.notification-icon i {
+    animation: notification-icon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes notification-icon-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+.notification-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.notification-message {
+    color: var(--color-text-primary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.notification-action {
+    align-self: flex-start;
+    background: transparent;
+    border: 1px solid var(--color-border-light);
+    color: var(--color-accent);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.notification-action:hover {
+    background: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+
+.notification-close {
+    background: transparent;
+    border: none;
+    color: var(--color-text-tertiary);
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-base);
+    flex-shrink: 0;
+}
+
+.notification-close:hover {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+}
+
+.notification-close i {
+    font-size: 1rem;
+}
+
+/* Progress bar for timed notifications */
+.notification-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--color-accent);
+    border-radius: 0 0 0 var(--radius-lg);
+    animation: notification-progress 5s linear;
+}
+
+@keyframes notification-progress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0;
+    }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .notification-container {
+        max-width: calc(100% - 2rem);
+        left: 1rem !important;
+        right: 1rem !important;
+        transform: none !important;
+    }
+    
+    .notification-top-center,
+    .notification-bottom-center {
+        left: 1rem !important;
+        transform: none !important;
+    }
+    
+    .notification {
+        font-size: 0.875rem;
+    }
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .notification {
+    background: var(--color-bg-secondary);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .notification-action {
+    border-color: var(--color-border-light);
+}
+
+[data-theme="dark"] .notification-close:hover {
+    background: var(--color-bg-tertiary);
+}
+
+/* Loading animation */
+.notification-info .notification-icon i.bi-arrow-clockwise {
+    animation: notification-spin 1s linear infinite;
+}
+
+@keyframes notification-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Hover effect */
+.notification:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px) translateX(0);
+}
+
+.notification-top-left .notification:hover,
+.notification-bottom-left .notification:hover {
+    transform: translateY(-2px) translateX(0);
+}

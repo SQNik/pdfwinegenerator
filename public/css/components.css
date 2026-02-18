@@ -1,0 +1,705 @@
+/**
+ * Components CSS - Standardowe komponenty Design System
+ * Wszystkie reusable komponenty w jednym miejscu
+ */
+
+/* ========================================
+   BUTTONS - Przyciski
+   ======================================== */
+
+.ds-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--ds-space-2);
+    padding: var(--ds-space-3) var(--ds-space-5);
+    border-radius: var(--ds-radius-md);
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-semibold);
+    font-family: var(--ds-font-family);
+    line-height: var(--ds-line-height-none);
+    border: var(--ds-border-width-thin) solid transparent;
+    cursor: pointer;
+    transition: all var(--ds-transition-fast);
+    text-decoration: none;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.ds-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ds-shadow-md);
+}
+
+.ds-btn:active {
+    transform: translateY(0);
+}
+
+.ds-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Primary Button */
+.ds-btn-primary {
+    background: var(--ds-color-primary);
+    color: white;
+    border-color: var(--ds-color-primary);
+}
+
+.ds-btn-primary:hover {
+    background: var(--ds-color-primary-dark);
+    border-color: var(--ds-color-primary-dark);
+    color: white;
+}
+
+/* Secondary Button */
+.ds-btn-secondary {
+    background: var(--ds-color-neutral-100);
+    color: var(--ds-color-neutral-700);
+    border-color: var(--ds-color-neutral-300);
+}
+
+.ds-btn-secondary:hover {
+    background: var(--ds-color-neutral-200);
+    color: var(--ds-color-neutral-900);
+    border-color: var(--ds-color-neutral-400);
+}
+
+/* Ghost Button */
+.ds-btn-ghost {
+    background: transparent;
+    color: var(--ds-color-neutral-700);
+    border-color: transparent;
+}
+
+.ds-btn-ghost:hover {
+    background: var(--ds-color-neutral-100);
+    color: var(--ds-color-neutral-900);
+}
+
+/* Danger Button */
+.ds-btn-danger {
+    background: var(--ds-color-error);
+    color: white;
+    border-color: var(--ds-color-error);
+}
+
+.ds-btn-danger:hover {
+    background: var(--ds-color-error-dark);
+    border-color: var(--ds-color-error-dark);
+}
+
+/* Success Button */
+.ds-btn-success {
+    background: var(--ds-color-success);
+    color: white;
+    border-color: var(--ds-color-success);
+}
+
+.ds-btn-success:hover {
+    background: var(--ds-color-success-dark);
+    border-color: var(--ds-color-success-dark);
+}
+
+/* Outline Variants */
+.ds-btn-outline-primary {
+    background: transparent;
+    color: var(--ds-color-primary);
+    border-color: var(--ds-color-primary);
+}
+
+.ds-btn-outline-primary:hover {
+    background: var(--ds-color-primary);
+    color: white;
+}
+
+/* Size Variants */
+.ds-btn-sm {
+    padding: var(--ds-space-2) var(--ds-space-4);
+    font-size: var(--ds-font-size-xs);
+}
+
+.ds-btn-lg {
+    padding: var(--ds-space-4) var(--ds-space-6);
+    font-size: var(--ds-font-size-md);
+}
+
+.ds-btn-xl {
+    padding: var(--ds-space-5) var(--ds-space-8);
+    font-size: var(--ds-font-size-lg);
+}
+
+/* Icon Only Button */
+.ds-btn-icon {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+}
+
+.ds-btn-icon.ds-btn-sm {
+    width: 32px;
+    height: 32px;
+}
+
+.ds-btn-icon.ds-btn-lg {
+    width: 48px;
+    height: 48px;
+}
+
+/* Full Width Button */
+.ds-btn-block {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Button Group */
+.ds-btn-group {
+    display: inline-flex;
+    gap: var(--ds-space-2);
+}
+
+/* ========================================
+   CARDS - Karty
+   ======================================== */
+
+.ds-card {
+    background: var(--ds-color-neutral-50);
+    border: var(--ds-border-width-thin) solid var(--ds-border-color-light);
+    border-radius: var(--ds-radius-lg);
+    box-shadow: var(--ds-shadow-sm);
+    transition: all var(--ds-transition-base);
+    overflow: hidden;
+}
+
+.ds-card-header {
+    padding: var(--ds-space-6);
+    border-bottom: var(--ds-border-width-thin) solid var(--ds-border-color-light);
+    background: var(--ds-color-neutral-50);
+}
+
+.ds-card-body {
+    padding: var(--ds-space-6);
+}
+
+.ds-card-footer {
+    padding: var(--ds-space-6);
+    border-top: var(--ds-border-width-thin) solid var(--ds-border-color-light);
+    background: var(--ds-color-neutral-100);
+}
+
+.ds-card-title {
+    font-size: var(--ds-font-size-lg);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--ds-color-neutral-900);
+    margin: 0;
+    line-height: var(--ds-line-height-tight);
+}
+
+.ds-card-subtitle {
+    font-size: var(--ds-font-size-sm);
+    color: var(--ds-color-neutral-600);
+    margin: var(--ds-space-1) 0 0 0;
+    line-height: var(--ds-line-height-normal);
+}
+
+/* Card Variants */
+.ds-card-hoverable:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--ds-shadow-xl);
+    border-color: var(--ds-color-primary);
+}
+
+.ds-card-clickable {
+    cursor: pointer;
+}
+
+.ds-card-flat {
+    box-shadow: none;
+    border-color: var(--ds-border-color-light);
+}
+
+/* ========================================
+   STAT CARDS - Karty statystyk
+   ======================================== */
+
+.ds-stat-card {
+    background: var(--ds-color-neutral-50);
+    border: var(--ds-border-width-thin) solid var(--ds-border-color-light);
+    border-radius: var(--ds-radius-lg);
+    padding: var(--ds-space-6);
+    transition: all var(--ds-transition-base);
+    cursor: pointer;
+}
+
+.ds-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--ds-shadow-lg);
+    border-color: var(--ds-color-primary);
+}
+
+.ds-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--ds-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--ds-font-size-2xl);
+    margin-bottom: var(--ds-space-4);
+}
+
+.ds-stat-icon-primary {
+    background: var(--ds-color-primary-bg);
+    color: var(--ds-color-primary);
+}
+
+.ds-stat-icon-success {
+    background: var(--ds-color-success-bg);
+    color: var(--ds-color-success);
+}
+
+.ds-stat-icon-warning {
+    background: var(--ds-color-warning-bg);
+    color: var(--ds-color-warning);
+}
+
+.ds-stat-icon-error {
+    background: var(--ds-color-error-bg);
+    color: var(--ds-color-error);
+}
+
+.ds-stat-icon-info {
+    background: var(--ds-color-info-bg);
+    color: var(--ds-color-info);
+}
+
+.ds-stat-value {
+    font-size: var(--ds-font-size-4xl);
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--ds-color-neutral-900);
+    line-height: var(--ds-line-height-tight);
+    margin-bottom: var(--ds-space-2);
+}
+
+.ds-stat-label {
+    font-size: var(--ds-font-size-sm);
+    color: var(--ds-color-neutral-600);
+    font-weight: var(--ds-font-weight-medium);
+    line-height: var(--ds-line-height-normal);
+}
+
+.ds-stat-change {
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-medium);
+    margin-top: var(--ds-space-2);
+}
+
+.ds-stat-change-positive {
+    color: var(--ds-color-success);
+}
+
+.ds-stat-change-negative {
+    color: var(--ds-color-error);
+}
+
+/* ========================================
+   GRIDS - Siatki
+   ======================================== */
+
+.ds-grid {
+    display: grid;
+    gap: var(--ds-space-6);
+}
+
+/* Auto-fit responsive grid */
+.ds-grid-auto {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Fixed column grids */
+.ds-grid-1 { grid-template-columns: repeat(1, 1fr); }
+.ds-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.ds-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.ds-grid-4 { grid-template-columns: repeat(4, 1fr); }
+.ds-grid-5 { grid-template-columns: repeat(5, 1fr); }
+.ds-grid-6 { grid-template-columns: repeat(6, 1fr); }
+
+/* Stats Grid (specialized) */
+.ds-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--ds-space-6);
+    margin-bottom: var(--ds-space-8);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1024px) {
+    .ds-grid-4,
+    .ds-grid-5,
+    .ds-grid-6 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .ds-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .ds-grid-2,
+    .ds-grid-3,
+    .ds-grid-4,
+    .ds-grid-5,
+    .ds-grid-6 {
+        grid-template-columns: 1fr;
+    }
+    .ds-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Gap variants */
+.ds-gap-0 { gap: 0; }
+.ds-gap-1 { gap: var(--ds-space-1); }
+.ds-gap-2 { gap: var(--ds-space-2); }
+.ds-gap-3 { gap: var(--ds-space-3); }
+.ds-gap-4 { gap: var(--ds-space-4); }
+.ds-gap-5 { gap: var(--ds-space-5); }
+.ds-gap-6 { gap: var(--ds-space-6); }
+.ds-gap-8 { gap: var(--ds-space-8); }
+
+/* ========================================
+   PAGE HEADER - Nagłówek strony
+   ======================================== */
+
+.ds-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--ds-space-8);
+    gap: var(--ds-space-6);
+    flex-wrap: wrap;
+}
+
+.ds-page-header-content {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-4);
+    flex: 1;
+    min-width: 0;
+}
+
+.ds-page-header-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--ds-radius-lg);
+    background: var(--ds-color-primary-bg);
+    color: var(--ds-color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--ds-font-size-2xl);
+    flex-shrink: 0;
+}
+
+.ds-page-title {
+    font-size: var(--ds-font-size-3xl);
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--ds-color-neutral-900);
+    margin: 0;
+    line-height: var(--ds-line-height-tight);
+}
+
+.ds-page-subtitle {
+    font-size: var(--ds-font-size-base);
+    color: var(--ds-color-neutral-600);
+    margin: var(--ds-space-1) 0 0 0;
+    line-height: var(--ds-line-height-normal);
+}
+
+.ds-page-header-actions {
+    display: flex;
+    gap: var(--ds-space-3);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .ds-page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .ds-page-header-actions {
+        width: 100%;
+    }
+    
+    .ds-page-title {
+        font-size: var(--ds-font-size-2xl);
+    }
+}
+
+/* ========================================
+   TABLES - Tabele
+   ======================================== */
+
+.ds-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--ds-font-size-sm);
+}
+
+.ds-table thead {
+    background: var(--ds-color-neutral-100);
+    border-bottom: var(--ds-border-width-medium) solid var(--ds-border-color-medium);
+}
+
+.ds-table th {
+    padding: var(--ds-space-4);
+    text-align: left;
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--ds-color-neutral-900);
+    white-space: nowrap;
+}
+
+.ds-table td {
+    padding: var(--ds-space-4);
+    border-bottom: var(--ds-border-width-thin) solid var(--ds-border-color-light);
+    color: var(--ds-color-neutral-700);
+}
+
+.ds-table tbody tr:hover {
+    background: var(--ds-color-neutral-100);
+}
+
+.ds-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Table Variants */
+.ds-table-striped tbody tr:nth-child(even) {
+    background: var(--ds-color-neutral-100);
+}
+
+.ds-table-bordered {
+    border: var(--ds-border-width-thin) solid var(--ds-border-color-light);
+}
+
+.ds-table-bordered th,
+.ds-table-bordered td {
+    border: var(--ds-border-width-thin) solid var(--ds-border-color-light);
+}
+
+/* ========================================
+   BADGES - Odznaki
+   ======================================== */
+
+.ds-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--ds-space-1) var(--ds-space-3);
+    border-radius: var(--ds-radius-full);
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-semibold);
+    line-height: var(--ds-line-height-none);
+    white-space: nowrap;
+}
+
+.ds-badge-primary {
+    background: var(--ds-color-primary-bg);
+    color: var(--ds-color-primary-dark);
+}
+
+.ds-badge-success {
+    background: var(--ds-color-success-bg);
+    color: var(--ds-color-success-dark);
+}
+
+.ds-badge-warning {
+    background: var(--ds-color-warning-bg);
+    color: var(--ds-color-warning-dark);
+}
+
+.ds-badge-error {
+    background: var(--ds-color-error-bg);
+    color: var(--ds-color-error-dark);
+}
+
+.ds-badge-info {
+    background: var(--ds-color-info-bg);
+    color: var(--ds-color-info-dark);
+}
+
+.ds-badge-neutral {
+    background: var(--ds-color-neutral-200);
+    color: var(--ds-color-neutral-700);
+}
+
+/* ========================================
+   FORMS - Formularze
+   ======================================== */
+
+.ds-form-group {
+    margin-bottom: var(--ds-space-5);
+}
+
+.ds-label {
+    display: block;
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-medium);
+    color: var(--ds-color-neutral-900);
+    margin-bottom: var(--ds-space-2);
+}
+
+.ds-input,
+.ds-select,
+.ds-textarea {
+    width: 100%;
+    padding: var(--ds-space-3) var(--ds-space-4);
+    border: var(--ds-border-width-thin) solid var(--ds-border-color-light);
+    border-radius: var(--ds-radius-md);
+    font-size: var(--ds-font-size-base);
+    font-family: var(--ds-font-family);
+    color: var(--ds-color-neutral-900);
+    background: var(--ds-color-neutral-50);
+    transition: all var(--ds-transition-fast);
+}
+
+.ds-input:focus,
+.ds-select:focus,
+.ds-textarea:focus {
+    outline: none;
+    border-color: var(--ds-color-primary);
+    box-shadow: 0 0 0 3px var(--ds-color-primary-bg);
+}
+
+.ds-input::placeholder,
+.ds-textarea::placeholder {
+    color: var(--ds-color-neutral-500);
+}
+
+.ds-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.ds-help-text {
+    font-size: var(--ds-font-size-xs);
+    color: var(--ds-color-neutral-600);
+    margin-top: var(--ds-space-2);
+}
+
+.ds-form-error {
+    font-size: var(--ds-font-size-xs);
+    color: var(--ds-color-error);
+    margin-top: var(--ds-space-2);
+}
+
+/* ========================================
+   EMPTY STATE - Stan pusty
+   ======================================== */
+
+.ds-empty-state {
+    text-align: center;
+    padding: var(--ds-space-12) var(--ds-space-6);
+}
+
+.ds-empty-state-icon {
+    font-size: var(--ds-font-size-5xl);
+    color: var(--ds-color-neutral-400);
+    margin-bottom: var(--ds-space-4);
+}
+
+.ds-empty-state-title {
+    font-size: var(--ds-font-size-xl);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--ds-color-neutral-900);
+    margin-bottom: var(--ds-space-2);
+}
+
+.ds-empty-state-description {
+    font-size: var(--ds-font-size-base);
+    color: var(--ds-color-neutral-600);
+    margin-bottom: var(--ds-space-6);
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ========================================
+   DIVIDER - Separator
+   ======================================== */
+
+.ds-divider {
+    height: var(--ds-border-width-thin);
+    background: var(--ds-border-color-light);
+    border: none;
+    margin: var(--ds-space-6) 0;
+}
+
+.ds-divider-vertical {
+    width: var(--ds-border-width-thin);
+    height: auto;
+    background: var(--ds-border-color-light);
+    margin: 0 var(--ds-space-4);
+}
+
+/* ========================================
+   LOADING - Ładowanie
+   ======================================== */
+
+.ds-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--ds-color-neutral-300);
+    border-top-color: var(--ds-color-primary);
+    border-radius: 50%;
+    animation: ds-spin 0.8s linear infinite;
+}
+
+@keyframes ds-spin {
+    to { transform: rotate(360deg); }
+}
+
+.ds-spinner-lg {
+    width: 40px;
+    height: 40px;
+    border-width: 4px;
+}
+
+/* ========================================
+   AVATARS - Awatary
+   ======================================== */
+
+.ds-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--ds-radius-full);
+    background: var(--ds-color-neutral-300);
+    color: var(--ds-color-neutral-700);
+    font-weight: var(--ds-font-weight-semibold);
+    overflow: hidden;
+}
+
+.ds-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ds-avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: var(--ds-font-size-xs);
+}
+
+.ds-avatar-lg {
+    width: 56px;
+    height: 56px;
+    font-size: var(--ds-font-size-lg);
+}

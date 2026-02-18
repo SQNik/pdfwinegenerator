@@ -1,65 +1,5 @@
 [
   {
-    "id": "collection_1761059604446_4pu9cmw9e",
-    "name": "Wina-przykladowe",
-    "description": "Wina z dostosowaną wielkością obrazów. W różnych kategoriach",
-    "wines": [
-      "470122",
-      "230119",
-      "600120",
-      "1630118",
-      "680709",
-      "111106",
-      "111102",
-      "630103",
-      "111101",
-      "555509",
-      "680706",
-      "230110",
-      "230116"
-    ],
-    "tags": [],
-    "status": "active",
-    "dynamicFields": {
-      "field_1761666965990_sifizd511": "Karta Win",
-      "field_1761664996551_94zlce2fl": "https://witrynarium.pl/images/okladki/okladka-wilczy.png",
-      "field_1761734592525_hc8ce2yat": null,
-      "field_1761734694559_ufq9yy8sj": null,
-      "field_1761734714059_t37imcg0c": null
-    },
-    "metadata": {},
-    "createdAt": "2025-10-21T15:13:24.445Z",
-    "updatedAt": "2025-10-31T10:18:14.821Z",
-    "pdfBackground": "/images/okladki/okladka-test-300dpi.jpg"
-  },
-  {
-    "id": "collection_1761743421442_umm7bc8wj",
-    "name": "Nazwa testow",
-    "description": "",
-    "wines": [
-      "600120",
-      "1630114",
-      "230104",
-      "230119",
-      "630141",
-      "181006",
-      "040626",
-      "630142"
-    ],
-    "tags": [],
-    "status": "active",
-    "dynamicFields": {
-      "field_1761666965990_sifizd511": "Karta Wina",
-      "field_1761664996551_94zlce2fl": null,
-      "field_1761734592525_hc8ce2yat": null,
-      "field_1761734694559_ufq9yy8sj": null,
-      "field_1761734714059_t37imcg0c": null
-    },
-    "metadata": {},
-    "createdAt": "2025-10-29T13:10:21.442Z",
-    "updatedAt": "2025-10-29T13:10:21.442Z"
-  },
-  {
     "id": "collection_1761906234546_3wa5jo0dq",
     "name": "10produktow",
     "description": "",
@@ -73,19 +13,90 @@
       "111106",
       "111102",
       "630103",
-      "080441"
+      "080441",
+      "080422",
+      "2120107",
+      "181001"
     ],
     "tags": [],
     "status": "active",
     "dynamicFields": {
-      "field_1761666965990_sifizd511": "Karta Win",
-      "field_1761664996551_94zlce2fl": "https://witrynarium.pl/images/okladki/okladka-wilczy.png",
-      "field_1761734592525_hc8ce2yat": null,
-      "field_1761734694559_ufq9yy8sj": null,
-      "field_1761734714059_t37imcg0c": null
+      "field_1761666965990_sifizd511": "Karta Win Białych",
+      "field_1732468800000_okladka": "/images/okladki/okladka-placeholder.png",
+      "field_1771246409077_pboulxh1m": null
     },
     "metadata": {},
     "createdAt": "2025-10-31T10:23:54.546Z",
-    "updatedAt": "2025-10-31T10:23:54.546Z"
+    "updatedAt": "2026-02-17T18:58:52.060Z",
+    "lastGeneratedPdf": {
+      "url": "/pdfs/collections/10produktow_A4_sk_adane_w_V_2026-02-17.pdf",
+      "filename": "10produktow_A4_sk_adane_w_V_2026-02-17.pdf",
+      "templateId": "4082fd40-ccd5-4df1-bffa-23d652ef5c26",
+      "templateName": "A4 składane w V",
+      "generatedAt": "2026-02-17T18:58:52.060Z"
+    },
+    "coverImage": ""
+  },
+  {
+    "id": "collection_1763726135763_ce9zywto2",
+    "name": "Karta wkładka",
+    "description": "Karta wkładka",
+    "wines": [
+      "630103",
+      "111102",
+      "630142",
+      "040626",
+      "230104"
+    ],
+    "tags": [],
+    "status": "active",
+    "dynamicFields": {
+      "field_1761666965990_sifizd511": "Karta Win dla firmy xxx",
+      "field_1732468800000_okladka": "/images/okladki/okladka-placeholder.png",
+      "field_1771246409077_pboulxh1m": "500"
+    },
+    "metadata": {},
+    "createdAt": "2025-11-21T11:55:35.763Z",
+    "updatedAt": "2026-02-17T12:31:07.601Z",
+    "lastGeneratedPdf": {
+      "url": "/pdfs/collections/Karta_wk_adka_Karta_wk_adka_2026-02-17.pdf",
+      "filename": "Karta_wk_adka_Karta_wk_adka_2026-02-17.pdf",
+      "templateId": "2a33410e-6621-4af1-a21c-25be2d7aada4",
+      "templateName": "Karta wkładka",
+      "generatedAt": "2026-02-17T12:31:07.601Z"
+    }
+  },
+  {
+    "id": "collection_1771326235981_7k6cau0nd",
+    "name": "Oferta 3 kategorie",
+    "description": "",
+    "wines": [
+      "600120",
+      "230119",
+      "555505",
+      "040626",
+      "111101",
+      "680701",
+      "230113",
+      "2120103",
+      "230116"
+    ],
+    "tags": [],
+    "status": "active",
+    "dynamicFields": {
+      "field_1761666965990_sifizd511": "Oferta 9 win",
+      "field_1732468800000_okladka": null,
+      "field_1771246409077_pboulxh1m": null
+    },
+    "metadata": {},
+    "createdAt": "2026-02-17T11:03:55.981Z",
+    "updatedAt": "2026-02-17T15:56:09.935Z",
+    "lastGeneratedPdf": {
+      "url": "/pdfs/collections/Oferta_3_kategorie_Oferta_z_okladka_2026-02-17.pdf",
+      "filename": "Oferta_3_kategorie_Oferta_z_okladka_2026-02-17.pdf",
+      "templateId": "83d6c543-14f6-482a-9462-d6ed1d33de61",
+      "templateName": "Oferta z okladka",
+      "generatedAt": "2026-02-17T15:56:09.935Z"
+    }
   }
 ]

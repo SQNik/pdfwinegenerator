@@ -110,6 +110,15 @@ class CollectionsManager {
             addFieldBtn.addEventListener('click', () => this.showCreateFieldModal());
         }
 
+        // View toggle buttons
+        const viewCardsBtn = document.getElementById('viewCollectionsCards');
+        const viewTableBtn = document.getElementById('viewCollectionsTable');
+        
+        if (viewCardsBtn && viewTableBtn) {
+            viewCardsBtn.addEventListener('click', () => this.switchView('cards'));
+            viewTableBtn.addEventListener('click', () => this.switchView('table'));
+        }
+
         // Modal events
         const collectionModal = document.getElementById('collectionModal');
         if (collectionModal) {
@@ -253,6 +262,7 @@ class CollectionsManager {
 
             this.applyFilters();
             this.renderCollections();
+            this.renderCollectionsTable(); // Renderuj również tabelę przy pierwszym załadowaniu
             this.updateStats();
             
         } catch (error) {
@@ -317,6 +327,123 @@ class CollectionsManager {
         if (typeof window.updateCollectionStats === 'function') {
             window.updateCollectionStats();
         }
+    }
+
+    switchView(viewType) {
+        const cardsView = document.getElementById('collectionsCardsView');
+        const tableView = document.getElementById('collectionsTableView');
+        const cardsBtn = document.getElementById('viewCollectionsCards');
+        const tableBtn = document.getElementById('viewCollectionsTable');
+        
+        if (!cardsView || !tableView || !cardsBtn || !tableBtn) return;
+        
+        if (viewType === 'cards') {
+            cardsView.classList.remove('d-none');
+            tableView.classList.add('d-none');
+            cardsBtn.classList.add('active');
+            tableBtn.classList.remove('active');
+        } else {
+            cardsView.classList.add('d-none');
+            tableView.classList.remove('d-none');
+            cardsBtn.classList.remove('active');
+            tableBtn.classList.add('active');
+            this.renderCollectionsTable();
+        }
+    }
+
+    renderCollectionsTable() {
+        const tbody = document.getElementById('collectionsTableBody');
+        if (!tbody) return;
+        
+        if (this.filteredCollections.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: var(--space-xl); color: var(--ds-color-neutral-600);">
+                        <i class="bi bi-folder-x" style="font-size: 2.5rem; opacity: 0.3; margin-bottom: var(--space-md); display: block;"></i>
+                        <div style="font-weight: 600; margin-bottom: 4px;">Brak kolekcji</div>
+                        <div style="font-size: 0.875rem;">Kliknij "Nowa kolekcja" aby utworzyć pierwszą kolekcję</div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = this.filteredCollections.map(collection => {
+            const wineCount = collection.wines ? collection.wines.length : 0;
+            const statusBadge = this.getStatusBadge(collection.status);
+            const createdDate = new Date(collection.createdAt).toLocaleDateString('pl-PL');
+            
+            return `
+                <tr>
+                    <td style="font-weight: 600;">${collection.name}</td>
+                    <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        ${collection.description || '<span style="color: var(--ds-color-neutral-500);">—</span>'}
+                    </td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <span style="display: inline-flex; align-items: center; gap: 4px;">
+                            <i class="bi bi-bottle" style="color: var(--ds-color-primary);"></i>
+                            <strong>${wineCount}</strong>
+                        </span>
+                    </td>
+                    <td style="color: var(--ds-color-neutral-600); font-size: 0.875rem;">${createdDate}</td>
+                    <td style="color: var(--ds-color-neutral-600); font-size: 0.875rem;">
+                        ${collection.lastGeneratedPdf ? `
+                            <span title="${new Date(collection.lastGeneratedPdf.generatedAt).toLocaleString('pl-PL')}">
+                                ${new Date(collection.lastGeneratedPdf.generatedAt).toLocaleDateString('pl-PL')}
+                                <br>
+                                <small style="color: var(--ds-color-neutral-500);">${new Date(collection.lastGeneratedPdf.generatedAt).toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}</small>
+                            </span>
+                        ` : '<span style="color: var(--ds-color-neutral-500);">—</span>'}
+                    </td>
+                    <td style="font-size: 0.875rem;">
+                        ${collection.lastGeneratedPdf && collection.lastGeneratedPdf.templateName ? `
+                            <span style="display: inline-flex; align-items: center; gap: 6px;">
+                                <i class="bi bi-file-earmark-text" style="color: var(--ds-color-primary);"></i>
+                                <span title="${collection.lastGeneratedPdf.templateName}">${collection.lastGeneratedPdf.templateName}</span>
+                            </span>
+                        ` : '<span style="color: var(--ds-color-neutral-500);">—</span>'}
+                    </td>
+                    <td style="text-align: right;">
+                        <div style="display: inline-flex; gap: 4px;">
+                            <button type="button" class="ds-btn ds-btn-sm ds-btn-ghost" 
+                                    onclick="window.collectionsApp.managers.collections.viewCollection('${collection.id}')" 
+                                    title="Zobacz szczegóły">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button type="button" class="ds-btn ds-btn-sm ds-btn-ghost" 
+                                    onclick="window.collectionsApp.managers.collections.editCollection('${collection.id}')" 
+                                    title="Edytuj">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            ${collection.lastGeneratedPdf ? `
+                                <button type="button" class="ds-btn ds-btn-sm ds-btn-primary" 
+                                        onclick="window.open('${collection.lastGeneratedPdf.url}', '_blank')" 
+                                        title="Pobierz ostatnie PDF (${new Date(collection.lastGeneratedPdf.generatedAt).toLocaleString('pl-PL')})">
+                                    <i class="bi bi-file-earmark-pdf-fill"></i>
+                                </button>
+                            ` : ''}
+                            <button type="button" class="ds-btn ds-btn-sm ds-btn-ghost" 
+                                    onclick="window.collectionsApp.managers.collections.showPDFModal('${collection.id}')" 
+                                    title="Generuj nowe PDF">
+                                <i class="bi bi-file-pdf"></i>
+                            </button>
+                            <button type="button" class="ds-btn ds-btn-sm ds-btn-ghost" 
+                                    onclick="window.collectionsApp.managers.collections.exportCollection('${collection.id}')" 
+                                    title="Eksportuj JSON">
+                                <i class="bi bi-download"></i>
+                            </button>
+                            <button type="button" class="ds-btn ds-btn-sm ds-btn-ghost" 
+                                    onclick="window.collectionsApp.managers.collections.deleteCollection('${collection.id}')" 
+                                    title="Usuń"
+                                    style="color: var(--ds-color-danger);">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     }
 
     renderCollections() {
@@ -405,9 +532,20 @@ class CollectionsManager {
                                 onclick="window.collectionsApp.managers.collections.showPDFModal('${collection.id}')"
                                 style="font-size: 0.8125rem;">
                             <i class="bi bi-file-pdf"></i>
-                            PDF
+                            Generuj PDF
                         </button>
                     </div>
+                    ${collection.lastGeneratedPdf ? `
+                    <div style="display: grid; grid-template-columns: 1fr; gap: var(--space-xs); margin-bottom: var(--space-xs);">
+                        <button type="button" class="modern-btn modern-btn-sm modern-btn-success" 
+                                onclick="window.open('${collection.lastGeneratedPdf.url}', '_blank')"
+                                title="Ostatnio wygenerowany: ${new Date(collection.lastGeneratedPdf.generatedAt).toLocaleString('pl-PL')}"
+                                style="font-size: 0.8125rem;">
+                            <i class="bi bi-download"></i>
+                            Pobierz ostatni PDF
+                        </button>
+                    </div>
+                    ` : ''}
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-xs);">
                         <button type="button" class="modern-btn modern-btn-sm modern-btn-ghost" 
                                 onclick="window.collectionsApp.managers.collections.editCollection('${collection.id}')"
@@ -535,20 +673,15 @@ class CollectionsManager {
                 return;
             }
 
-            // Get custom PDF formats
-            const customFormatsResponse = await api.getCustomFormats();
-            const customFormats = customFormatsResponse.success ? 
-                customFormatsResponse.data.filter(format => format.isActive) : [];
-
-            this.showPDFGenerationModal(collectionResponse.data, templatesResponse.data, customFormats);
+            this.showPDFGenerationModal(collectionResponse.data, templatesResponse.data);
         } catch (error) {
             console.error('Failed to load PDF modal data:', error);
             this.showNotification('Błąd podczas ładowania danych dla PDF', 'error');
         }
     }
 
-    showPDFGenerationModal(collection, templates, customFormats = []) {
-        const modal = this.createPDFModal(collection, templates, customFormats);
+    showPDFGenerationModal(collection, templates) {
+        const modal = this.createPDFModal(collection, templates);
         document.body.appendChild(modal);
         
         const bsModal = new bootstrap.Modal(modal);
@@ -661,41 +794,12 @@ class CollectionsManager {
         return modal;
     }
 
-    createPDFModal(collection, templates, customFormats = []) {
+    createPDFModal(collection, templates) {
         // Filter only active templates
         const activeTemplates = templates.filter(template => template.status === 'active');
         
         const templatesOptions = activeTemplates.map(template => 
             `<option value="${template.id}">${template.name}</option>`
-        ).join('');
-
-        // Build format options - standard formats + custom formats
-        const standardFormats = [
-            { value: 'A4', label: 'A4 (210×297 mm)' },
-            { value: 'A5', label: 'A5 (148×210 mm)' },
-            { value: 'Letter', label: 'Letter (216×279 mm)' },
-            { value: 'A6', label: 'A6 (105×148 mm)' },
-            { value: 'Legal', label: 'Legal (216×356 mm)' }
-        ];
-
-        const customFormatOptions = customFormats.map(format => ({
-            value: `custom:${format.id}`,  // CRITICAL: Add 'custom:' prefix for proper detection
-            label: `${format.name} (${format.width}×${format.height} ${format.unit})`
-        }));
-
-        const allFormats = [...standardFormats, ...customFormatOptions];
-        const formatOptions = allFormats.map(format => 
-            `<option value="${format.value}"${format.value === 'A4' ? ' selected' : ''}>${format.label}</option>`
-        ).join('');
-
-        // Add separator if there are custom formats
-        const separatorHtml = customFormats.length > 0 ? 
-            '<option disabled>──── Formaty niestandardowe ────</option>' : '';
-        
-        const formatsWithSeparator = standardFormats.map(format => 
-            `<option value="${format.value}"${format.value === 'A4' ? ' selected' : ''}>${format.label}</option>`
-        ).join('') + separatorHtml + customFormatOptions.map(format => 
-            `<option value="${format.value}">${format.label}</option>`
         ).join('');
 
         const modal = document.createElement('div');
@@ -727,19 +831,7 @@ class CollectionsManager {
                                 ${templatesOptions}
                             </select>
                             <div class="form-text">
-                                Szablon określa wygląd i układ elementów w generowanym PDF.
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="pdfFormat" class="form-label">
-                                <i class="fas fa-file-pdf me-1"></i>Format PDF
-                            </label>
-                            <select class="form-select" id="pdfFormat">
-                                ${formatsWithSeparator}
-                            </select>
-                            <div class="form-text">
-                                Wybierz format strony dla dokumentu PDF. Dostępne standardowe i niestandardowe formaty.
+                                Szablon określa wygląd, układ elementów oraz format strony w generowanym PDF.
                             </div>
                         </div>
 
@@ -923,6 +1015,9 @@ class CollectionsManager {
 
             // Dynamic fields
             this.populateDynamicFields(collection);
+
+            // Cover image gallery
+            this.loadCoverImageGallery(collection);
 
             // Update modal title
             const modalTitle = document.querySelector('#collectionModal .modal-title');
@@ -1143,7 +1238,7 @@ class CollectionsManager {
                             <div id="wineFilterInfo" style="display: none;"></div>
                             
                             <!-- Lista win -->
-                            <div class="row" id="availableWines">
+                            <div id="availableWines" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--ds-space-4);">
                                 <!-- Wina będą renderowane przez renderWinesPage() -->
                             </div>
                             
@@ -1499,81 +1594,35 @@ class CollectionsManager {
         } else {
             if (noWinesMessage) noWinesMessage.style.display = 'none';
             
-            // Renderuj wina na aktualnej stronie - styl podobny do screenu z dużym zdjęciem
+            // Renderuj wina w gridzie - kompaktowy widok kart
             container.innerHTML = currentPageWines.map(wine => `
-                <div class="col-12 mb-4 wine-item" data-category="${wine.category || ''}" data-name="${wine.name.toLowerCase()}" data-region="${(wine.region || '').toLowerCase()}" data-szczepy="${(wine.szczepy || '').toLowerCase()}">
-                    <div class="card wine-card shadow-sm border-0" data-wine-catalog="${wine.catalogNumber}">
-                        <div class="row g-0">
-                            <!-- Zdjęcie butelki po lewej stronie -->
-                            <div class="col-md-3 position-relative">
-                                <div class="form-check position-absolute" style="top: 10px; right: 10px; z-index: 10;">
-                                    <input class="form-check-input wine-checkbox" type="checkbox" value="${wine.catalogNumber}" 
-                                           id="wine_${wine.catalogNumber}" ${this.selectedWineCatalogNumbers.has(wine.catalogNumber) ? 'checked' : ''}>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-center h-100 p-3" style="min-height: 200px;">
-                                    ${wine.image ? 
-                                        `<img src="${wine.image}" class="img-fluid" style="max-height: 180px; max-width: 100%; object-fit: contain;" alt="${wine.name}">` : 
-                                        `<div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 120px; height: 180px;">
-                                            <i class="bi bi-bottle text-muted" style="font-size: 3rem;"></i>
-                                        </div>`
-                                    }
-                                </div>
+                <div class="wine-item" data-category="${wine.category || ''}" data-name="${wine.name.toLowerCase()}" data-region="${(wine.region || '').toLowerCase()}" data-szczepy="${(wine.szczepy || '').toLowerCase()}">
+                    <div class="ds-card" data-wine-catalog="${wine.catalogNumber}" style="height: 100%; display: flex; flex-direction: column;">
+                        <div class="position-relative">
+                            <div class="form-check position-absolute" style="top: var(--ds-space-2); right: var(--ds-space-2); z-index: 10;">
+                                <input class="form-check-input wine-checkbox" type="checkbox" value="${wine.catalogNumber}" 
+                                       id="wine_${wine.catalogNumber}" ${this.selectedWineCatalogNumbers.has(wine.catalogNumber) ? 'checked' : ''}>
                             </div>
+                            <div class="d-flex align-items-center justify-content-center" style="height: 160px; padding: var(--ds-space-4); background: var(--ds-color-neutral-50);">
+                                ${wine.image ? 
+                                    `<img src="${wine.image}" class="img-fluid" style="max-height: 140px; max-width: 100%; object-fit: contain;" alt="${wine.name}">` : 
+                                    `<div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 80px; height: 140px;">
+                                        <i class="bi bi-bottle text-muted" style="font-size: 2.5rem;"></i>
+                                    </div>`
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="ds-card-body" style="flex: 1; display: flex; flex-direction: column;">
+                            <h6 class="fw-bold mb-2" style="font-size: var(--ds-font-size-sm); line-height: 1.3; min-height: 2.6em; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                ${wine.name}
+                            </h6>
                             
-                            <!-- Informacje o winie po prawej stronie -->
-                            <div class="col-md-9">
-                                <div class="card-body p-4">
-                                    <!-- Nazwa wina -->
-                                    <h4 class="card-title text-uppercase fw-bold mb-3" style="color: #2c3e50; letter-spacing: 0.5px;">
-                                        ${wine.name}
-                                    </h4>
-                                    
-                                    <!-- Szczegóły wina -->
-                                    <div class="row mb-3">
-                                        ${wine.szczepy ? `
-                                            <div class="col-md-6">
-                                                <strong>Szczep:</strong> <span class="text-muted">${wine.szczepy}</span>
-                                            </div>
-                                        ` : ''}
-                                        ${wine.region ? `
-                                            <div class="col-md-6">
-                                                <strong>Region:</strong> <span class="text-muted">${wine.region}</span>
-                                            </div>
-                                        ` : ''}
-                                        ${wine.category ? `
-                                            <div class="col-md-6">
-                                                <strong>Typ:</strong> <span class="text-muted">${wine.category}</span>
-                                            </div>
-                                        ` : ''}
-                                        ${wine.alcohol ? `
-                                            <div class="col-md-6">
-                                                <strong>Alkohol:</strong> <span class="text-muted">${wine.alcohol}% Vol</span>
-                                            </div>
-                                        ` : ''}
-                                        ${wine.poj ? `
-                                            <div class="col-md-6">
-                                                <strong>Pojemność:</strong> <span class="text-muted">${wine.poj}ml</span>
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                    
-                                    <!-- Opis wina jeśli jest dostępny -->
-                                    ${wine.description ? `
-                                        <div class="mb-3">
-                                            <div class="wine-description" data-wine-id="${wine.catalogNumber}">
-                                                <p class="text-muted mb-1 description-text" style="line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-                                                    ${wine.description}
-                                                </p>
-                                                ${wine.description.length > 150 ? `
-                                                    <button type="button" class="btn btn-link btn-sm p-0 text-primary expand-description" 
-                                                            onclick="window.collectionsApp.managers.collections.toggleDescription('${wine.catalogNumber}')">
-                                                        <i class="bi bi-chevron-down me-1"></i>Rozwiń opis
-                                                    </button>
-                                                ` : ''}
-                                            </div>
-                                        </div>
-                                    ` : ''}
-                                </div>
+                            <div style="font-size: var(--ds-font-size-xs); color: var(--ds-color-neutral-600); flex: 1;">
+                                ${wine.category ? `<div class="mb-1"><i class="bi bi-tag-fill me-1" style="color: var(--ds-color-primary);"></i>${wine.category}</div>` : ''}
+                                ${wine.region ? `<div class="mb-1"><i class="bi bi-geo-alt-fill me-1" style="color: var(--ds-color-primary);"></i>${wine.region}</div>` : ''}
+                                ${wine.szczepy ? `<div class="mb-1"><i class="bi bi-flower1 me-1" style="color: var(--ds-color-primary);"></i>${wine.szczepy}</div>` : ''}
+                                ${wine.alcohol ? `<div class="mb-1"><i class="bi bi-percent me-1" style="color: var(--ds-color-primary);"></i>${wine.alcohol}% Vol</div>` : ''}
                             </div>
                         </div>
                     </div>
@@ -1995,6 +2044,77 @@ class CollectionsManager {
         `;
     }
 
+    async loadCoverImageGallery(collection = null) {
+        console.log('🖼️ Loading cover image gallery');
+        const galleryContainer = document.getElementById('coverImageGallery');
+        const noImagesMsg = document.getElementById('noCoverImages');
+        
+        if (!galleryContainer) {
+            console.error('❌ Gallery container not found');
+            return;
+        }
+
+        try {
+            // Pobierz listę dostępnych okładek
+            const response = await api.getCollectionHelperCoverImages();
+            
+            if (!response.success || !response.data || response.data.length === 0) {
+                galleryContainer.style.display = 'none';
+                if (noImagesMsg) noImagesMsg.style.display = 'block';
+                console.log('ℹ️ No cover images available');
+                return;
+            }
+
+            galleryContainer.style.display = 'grid';
+            if (noImagesMsg) noImagesMsg.style.display = 'none';
+
+            // Pobierz aktualnie wybraną okładkę z kolekcji
+            const currentCover = collection?.dynamicFields?.field_1732468800000_okladka || '';
+            console.log('Current cover:', currentCover);
+
+            // Renderuj galerię
+            galleryContainer.innerHTML = response.data.map(imagePath => {
+                const fileName = imagePath.split('/').pop();
+                const isSelected = imagePath === currentCover;
+                
+                return `
+                    <div class="cover-image-item ${isSelected ? 'selected' : ''}" data-cover="${imagePath}">
+                        <img src="${imagePath}" alt="${fileName}" loading="lazy">
+                        <div class="selection-indicator">
+                            <i class="bi bi-check-lg"></i>
+                        </div>
+                        <div class="image-name">${fileName}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Dodaj obsługę kliknięć na okładki
+            galleryContainer.querySelectorAll('.cover-image-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    // Usuń zaznaczenie ze wszystkich
+                    galleryContainer.querySelectorAll('.cover-image-item').forEach(i => {
+                        i.classList.remove('selected');
+                    });
+                    
+                    // Zaznacz klikniętą
+                    item.classList.add('selected');
+                    
+                    // Zapisz wybór (będzie pobrany podczas zapisu kolekcji)
+                    console.log('Selected cover:', item.dataset.cover);
+                });
+            });
+
+            console.log('✅ Cover gallery loaded with', response.data.length, 'images');
+        } catch (error) {
+            console.error('❌ Failed to load cover images:', error);
+            galleryContainer.style.display = 'none';
+            if (noImagesMsg) {
+                noImagesMsg.style.display = 'block';
+                noImagesMsg.querySelector('p').textContent = 'Błąd podczas ładowania okładek';
+            }
+        }
+    }
+
     async saveCollection() {
         try {
             console.log('Saving collection, currentCollection:', this.currentCollection);
@@ -2053,6 +2173,11 @@ class CollectionsManager {
         // Debug: Log aktualnego stanu zaznaczonych win
         console.log('getCollectionFormData: selectedWineCatalogNumbers ma', this.selectedWineCatalogNumbers.size, 'win:', Array.from(this.selectedWineCatalogNumbers));
 
+        // Get selected cover image from gallery
+        const selectedCoverItem = document.querySelector('.cover-image-item.selected');
+        const selectedCover = selectedCoverItem ? selectedCoverItem.dataset.cover : '';
+        console.log('Selected cover from gallery:', selectedCover);
+
         // Get dynamic fields
         let dynamicFields = {};
         console.log('🔍 Collecting dynamic fields, available fields:', this.collectionFields.map(f => ({ id: f.id, name: f.name })));
@@ -2093,6 +2218,14 @@ class CollectionsManager {
                 }
             });
         }
+        
+        // Dodaj wybrane okładkę do dynamicFields (pole okladka)
+        const okladkaField = this.collectionFields.find(f => f.name.toLowerCase() === 'okladka');
+        if (okladkaField && selectedCover) {
+            dynamicFields[okladkaField.id] = selectedCover;
+            console.log(`  ✅ Added cover to field "${okladkaField.name}":`, selectedCover);
+        }
+        
         console.log('📦 Final dynamicFields object:', dynamicFields);
 
         return {
@@ -2414,61 +2547,41 @@ class CollectionsManager {
                 return;
             }
 
-            // Get selected format
-            const formatSelect = modal.querySelector('#pdfFormat');
-            const selectedFormat = formatSelect ? formatSelect.value : 'A4';
-            
-            console.log('🔍 Selected format:', selectedFormat, 'Is custom:', selectedFormat?.startsWith('custom:'));
-
             // Prepare data for Template Editor preview
+            // Format i marginesy będą pobrane z ustawień szablonu
             const templateData = {
                 collectionId: collectionId,
                 customTitle: customTitle || collection.name,
-                options: {
-                    format: selectedFormat
-                }
+                options: {}
             };
-            
-            // Only add default margins for standard formats (not custom formats)
-            // Custom formats will use their own margins defined in the format
-            if (!selectedFormat || !selectedFormat.startsWith('custom:')) {
-                console.log('📏 Adding default margins (standard format)');
-                templateData.options.margin = {
-                    top: '10mm',
-                    right: '10mm',
-                    bottom: '10mm',
-                    left: '10mm'
-                };
-            } else {
-                console.log('✨ No margins added (custom format)');
-            }
 
             console.log('Template Editor preview data:', templateData);
 
             // Generate preview using Template Editor API
-            const response = await api.previewCollectionTemplate(selectedTemplate, templateData);
+            const result = await api.previewCollectionTemplate(selectedTemplate, templateData);
 
-            if (!response || !response.ok) {
-                const errorText = response ? await response.text() : 'Nieznany błąd';
-                console.error('Preview error:', errorText);
-                throw new Error(`Błąd podczas generowania podglądu: ${errorText}`);
-            }
-
-            // Preview is returned as PDF blob - create URL and open in new tab
-            const blob = await response.blob();
-            const previewUrl = URL.createObjectURL(blob);
-            
-            // Open preview in new window/tab
-            const previewWindow = window.open(previewUrl, '_blank');
-            
-            // Clean up the URL after window is opened
-            if (previewWindow) {
-                previewWindow.onload = () => {
+            // Check if result is error object (JSON) or blob (PDF)
+            if (result instanceof Blob) {
+                // Success - got PDF blob
+                const previewUrl = URL.createObjectURL(result);
+                
+                // Open preview in new window/tab
+                const previewWindow = window.open(previewUrl, '_blank');
+                
+                // Clean up the URL after window is opened
+                if (previewWindow) {
+                    previewWindow.onload = () => {
+                        URL.revokeObjectURL(previewUrl);
+                    };
+                } else {
                     URL.revokeObjectURL(previewUrl);
-                };
+                    throw new Error('Nie udało się otworzyć okna podglądu');
+                }
+            } else if (result.success === false) {
+                // Error response (JSON)
+                throw new Error(result.error || 'Nieznany błąd podczas generowania podglądu');
             } else {
-                URL.revokeObjectURL(previewUrl);
-                throw new Error('Nie udało się otworzyć okna podglądu');
+                throw new Error('Nieprawidłowa odpowiedź z serwera');
             }
 
         } catch (error) {
@@ -2509,58 +2622,38 @@ class CollectionsManager {
             generateBtn.disabled = true;
             generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generuję...';
 
-            // Get selected format
-            const formatSelect = modal.querySelector('#pdfFormat');
-            const selectedFormat = formatSelect ? formatSelect.value : 'A4';
-            
-            console.log('🔍 Generate - Selected format:', selectedFormat, 'Is custom:', selectedFormat?.startsWith('custom:'));
-
             // Prepare data for Template Editor
+            // Format i marginesy będą pobrane z ustawień szablonu
             const templateData = {
                 collectionId: collectionId,
                 customTitle: customTitle || collection.name,
                 options: {
-                    format: selectedFormat,
                     flatten: shouldFlatten
                 }
             };
-            
-            // Only add default margins for standard formats (not custom formats)
-            // Custom formats will use their own margins defined in the format
-            if (!selectedFormat || !selectedFormat.startsWith('custom:')) {
-                console.log('📏 Generate - Adding default margins (standard format)');
-                templateData.options.margin = {
-                    top: '10mm',
-                    right: '10mm',
-                    bottom: '10mm',
-                    left: '10mm'
-                };
-            } else {
-                console.log('✨ Generate - No margins added (custom format)');
-            }
 
             // Generate PDF using Template Editor API
-            const response = await api.generateCollectionTemplate(selectedTemplate, templateData);
+            const result = await api.generateCollectionTemplate(selectedTemplate, templateData);
 
-            if (!response || !response.ok) {
-                const errorText = response ? await response.text() : 'Nieznany błąd';
-                throw new Error(`Błąd podczas generowania PDF: ${errorText}`);
+            // Check if result is error object (JSON) or blob (PDF)
+            if (result instanceof Blob) {
+                // Success - got PDF blob
+                console.log('✅ Generate PDF success - received blob:', result.size, 'bytes');
+                
+                // Close modal first
+                this.hideModal('pdfModal');
+                
+                // Show success message
+                this.showNotification('PDF został wygenerowany i zapisany. Możesz go teraz pobrać.', 'success');
+                
+                // Refresh collections to show the download button
+                await this.refresh();
+            } else if (result.success === false) {
+                // Error response (JSON)
+                throw new Error(result.error || 'Nieznany błąd podczas generowania PDF');
+            } else {
+                throw new Error('Nieprawidłowa odpowiedź z serwera');
             }
-
-            // Parse JSON response
-            const result = await response.json();
-            console.log('Generate PDF response:', result);
-
-            if (!result.success || !result.data || !result.data.pdf_url) {
-                throw new Error('Serwer nie zwrócił URL do pliku PDF');
-            }
-
-            // Open PDF in same window
-            window.location.href = result.data.pdf_url;
-
-            // Show success message and close modal
-            this.showNotification('PDF został wygenerowany pomyślnie', 'success');
-            this.hideModal('pdfModal');
 
         } catch (error) {
             console.error('Generate PDF error:', error);

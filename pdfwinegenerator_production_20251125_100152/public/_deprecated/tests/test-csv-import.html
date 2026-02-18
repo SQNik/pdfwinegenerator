@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Import CSV</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Test CSV Import</h1>
+    <button onclick="testImport()">Test Import</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testImport() {
+            const csvData = `name,region,type,alcohol,description,category,szczepy,vol,catalogNumber,image
+"Test Wine 1","Toskania","wytrawne","13.5%","Opis testowego wina 1","czerwone","Sangiovese","750ml","TEST001","/images/test1.jpg"
+"Test Wine 2","Bordeaux","półwytrawne","12%","Opis testowego wina 2","białe","Chardonnay","750ml","TEST002","/images/test2.jpg"`;
+            
+            try {
+                console.log('Sending CSV:', csvData);
+                const response = await axios.post('/api/import/csv', {
+                    csvData: csvData,
+                    clearBefore: true,
+                    validateFields: true
+                });
+                
+                console.log('Response:', response.data);
+                document.getElementById('result').innerHTML = JSON.stringify(response.data, null, 2);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = 'Error: ' + JSON.stringify(error.response?.data || error.message);
+            }
+        }
+    </script>
+</body>
+</html>

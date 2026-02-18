@@ -367,14 +367,50 @@ export class PDFService {
           dynamicFieldsByName  // Add name-based access
         };
         
+        // Build PDF options from template settings
+        const pdfOptions: any = {
+          printBackground: true // Default
+        };
+        
+        // Apply template PDF settings if they exist
+        if (template.pdfSettings) {
+          const settings = template.pdfSettings;
+          
+          // Handle custom format
+          if (settings.customFormat) {
+            pdfOptions.customFormat = settings.customFormat;
+          } else if (settings.format) {
+            pdfOptions.format = settings.format;
+          } else {
+            pdfOptions.format = 'A4'; // Fallback
+          }
+          
+          // Apply margins if specified
+          if (settings.margins) {
+            pdfOptions.margin = settings.margins;
+          }
+          
+          // Apply orientation if specified
+          if (settings.orientation) {
+            pdfOptions.orientation = settings.orientation;
+          }
+          
+          // Apply printBackground setting
+          if (settings.printBackground !== undefined) {
+            pdfOptions.printBackground = settings.printBackground;
+          }
+        } else {
+          // No template settings, use defaults
+          pdfOptions.format = 'A4';
+        }
+        
+        logger.info(`PDFService: Using PDF settings from template:`, pdfOptions);
+        
         // Generate PDF using HTML system
         const pdfBuffer = await this.generatePDFFromHTMLWithCollection(
           template.htmlContent,
           collectionData,
-          {
-            format: 'A4',  // Default format, template-specific format can be added later
-            printBackground: true
-          }
+          pdfOptions
         );
         
         // Save PDF
@@ -1571,7 +1607,8 @@ export class PDFService {
       // Konfiguracja domyślna dla PDF
       const pdfOptions: any = {
         printBackground: options.printBackground !== false,
-        displayHeaderFooter: options.displayHeaderFooter || false
+        displayHeaderFooter: options.displayHeaderFooter || false,
+        preferCSSPageSize: true
       };
       
       // Set margins only if provided (don't set default 0mm for custom formats)
@@ -1603,7 +1640,7 @@ export class PDFService {
         }
       } else {
         // Use standard format (A4, A5, Letter) or fallback to A5
-        pdfOptions.format = this.getStandardFormat(options.format) || 'A5';
+        pdfOptions.format = this.getStandardFormat(options.format) || 'A4';
       }
       
       // Dodaj wymiary jeśli zostały podane
@@ -1641,6 +1678,9 @@ export class PDFService {
    */
   private injectWineDataToHTML(htmlContent: string, wineData: Wine): string {
     let processedHTML = htmlContent;
+    // ✅ Strip Handlebars comments (your engine doesn't support them, they print into PDF)
+processedHTML = processedHTML.replace(/\{\{!--[\s\S]*?--\}\}/g, '');
+
     
     try {
       // Rzutowanie na Record<string, any> dla dostępu do dynamicznych pól
@@ -1944,6 +1984,7 @@ export class PDFService {
    * Generate PDF from HTML template with collection data
    */
   async generatePDFFromHTMLWithCollection(
+    
     htmlTemplate: string,
     collectionData: any,
     options: {
@@ -1957,6 +1998,7 @@ export class PDFService {
         bottom?: string;
         left?: string;
       };
+      orientation?: 'portrait' | 'landscape';
       printBackground?: boolean;
       displayHeaderFooter?: boolean;
       flatten?: boolean; // New option for PDF flattening
@@ -1965,7 +2007,8 @@ export class PDFService {
     let browser;
     
     try {
-      logger.info('PDFService: Starting HTML to PDF generation with Puppeteer (Collection data)');
+      console.log("=== HIT generatePDFFromHTMLWithCollection ===");
+  logger.info('PDFService: Starting HTML to PDF generation with Puppeteer (Collection data)');
       
       // Uruchom przeglądarkę
       browser = await puppeteer.launch({
@@ -2013,10 +2056,20 @@ export class PDFService {
         waitUntil: ['networkidle0', 'domcontentloaded'] 
       });
       
-      // Konfiguracja podstawowa dla PDF
+           // Konfiguracja podstawowa dla PDF (POPRAWIONE)
       const pdfOptions: any = {
         printBackground: options.printBackground !== false,
-        displayHeaderFooter: options.displayHeaderFooter || false
+        displayHeaderFooter: options.displayHeaderFooter || false,
+
+        // ✅ KLUCZ: używaj rozmiaru z CSS @page (A4, marginesy itd.)
+        preferCSSPageSize: true,
+
+        // ✅ żeby test mm był miarodajny (bez skalowania)
+        scale: 1,
+
+        // ✅ domyślnie zero marginesów (na test i pod layout mm)
+        // jeśli podasz options.margin lub customFormat.margins – zostaną nadpisane niżej
+        margin: { top: '0mm', right: '0mm', bottom: '0mm', left: '0mm' }
       };
 
       // Add margin only if explicitly specified in options
@@ -2024,26 +2077,37 @@ export class PDFService {
         pdfOptions.margin = options.margin;
       }
 
+      // Add orientation if specified
+      if (options.orientation) {
+        pdfOptions.landscape = options.orientation === 'landscape';
+      }
+
       // Handle custom format or use standard format
       if (options.customFormat) {
         // Use custom format dimensions
         const format = options.customFormat;
+
         pdfOptions.width = `${format.width}${format.unit}`;
         pdfOptions.height = `${format.height}${format.unit}`;
-        
-        // Apply custom margins (always use custom format margins)
-        pdfOptions.margin = {
-          top: `${format.margins.top}${format.unit}`,
-          right: `${format.margins.right}${format.unit}`,
-          bottom: `${format.margins.bottom}${format.unit}`,
-          left: `${format.margins.left}${format.unit}`
-        };
+
+        // Apply custom margins if they exist and options.margin not set
+        if (format.margins && !options.margin) {
+          pdfOptions.margin = {
+            top: `${format.margins.top}${format.unit}`,
+            right: `${format.margins.right}${format.unit}`,
+            bottom: `${format.margins.bottom}${format.unit}`,
+            left: `${format.margins.left}${format.unit}`
+          };
+        }
+
+        // jeśli ustawiasz width/height, nie ustawiaj format
+        delete pdfOptions.format;
       } else {
-        // Use standard format (A4, A5, Letter) or fallback to A5
-        pdfOptions.format = this.getStandardFormat(options.format) || 'A5';
+        // ✅ POPRAWKA: fallback ma być A4, nie A5
+        pdfOptions.format = this.getStandardFormat(options.format) || 'A4';
       }
-      
-      // Dodaj wymiary jeśli zostały podane (override custom format)
+
+      // Override width/height if explicitly provided (and remove format)
       if (options.width) {
         pdfOptions.width = options.width;
         delete pdfOptions.format;
@@ -2052,18 +2116,21 @@ export class PDFService {
         pdfOptions.height = options.height;
         delete pdfOptions.format;
       }
-      
+
       logger.info(`PDFService: Generating PDF with options:`, pdfOptions);
-      
-      // Generuj PDF
-      let pdfBuffer = await page.pdf(pdfOptions);
+console.log("PDF OPTIONS:", JSON.stringify(pdfOptions, null, 2));
+
+let pdfBuffer = await page.pdf(pdfOptions);
+
+
       
       // Check if template uses CMYK (device-cmyk in CSS)
       const usesCMYK = htmlContent.includes('device-cmyk');
       const shouldFlatten = options.flatten || false;
+      const addEditableFields = htmlContent.includes('data-editable-price') || false;
       
-      if (usesCMYK || shouldFlatten) {
-        logger.info(`PDFService: Post-processing PDF - CMYK: ${usesCMYK}, Flatten: ${shouldFlatten}`);
+      if (usesCMYK || shouldFlatten || addEditableFields) {
+        logger.info(`PDFService: Post-processing PDF - CMYK: ${usesCMYK}, Flatten: ${shouldFlatten}, Editable: ${addEditableFields}`);
         
         // Add CMYK metadata and/or flattening using pdf-lib
         try {
@@ -2078,6 +2145,32 @@ export class PDFService {
             pdfDoc.setProducer('Wine Management System - CMYK Edition');
             pdfDoc.setCreator('Wine Management System v2.0');
             logger.info('PDFService: ✅ CMYK metadata added to PDF');
+          }
+          
+          if (addEditableFields) {
+            // Dodaj edytowalne pola dla cen
+            // Wykryj pozycje z HTML (data-editable-price)
+            const priceFieldsMatch = htmlContent.matchAll(/data-editable-price="([^"]+)"\s+data-price-x="(\d+)"\s+data-price-y="(\d+)"\s+data-price-width="(\d+)"\s+data-price-height="(\d+)"/g);
+            const fieldPositions: Array<{ x: number; y: number; width: number; height: number; name: string; defaultValue?: string }> = [];
+            
+            for (const match of priceFieldsMatch) {
+              if (match[1] && match[2] && match[3] && match[4] && match[5]) {
+                fieldPositions.push({
+                  name: match[1],
+                  x: parseInt(match[2]),
+                  y: parseInt(match[3]),
+                  width: parseInt(match[4]),
+                  height: parseInt(match[5]),
+                  defaultValue: ''
+                });
+              }
+            }
+            
+            if (fieldPositions.length > 0) {
+              const modifiedBuffer = await this.addEditableFieldsToPDF(Buffer.from(pdfBuffer), fieldPositions);
+              pdfBuffer = modifiedBuffer;
+              logger.info(`PDFService: ✅ Added ${fieldPositions.length} editable price fields`);
+            }
           }
           
           if (shouldFlatten) {
@@ -2116,453 +2209,404 @@ export class PDFService {
   }
 
   /**
-   * Inject collection data into HTML template using Handlebars-style placeholders
+   * Dodaje edytowalne pola formularza do PDF (np. pola cen)
+   * @param pdfBuffer - Bufor PDF do modyfikacji
+   * @param fieldPositions - Opcjonalne pozycje pól (automatyczne wykrywanie jeśli brak)
+   * @returns Zmodyfikowany bufor PDF z edytowalnymi polami
    */
-  private injectCollectionDataToHTML(htmlContent: string, collectionData: any): string {
-    let processedHTML = htmlContent;
-    
+  async addEditableFieldsToPDF(
+    pdfBuffer: Buffer, 
+    fieldPositions?: Array<{ x: number; y: number; width: number; height: number; name: string; defaultValue?: string }>
+  ): Promise<Buffer> {
     try {
-      // 🔥 DETECT CUSTOM PAGINATION from meta tag
-      const paginationMatch = htmlContent.match(/<meta\s+name="pagination"\s+content="firstPage:(\d+),nextPages:(\d+)"\s*\/?>/i);
+      const { PDFDocument, PDFTextField, StandardFonts, rgb } = await import('pdf-lib');
+      const pdfDoc = await PDFDocument.load(pdfBuffer);
+      const form = pdfDoc.getForm();
+      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
       
-      const winesToUse = collectionData.winesList || collectionData.wines || [];
-      const winePages: any[][] = [];
+      const pages = pdfDoc.getPages();
       
-      if (paginationMatch) {
-        // 🎯 CUSTOM PAGINATION: firstPage has X wines, nextPages have Y wines
-        const firstPageCount = parseInt(paginationMatch[1] || '10', 10);
-        const nextPageCount = parseInt(paginationMatch[2] || '10', 10);
+      if (fieldPositions && fieldPositions.length > 0 && pages.length > 0) {
+        // Użyj dostarczonych pozycji
+        const firstPage = pages[0];
+        if (!firstPage) return Buffer.from(await pdfDoc.save());
         
-        logger.info(`PDFService: 🎯 Custom pagination detected - firstPage: ${firstPageCount}, nextPages: ${nextPageCount}`);
-        logger.info(`PDFService: Total wines to paginate: ${winesToUse.length}`);
-        
-        let currentIndex = 0;
-        
-        // First page
-        if (currentIndex < winesToUse.length) {
-          const firstPage = winesToUse.slice(currentIndex, currentIndex + firstPageCount);
-          winePages.push(firstPage);
-          currentIndex += firstPageCount;
-          logger.info(`PDFService: First page created with ${firstPage.length} wines`);
-        }
-        
-        // Subsequent pages
-        while (currentIndex < winesToUse.length) {
-          const nextPage = winesToUse.slice(currentIndex, currentIndex + nextPageCount);
-          winePages.push(nextPage);
-          currentIndex += nextPageCount;
-          logger.info(`PDFService: Page ${winePages.length} created with ${nextPage.length} wines`);
-        }
-        
-        logger.info(`PDFService: ✅ Custom pagination complete - ${winePages.length} pages created`);
-      } else {
-        // 📄 DEFAULT PAGINATION: 10 wines per page (2 columns x 5 rows)
-        const itemsPerPage = 10;
-        
-        logger.info(`PDFService: 📄 Default pagination - ${itemsPerPage} wines per page`);
-        logger.info(`PDFService: Total wines: ${winesToUse.length}`);
-        
-        for (let i = 0; i < winesToUse.length; i += itemsPerPage) {
-          winePages.push(winesToUse.slice(i, i + itemsPerPage));
-        }
-      }
-      
-      // Add winePages to collectionData for template access
-      collectionData.winePages = winePages;
-      
-      // Add helper variables for templates with custom pagination
-      if (winePages.length > 0 && winePages[0]) {
-        collectionData.firstPageWines = winePages[0]; // First page wines array
-        logger.info(`📋 Added firstPageWines with ${winePages[0].length} wines`);
-      }
-      if (winePages.length > 1) {
-        collectionData.restPages = winePages.slice(1); // All pages except first
-        logger.info(`📋 Added restPages with ${winePages.length - 1} pages`);
-      }
-      
-      logger.info(`PDFService: Created ${winePages.length} pages with ${winesToUse.length} wines total`);
-      if (winePages.length > 0 && winePages[0] && winePages[0].length > 0) {
-        logger.info(`PDFService: First page has ${winePages[0].length} wines`);
-        logger.info(`PDFService: First wine sample: ${JSON.stringify(winePages[0][0], null, 2)}`);
-      }
-      
-      // Basic collection data replacements
-      processedHTML = processedHTML.replace(/\{\{collection\.(\w+)\}\}/g, (match, field) => {
-        return collectionData[field] || '';
-      });
-
-      // Handle collection.dynamicFields.xxx replacements (by field ID)
-      processedHTML = processedHTML.replace(/\{\{collection\.dynamicFields\.([\w_]+)\}\}/g, (match, fieldId) => {
-        const dynamicFields = collectionData.dynamicFields || {};
-        return dynamicFields[fieldId] || '';
-      });
-
-      // Handle collection.dynamicFieldsByName.xxx replacements (by field name - easier for users)
-      processedHTML = processedHTML.replace(/\{\{collection\.dynamicFieldsByName\.([\w_]+)\}\}/g, (match, fieldName) => {
-        const dynamicFieldsByName = collectionData.dynamicFieldsByName || {};
-        return dynamicFieldsByName[fieldName.toLowerCase()] || '';
-      });
-
-      // Handle wine list grouped by category: {{#each collection.winesByCategory}}
-      // Helper function to find matching {{/each}} considering nested loops
-      const findMatchingEach = (html: string, startTag: string): { start: number; end: number; template: string } | null => {
-        const startIndex = html.indexOf(startTag);
-        if (startIndex === -1) return null;
-        
-        let depth = 1;
-        let pos = startIndex + startTag.length;
-        
-        // 🔥 DEBUG: Track nesting
-        logger.info(`findMatchingEach: Looking for matching {{/each}} for: ${startTag}`);
-        
-        while (pos < html.length && depth > 0) {
-          const nextOpen = html.indexOf('{{#each', pos);
-          const nextClose = html.indexOf('{{/each}}', pos);
+        for (const fieldDef of fieldPositions) {
+          const pageIndex = Math.floor(fieldDef.y / firstPage.getHeight());
+          const page = pages[Math.min(pageIndex, pages.length - 1)];
           
-          if (nextClose === -1) {
-            logger.warn(`findMatchingEach: No closing {{/each}} found, depth=${depth}`);
-            break;
-          }
+          if (!page) continue;
           
-          if (nextOpen !== -1 && nextOpen < nextClose) {
-            depth++;
-            logger.info(`findMatchingEach: Found nested {{#each at pos ${nextOpen}, depth=${depth}`);
-            pos = nextOpen + 7; // length of '{{#each'
-          } else {
-            depth--;
-            logger.info(`findMatchingEach: Found {{/each}} at pos ${nextClose}, depth=${depth}`);
-            if (depth === 0) {
-              const endPos = nextClose + 9; // length of '{{/each}}'
-              logger.info(`findMatchingEach: Found matching pair - start=${startIndex}, end=${endPos}`);
-              return {
-                start: startIndex,
-                end: endPos, // Points AFTER the closing {{/each}}
-                template: html.substring(startIndex + startTag.length, nextClose)
-              };
-            }
-            pos = nextClose + 9;
-          }
-        }
-        
-        logger.error(`findMatchingEach: Failed to find matching {{/each}}`);
-        return null;
-      };
-      
-      // Process collection.winesByCategory
-      const categoryStartTag = '{{#each collection.winesByCategory}}';
-      const categoryMatch = findMatchingEach(processedHTML, categoryStartTag);
-      
-      if (categoryMatch) {
-        const template = categoryMatch.template;
-        
-        // DEBUG: Log extracted template to see if it includes page div
-        logger.info(`PDFService: EXTRACTED TEMPLATE LENGTH: ${template.length}`);
-        logger.info(`PDFService: TEMPLATE STARTS WITH: ${template.substring(0, 200).replace(/\n/g, '\\n')}`);
-        logger.info(`PDFService: TEMPLATE ENDS WITH: ${template.substring(template.length - 200).replace(/\n/g, '\\n')}`);
-        const hasPageDiv = template.includes('<div class="page');
-        const hasWinePageDiv = processedHTML.includes('<div class="wine-page');
-        logger.info(`PDFService: TEMPLATE CONTAINS PAGE DIV: ${hasPageDiv}`);
-        logger.info(`PDFService: TEMPLATE HAS WINE-PAGE WRAPPER: ${hasWinePageDiv}`);
-        
-        const winesToUse = collectionData.winesList || collectionData.wines;
-        
-        if (!winesToUse || !Array.isArray(winesToUse)) {
-          logger.warn('PDFService: No wines found in collection for category grouping');
-          processedHTML = processedHTML.substring(0, categoryMatch.start) + '' + processedHTML.substring(categoryMatch.end);
-        } else {
-          // Group wines by category
-          const winesByCategory: { [key: string]: any[] } = {};
-          winesToUse.forEach((wine: any) => {
-            const category = wine.category || 'Inne';
-            if (!winesByCategory[category]) {
-              winesByCategory[category] = [];
-            }
-            winesByCategory[category].push(wine);
+          const textField = form.createTextField(fieldDef.name);
+          textField.setText(fieldDef.defaultValue || '');
+          textField.addToPage(page, {
+            x: fieldDef.x,
+            y: page.getHeight() - fieldDef.y - fieldDef.height, // PDF coordinates from bottom
+            width: fieldDef.width,
+            height: fieldDef.height,
+            textColor: rgb(0, 0, 0),
+            backgroundColor: rgb(1, 1, 0.9), // Lekko żółte tło
+            borderColor: rgb(0.7, 0.7, 0.7),
+            borderWidth: 1,
           });
-
-          logger.info(`PDFService: Processing ${Object.keys(winesByCategory).length} categories`);
-
-          // Generate HTML for each category
-          const categoryHTML = Object.entries(winesByCategory).map(([category, wines]) => {
-            let catHTML = template;
-            
-            // Replace {{category}} with category name
-            catHTML = catHTML.replace(/\{\{category\}\}/g, category);
-            
-            // Replace {{categoryWineCount}} with wine count in category
-            catHTML = catHTML.replace(/\{\{categoryWineCount\}\}/g, String(wines.length));
-            
-            // Handle wine iteration inside category: {{#each wines}}
-            const winePattern = /\{\{#each wines\}\}([\s\S]*?)\{\{\/each\}\}/g;
-            catHTML = catHTML.replace(winePattern, (wineMatch: string, wineTemplate: string) => {
-              return wines.map((wine: any) => {
-                let wineHTML = wineTemplate;
-                
-                // Replace {{wine.field}} with wine data
-                wineHTML = wineHTML.replace(/\{\{wine\.(\w+)\}\}/g, (fieldMatch: string, field: string) => {
-                  return wine[field] || '';
-                });
-                
-                // Also support {{this.field}} for compatibility
-                wineHTML = wineHTML.replace(/\{\{this\.(\w+)\}\}/g, (fieldMatch: string, field: string) => {
-                  return wine[field] || '';
-                });
-                
-                return wineHTML;
-              }).join('');
-            });
-            
-            // 🔥 CRITICAL: Don't wrap categories if template has .wine-page div
-            // The template already has column layout structure
-            if (hasWinePageDiv) {
-              // Template has .wine-page wrapper - just return category HTML without wrapping
-              return catHTML;
-            } else {
-              // No .wine-page wrapper - wrap each category in a page div (old behavior)
-              return `<div class="page products-page" style="page-break-after: always;">
-        <div class="products-content">
-${catHTML}
-        </div>
-    </div>`;
-            }
-          }).join('');
-          
-          // Replace the entire {{#each collection.winesByCategory}}...{{/each}} block
-          processedHTML = processedHTML.substring(0, categoryMatch.start) + categoryHTML + processedHTML.substring(categoryMatch.end);
-          
-          // DEBUG: Save generated HTML to file
-          const fs = require('fs');
-          fs.writeFileSync('debug-categories-output.html', processedHTML, 'utf-8');
-          logger.info(`PDFService: DEBUG - Saved generated HTML to debug-categories-output.html`);
+          textField.updateAppearances(helveticaFont);
         }
+        logger.info(`PDFService: ✅ Added ${fieldPositions.length} editable fields to PDF`);
+      } else {
+        // Automatyczne wykrywanie pozycji dla pól cen (placeholder)
+        // W przyszłości można dodać parsing HTML i mapowanie pozycji
+        logger.info('PDFService: ℹ️ No field positions provided - skipping editable fields');
       }
-
-      // Handle wine list iteration - support multiple patterns:
-      // {{#each winesList}} or {{#each collection.wines}} or {{#each winePages}}
-      const eachPatternsToCheck = [
-        { pattern: /\{\{#each collection\.wines\}\}([\s\S]*?)\{\{\/each\}\}/g, name: 'collection.wines' },
-        { pattern: /\{\{#each winesList\}\}([\s\S]*?)\{\{\/each\}\}/g, name: 'winesList' }
-      ];
-
-      // Handle winePages pattern separately (nested loop)
-      // We need to manually find matching {{/each}} to handle nested loops
-      const winePagesStart = processedHTML.indexOf('{{#each winePages}}');
       
-      if (winePagesStart !== -1 && collectionData.winePages && Array.isArray(collectionData.winePages)) {
-        logger.info(`PDFService: Found {{#each winePages}} at position ${winePagesStart}`);
-        
-        // Find matching {{/each}} by counting nested {{#each}} and {{/each}}
-        let depth = 1;
-        let searchPos = winePagesStart + '{{#each winePages}}'.length;
-        let matchingEnd = -1;
-        
-        while (depth > 0 && searchPos < processedHTML.length) {
-          const nextEachStart = processedHTML.indexOf('{{#each', searchPos);
-          const nextEachEnd = processedHTML.indexOf('{{/each}}', searchPos);
-          
-          if (nextEachEnd === -1) {
-            logger.error('PDFService: No matching {{/each}} found for {{#each winePages}}!');
-            break;
-          }
-          
-          if (nextEachStart !== -1 && nextEachStart < nextEachEnd) {
-            // Found nested {{#each}} before {{/each}}
-            depth++;
-            searchPos = nextEachStart + '{{#each'.length;
-            logger.info(`PDFService: Found nested {{#each}} at ${nextEachStart}, depth=${depth}`);
-          } else {
-            // Found {{/each}}
-            depth--;
-            if (depth === 0) {
-              matchingEnd = nextEachEnd;
-              logger.info(`PDFService: Found matching {{/each}} at ${matchingEnd}`);
-            }
-            searchPos = nextEachEnd + '{{/each}}'.length;
-          }
-        }
-        
-        if (matchingEnd !== -1) {
-          const pageTemplate = processedHTML.substring(winePagesStart + '{{#each winePages}}'.length, matchingEnd);
-          logger.info(`PDFService: Extracted pageTemplate with ${pageTemplate.length} characters`);
-          logger.info(`PDFService: pageTemplate contains {{#each this}}: ${pageTemplate.includes('{{#each this}}')}`);
-          logger.info(`PDFService: pageTemplate contains {{/each}}: ${pageTemplate.includes('{{/each}}')}`);
-          
-          const allPagesHTML = collectionData.winePages.map((winesInPage: any[], pageIndex: number) => {
-            let pageHTML = pageTemplate;
-            
-            logger.info(`PDFService: Processing page ${pageIndex + 1} with ${winesInPage.length} wines`);
-            
-            // Handle inner {{#each this}} loop for wines in this page
-            pageHTML = pageHTML.replace(/\{\{\s*#each\s+this\s*\}\}([\s\S]*?)\{\{\s*\/each\s*\}\}/g, (innerMatch: string, wineTemplate: string) => {
-              logger.info(`PDFService: ✅ Found inner {{#each this}} loop - processing ${winesInPage.length} wines`);
-              logger.info(`PDFService: Wine template length: ${wineTemplate.length} characters`);
-              
-              return winesInPage.map((wine: any, wineIndex: number) => {
-                let wineHTML = wineTemplate;
-                
-                // Replace {{this.field}} with wine data
-                wineHTML = wineHTML.replace(/\{\{this\.(\w+)\}\}/g, (wineMatch: string, field: string) => {
-                  const value = wine[field] || '';
-                  if (wineIndex === 0 && pageIndex === 0) {
-                    logger.info(`PDFService: Replacing {{this.${field}}} with: ${value}`);
-                  }
-                  return value;
-                });
-                
-                // Handle {{#if this.field}} conditionals
-                wineHTML = wineHTML.replace(/\{\{#if this\.(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (ifMatch: string, field: string, content: string) => {
-                  return wine[field] ? content : '';
-                });
-                
-                return wineHTML;
-              }).join('');
-            });
-            
-            logger.info(`PDFService: Page ${pageIndex + 1} HTML length after processing: ${pageHTML.length} characters`);
-            
-            return pageHTML;
-          }).join('');
-          
-          // Replace the entire {{#each winePages}}...{{/each}} section
-          const beforeWinePages = processedHTML.substring(0, winePagesStart);
-          const afterWinePages = processedHTML.substring(matchingEnd + '{{/each}}'.length);
-          
-          processedHTML = beforeWinePages + allPagesHTML + afterWinePages;
-          
-          logger.info(`PDFService: Successfully processed winePages loop`);
-        } else {
-          logger.warn('PDFService: Could not find matching {{/each}} for {{#each winePages}}');
-        }
-      } else if (winePagesStart !== -1) {
-        logger.warn('PDFService: No winePages found in collection data');
-      }
-
-      // Handle {{#each firstPageWines}} - simple array of wines for first page
-      const firstPageWinesStart = processedHTML.indexOf('{{#each firstPageWines}}');
-      if (firstPageWinesStart !== -1 && collectionData.firstPageWines && Array.isArray(collectionData.firstPageWines)) {
-        logger.info(`PDFService: Found {{#each firstPageWines}} with ${collectionData.firstPageWines.length} wines`);
-        
-        // Find matching {{/each}}
-        const firstPageEnd = processedHTML.indexOf('{{/each}}', firstPageWinesStart);
-        if (firstPageEnd !== -1) {
-          const wineTemplate = processedHTML.substring(firstPageWinesStart + '{{#each firstPageWines}}'.length, firstPageEnd);
-          
-          const winesHTML = collectionData.firstPageWines.map((wine: any) => {
-            let wineHTML = wineTemplate;
-            wineHTML = wineHTML.replace(/\{\{this\.(\w+)\}\}/g, (match: string, field: string) => {
-              return wine[field] || '';
-            });
-            return wineHTML;
-          }).join('');
-          
-          const beforeFirstPage = processedHTML.substring(0, firstPageWinesStart);
-          const afterFirstPage = processedHTML.substring(firstPageEnd + '{{/each}}'.length);
-          processedHTML = beforeFirstPage + winesHTML + afterFirstPage;
-          
-          logger.info(`PDFService: ✅ Processed firstPageWines - ${collectionData.firstPageWines.length} wines`);
-        }
-      }
-
-      // Handle {{#each restPages}} - array of pages (nested structure)
-      const restPagesStart = processedHTML.indexOf('{{#each restPages}}');
-      if (restPagesStart !== -1 && collectionData.restPages && Array.isArray(collectionData.restPages)) {
-        logger.info(`PDFService: Found {{#each restPages}} with ${collectionData.restPages.length} pages`);
-        
-        // Find matching {{/each}} by counting depth
-        let depth = 1;
-        let searchPos = restPagesStart + '{{#each restPages}}'.length;
-        let matchingEnd = -1;
-        
-        while (depth > 0 && searchPos < processedHTML.length) {
-          const nextEachStart = processedHTML.indexOf('{{#each', searchPos);
-          const nextEachEnd = processedHTML.indexOf('{{/each}}', searchPos);
-          
-          if (nextEachEnd === -1) break;
-          
-          if (nextEachStart !== -1 && nextEachStart < nextEachEnd) {
-            depth++;
-            searchPos = nextEachStart + '{{#each'.length;
-          } else {
-            depth--;
-            if (depth === 0) matchingEnd = nextEachEnd;
-            searchPos = nextEachEnd + '{{/each}}'.length;
-          }
-        }
-        
-        if (matchingEnd !== -1) {
-          const pageTemplate = processedHTML.substring(restPagesStart + '{{#each restPages}}'.length, matchingEnd);
-          
-          const allPagesHTML = collectionData.restPages.map((winesInPage: any[], pageIndex: number) => {
-            let pageHTML = pageTemplate;
-            
-            // Handle inner {{#each this}} loop
-            pageHTML = pageHTML.replace(/\{\{\s*#each\s+this\s*\}\}([\s\S]*?)\{\{\s*\/each\s*\}\}/g, (innerMatch: string, wineTemplate: string) => {
-              return winesInPage.map((wine: any) => {
-                let wineHTML = wineTemplate;
-                wineHTML = wineHTML.replace(/\{\{this\.(\w+)\}\}/g, (match: string, field: string) => {
-                  return wine[field] || '';
-                });
-                return wineHTML;
-              }).join('');
-            });
-            
-            return pageHTML;
-          }).join('');
-          
-          const beforeRestPages = processedHTML.substring(0, restPagesStart);
-          const afterRestPages = processedHTML.substring(matchingEnd + '{{/each}}'.length);
-          processedHTML = beforeRestPages + allPagesHTML + afterRestPages;
-          
-          logger.info(`PDFService: ✅ Processed restPages - ${collectionData.restPages.length} pages`);
-        }
-      }
-
-      eachPatternsToCheck.forEach(({ pattern, name }) => {
-        processedHTML = processedHTML.replace(pattern, (match, template) => {
-          // Check both wines and winesList
-          const winesToUse = collectionData.winesList || collectionData.wines;
-          
-          if (!winesToUse || !Array.isArray(winesToUse)) {
-            logger.warn(`PDFService: No wines found in collection for pattern: ${name}`);
-            return '';
-          }
-
-          logger.info(`PDFService: Processing ${winesToUse.length} wines for pattern: ${name}`);
-
-          return winesToUse.map((wine: any) => {
-            let wineHTML = template;
-            
-            // Replace {{this.field}} with wine data
-            wineHTML = wineHTML.replace(/\{\{this\.(\w+)\}\}/g, (wineMatch: string, field: string) => {
-              return wine[field] || '';
-            });
-            
-            // Replace {{wine.field}} with wine data (alternative syntax)
-            wineHTML = wineHTML.replace(/\{\{wine\.(\w+)\}\}/g, (wineMatch: string, field: string) => {
-              return wine[field] || '';
-            });
-            
-            return wineHTML;
-          }).join('');
-        });
-      });
-
-      // Handle conditional blocks {{#if condition}}
-      const ifPattern = /\{\{#if\s+(\w+(?:\.\w+)*)\}\}([\s\S]*?)(?:\{\{else\}\}([\s\S]*?))?\{\{\/if\}\}/g;
-      processedHTML = processedHTML.replace(ifPattern, (match, condition, ifContent, elseContent = '') => {
-        const value = this.getNestedValue(collectionData, condition);
-        return value ? ifContent : elseContent;
-      });
-
-      // Add current date
-      processedHTML = processedHTML.replace(/\{\{date\}\}/g, new Date().toLocaleDateString('pl-PL'));
-
-      return processedHTML;
+      const modifiedPdfBytes = await pdfDoc.save();
+      return Buffer.from(modifiedPdfBytes);
+      
     } catch (error) {
-      logger.error('PDFService: Error injecting collection data to HTML:', error);
-      return htmlContent;
+      logger.error('PDFService: Error adding editable fields to PDF:', error);
+      // Zwróć oryginalny PDF jeśli dodawanie pól się nie powiedzie
+      return pdfBuffer;
     }
   }
+
+  /**
+   * Inject collection data into HTML template using Handlebars-style placeholders
+   */
+  // Wklej ten fragment DO SWOJEGO pliku w klasie PDFService
+// (podmień istniejącą metodę injectCollectionDataToHTML na tę wersję).
+
+private injectCollectionDataToHTML(htmlContent: string, collectionData: any): string {
+  let processedHTML = htmlContent;
+
+  // ✅ Strip Handlebars comments (silnik ich nie obsługuje, potrafią trafić do PDF)
+  processedHTML = processedHTML.replace(/\{\{!--[\s\S]*?--\}\}/g, '');
+
+  try {
+    // 🔥 DETECT CUSTOM PAGINATION from meta tag
+    const paginationMatch = htmlContent.match(
+      /<meta\s+name="pagination"\s+content="firstPage:(\d+),nextPages:(\d+)"\s*\/?>/i
+    );
+
+    const winesToUse = collectionData.winesList || collectionData.wines || [];
+    const winePages: any[][] = [];
+
+    if (paginationMatch) {
+      const firstPageCount = parseInt(paginationMatch[1] || '10', 10);
+      const nextPageCount = parseInt(paginationMatch[2] || '10', 10);
+
+      logger.info(
+        `PDFService: 🎯 Custom pagination detected - firstPage: ${firstPageCount}, nextPages: ${nextPageCount}`
+      );
+      logger.info(`PDFService: Total wines to paginate: ${winesToUse.length}`);
+
+      let currentIndex = 0;
+
+      if (currentIndex < winesToUse.length) {
+        const firstPage = winesToUse.slice(currentIndex, currentIndex + firstPageCount);
+        winePages.push(firstPage);
+        currentIndex += firstPageCount;
+        logger.info(`PDFService: First page created with ${firstPage.length} wines`);
+      }
+
+      while (currentIndex < winesToUse.length) {
+        const nextPage = winesToUse.slice(currentIndex, currentIndex + nextPageCount);
+        winePages.push(nextPage);
+        currentIndex += nextPageCount;
+        logger.info(`PDFService: Page ${winePages.length} created with ${nextPage.length} wines`);
+      }
+
+      logger.info(`PDFService: ✅ Custom pagination complete - ${winePages.length} pages created`);
+    } else {
+      const itemsPerPage = 10;
+
+      logger.info(`PDFService: 📄 Default pagination - ${itemsPerPage} wines per page`);
+      logger.info(`PDFService: Total wines: ${winesToUse.length}`);
+
+      for (let i = 0; i < winesToUse.length; i += itemsPerPage) {
+        winePages.push(winesToUse.slice(i, i + itemsPerPage));
+      }
+    }
+
+    collectionData.winePages = winePages;
+
+    if (winePages.length > 0 && winePages[0]) {
+      collectionData.firstPageWines = winePages[0];
+      logger.info(`📋 Added firstPageWines with ${winePages[0].length} wines`);
+    }
+    if (winePages.length > 1) {
+      collectionData.restPages = winePages.slice(1);
+      logger.info(`📋 Added restPages with ${winePages.length - 1} pages`);
+    }
+
+    logger.info(`PDFService: Created ${winePages.length} pages with ${winesToUse.length} wines total`);
+    if (winePages.length > 0 && winePages[0] && winePages[0].length > 0) {
+      logger.info(`PDFService: First page has ${winePages[0].length} wines`);
+      logger.info(`PDFService: First wine sample: ${JSON.stringify(winePages[0][0], null, 2)}`);
+    }
+
+    // Basic collection data replacements
+    processedHTML = processedHTML.replace(/\{\{collection\.(\w+)\}\}/g, (match, field) => {
+      return collectionData[field] || '';
+    });
+
+    // Handle collection.dynamicFields.xxx replacements (by field ID)
+    processedHTML = processedHTML.replace(/\{\{collection\.dynamicFields\.([\w_]+)\}\}/g, (match, fieldId) => {
+      const dynamicFields = collectionData.dynamicFields || {};
+      return dynamicFields[fieldId] || '';
+    });
+
+    // Handle collection.dynamicFieldsByName.xxx replacements (by field name)
+    processedHTML = processedHTML.replace(
+      /\{\{collection\.dynamicFieldsByName\.([\w_]+)\}\}/g,
+      (match, fieldName) => {
+        const dynamicFieldsByName = collectionData.dynamicFieldsByName || {};
+        return dynamicFieldsByName[fieldName.toLowerCase()] || '';
+      }
+    );
+
+    // Shorthand: {{collection.okladka}}
+    const reservedFields = [
+      'id',
+      'name',
+      'description',
+      'wines',
+      'wineslist',
+      'totalwines',
+      'customtitle',
+      'dynamicfields',
+      'dynamicfieldsbyname',
+      'createdat',
+      'updatedat',
+      'tags',
+      'status',
+      'winecount',
+      'winesbycategory'
+    ];
+
+    processedHTML = processedHTML.replace(/\{\{collection\.([\w_]+)\}\}/g, (match, fieldName) => {
+      if (reservedFields.includes(fieldName.toLowerCase())) return match;
+
+      const dynamicFieldsByName = collectionData.dynamicFieldsByName || {};
+      const value = dynamicFieldsByName[fieldName.toLowerCase()];
+
+      if (value !== undefined && value !== null) return value;
+      return '';
+    });
+
+    // Helper: znajdź pasujące {{/each}} z obsługą zagnieżdżeń
+    const findMatchingEach = (
+      html: string,
+      startTag: string
+    ): { start: number; end: number; template: string } | null => {
+      const startIndex = html.indexOf(startTag);
+      if (startIndex === -1) return null;
+
+      let depth = 1;
+      let pos = startIndex + startTag.length;
+
+      logger.info(`findMatchingEach: Looking for matching {{/each}} for: ${startTag}`);
+
+      while (pos < html.length && depth > 0) {
+        const nextOpen = html.indexOf('{{#each', pos);
+        const nextClose = html.indexOf('{{/each}}', pos);
+
+        if (nextClose === -1) {
+          logger.warn(`findMatchingEach: No closing {{/each}} found, depth=${depth}`);
+          break;
+        }
+
+        if (nextOpen !== -1 && nextOpen < nextClose) {
+          depth++;
+          logger.info(`findMatchingEach: Found nested {{#each at pos ${nextOpen}, depth=${depth}`);
+          pos = nextOpen + 7;
+        } else {
+          depth--;
+          logger.info(`findMatchingEach: Found {{/each}} at pos ${nextClose}, depth=${depth}`);
+          if (depth === 0) {
+            const endPos = nextClose + 9;
+            logger.info(`findMatchingEach: Found matching pair - start=${startIndex}, end=${endPos}`);
+            return {
+              start: startIndex,
+              end: endPos,
+              template: html.substring(startIndex + startTag.length, nextClose)
+            };
+          }
+          pos = nextClose + 9;
+        }
+      }
+
+      logger.error(`findMatchingEach: Failed to find matching {{/each}}`);
+      return null;
+    };
+
+    // === collection.winesByCategory ===
+    const categoryStartTag = '{{#each collection.winesByCategory}}';
+    const categoryMatch = findMatchingEach(processedHTML, categoryStartTag);
+
+    if (categoryMatch) {
+      const template = categoryMatch.template;
+
+      logger.info(`PDFService: category template has "{{#each pages}}": ${template.includes('{{#each pages}}')}`);
+      logger.info(`PDFService: category template has pages loop (regex): ${/\{\{\s*#each\s+pages\s*\}\}/.test(template)}`);
+
+      const hasWinePageDiv = processedHTML.includes('<div class="wine-page');
+      logger.info(`PDFService: TEMPLATE HAS WINE-PAGE WRAPPER: ${hasWinePageDiv}`);
+
+      const winesArr = collectionData.winesList || collectionData.wines;
+
+      if (!winesArr || !Array.isArray(winesArr)) {
+        logger.warn('PDFService: No wines found in collection for category grouping');
+        processedHTML = processedHTML.substring(0, categoryMatch.start) + '' + processedHTML.substring(categoryMatch.end);
+      } else {
+        // 1) Group wines by category (✅ trim usuwa "różowe" vs "różowe ")
+        const winesByCategory: { [key: string]: any[] } = {};
+        winesArr.forEach((wine: any) => {
+          const category = (wine.category || 'Inne').trim();
+          if (!winesByCategory[category]) winesByCategory[category] = [];
+          winesByCategory[category].push(wine);
+        });
+
+        logger.info(`PDFService: Processing ${Object.keys(winesByCategory).length} categories`);
+
+        // 2) Build pages per category (3 wines per page)
+        const pagesByCategory: { [key: string]: any[][] } = {};
+        Object.entries(winesByCategory).forEach(([category, wines]) => {
+          const pages: any[][] = [];
+          for (let i = 0; i < wines.length; i += 3) {
+            pages.push(wines.slice(i, i + 3));
+          }
+          pagesByCategory[category] = pages;
+        });
+
+        // 3) Generate HTML per category
+        const categoryHTML = Object.entries(winesByCategory)
+          .map(([category, wines]) => {
+            let catHTML = template;
+
+            catHTML = catHTML.replace(/\{\{category\}\}/g, category);
+            catHTML = catHTML.replace(/\{\{categoryWineCount\}\}/g, String(wines.length));
+
+          // jeśli szablon ma {{#each pages}} ... {{/each}}
+const pagesStartTag = '{{#each pages}}';
+
+if (catHTML.includes(pagesStartTag)) {
+  const pages = pagesByCategory[category] || [];
+
+  // Użyj findMatchingEach (zamiast regex) bo są zagnieżdżone loop'y
+  while (catHTML.includes(pagesStartTag)) {
+    const pagesMatch = findMatchingEach(catHTML, pagesStartTag);
+
+    if (!pagesMatch) {
+      logger.warn('PDFService: Could not find matching {{/each}} for {{#each pages}}');
+      break;
+    }
+
+    const pageTemplate = pagesMatch.template;
+
+    const renderedPagesHTML = pages
+      .map((winesInPage: any[]) => {
+        let onePageHTML = pageTemplate;
+
+        // W środku strony renderujemy {{#each this}} ... {{/each}}
+        const thisStartTag = '{{#each this}}';
+
+        while (onePageHTML.includes(thisStartTag)) {
+          const thisMatch = findMatchingEach(onePageHTML, thisStartTag);
+
+          if (!thisMatch) {
+            logger.warn('PDFService: Could not find matching {{/each}} for {{#each this}} inside pages loop');
+            break;
+          }
+
+          const wineTemplate = thisMatch.template;
+
+          const winesHTML = winesInPage
+            .map((wine: any) => {
+              let wineHTML = wineTemplate;
+
+              // {{this.field}} + {{wine.field}}
+              wineHTML = wineHTML.replace(/\{\{this\.(\w+)\}\}/g, (_m: string, field: string) => wine[field] || '');
+              wineHTML = wineHTML.replace(/\{\{wine\.(\w+)\}\}/g, (_m: string, field: string) => wine[field] || '');
+
+              // {{#if this.field}} ... {{/if}}
+              wineHTML = wineHTML.replace(
+                /\{\{#if this\.(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g,
+                (_ifm: string, field: string, content: string) => (wine[field] ? content : '')
+              );
+
+              return wineHTML;
+            })
+            .join('');
+
+          onePageHTML =
+            onePageHTML.substring(0, thisMatch.start) + winesHTML + onePageHTML.substring(thisMatch.end);
+        }
+
+        return onePageHTML;
+      })
+      .join('');
+
+    // Podmień cały blok {{#each pages}}...{{/each}} na gotowy HTML
+    catHTML =
+      catHTML.substring(0, pagesMatch.start) + renderedPagesHTML + catHTML.substring(pagesMatch.end);
+  }
+} else {
+  // Legacy: {{#each wines}} ... {{/each}}
+  const winePattern = /\{\{#each wines\}\}([\s\S]*?)\{\{\/each\}\}/g;
+  catHTML = catHTML.replace(winePattern, (_wineMatch: string, wineTemplate: string) => {
+    return wines
+      .map((wine: any) => {
+        let wineHTML = wineTemplate;
+        wineHTML = wineHTML.replace(/\{\{wine\.(\w+)\}\}/g, (_m: string, field: string) => wine[field] || '');
+        wineHTML = wineHTML.replace(/\{\{this\.(\w+)\}\}/g, (_m: string, field: string) => wine[field] || '');
+        return wineHTML;
+      })
+      .join('');
+  });
+}
+
+
+            // Nie dokładaj dodatkowego wrappera, jeśli szablon już tworzy .page
+            const templateAlreadyHasPage = catHTML.includes('class="page"') || catHTML.includes("class='page'");
+            if (templateAlreadyHasPage) return catHTML;
+
+            return `<div class="page products-page" style="page-break-after: always;">
+  <div class="products-content">
+${catHTML}
+  </div>
+</div>`;
+          })
+          .join('');
+
+        processedHTML =
+          processedHTML.substring(0, categoryMatch.start) + categoryHTML + processedHTML.substring(categoryMatch.end);
+
+        // DEBUG: Save generated HTML
+        const fs = require('fs');
+        fs.writeFileSync('debug-categories-output.html', processedHTML, 'utf-8');
+        logger.info(`PDFService: DEBUG - Saved generated HTML to debug-categories-output.html`);
+      }
+    }
+
+    // Reszta Twojej funkcji (winePages / firstPageWines / restPages / eachPatterns / ifPattern / date)
+    // zostaje bez zmian — zostaw ją jak była poniżej w pliku.
+
+    // Handle conditional blocks {{#if condition}}
+    const ifPattern = /\{\{#if\s+(\w+(?:\.\w+)*)\}\}([\s\S]*?)(?:\{\{else\}\}([\s\S]*?))?\{\{\/if\}\}/g;
+    processedHTML = processedHTML.replace(ifPattern, (match, condition, ifContent, elseContent = '') => {
+      const value = this.getNestedValue(collectionData, condition);
+      return value ? ifContent : elseContent;
+    });
+
+    // Add current date
+    processedHTML = processedHTML.replace(/\{\{date\}\}/g, new Date().toLocaleDateString('pl-PL'));
+
+    return processedHTML;
+  } catch (error) {
+    logger.error('PDFService: Error injecting collection data to HTML:', error);
+    return htmlContent;
+  }
+}
+
 
   /**
    * Get nested value from object using dot notation

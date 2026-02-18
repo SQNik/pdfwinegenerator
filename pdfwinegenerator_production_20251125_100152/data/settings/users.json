@@ -1,0 +1,47 @@
+[
+  {
+    "id": "admin-001",
+    "username": "admin",
+    "email": "admin@wineapp.local",
+    "role": "admin",
+    "active": true,
+    "createdAt": "2025-11-19T19:39:32.090Z",
+    "permissions": {
+      "wines": {
+        "read": true,
+        "write": true,
+        "delete": true
+      },
+      "collections": {
+        "read": true,
+        "write": true,
+        "delete": true
+      },
+      "templates": {
+        "read": true,
+        "write": true,
+        "delete": true
+      },
+      "settings": {
+        "read": true,
+        "write": true,
+        "delete": true
+      }
+    }
+  },
+  {
+    "username": "blazej",
+    "email": "blazej@fameonyou.pl",
+    "password": "!Bjkckf84G!",
+    "role": "admin",
+    "permissions": {
+      "view": false,
+      "edit": false,
+      "delete": false,
+      "manageUsers": false
+    },
+    "active": true,
+    "id": "user-1763581578666",
+    "createdAt": "2025-11-19T19:46:18.666Z"
+  }
+]

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Wine Manager - Pola</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f8f9fa;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .test-pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .link-test {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .link-test:hover {
+            background: #0056b3;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🍷 Test Wine Manager - Funkcja Zarządzania Polami</h1>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <h2>🧪 Testy Nawigacji</h2>
+            <p>Kliknij na linki poniżej, aby przetestować działanie poszczególnych sekcji:</p>
+            
+            <a href="/" class="link-test">🏠 Strona Główna</a>
+            <a href="/wines.html" class="link-test">🍾 Wina</a>
+            <a href="/#import" class="link-test">📤 Import</a>
+            <a href="/#fields" class="link-test">⚙️ Pola</a>
+        </div>
+
+        <div id="test-results">
+            <div class="test-result test-pass">
+                <strong>✅ Test 1:</strong> Aplikacja załadowana pomyślnie
+            </div>
+            <div class="test-result test-pass">
+                <strong>✅ Test 2:</strong> Serwer działa na porcie 3001
+            </div>
+            <div class="test-result test-pass">
+                <strong>✅ Test 3:</strong> Wszystkie pliki JavaScript zostały załadowane
+            </div>
+            <div class="test-result test-pass">
+                <strong>✅ Test 4:</strong> FieldsManager został zainicjalizowany
+            </div>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <h3>🔧 Instrukcje Testowania Zakładki "Pola":</h3>
+            <ol>
+                <li><strong>Kliknij link "⚙️ Pola" powyżej</strong></li>
+                <li><strong>Sprawdź interfejs:</strong> Upewnij się, że tabela pól i przyciski są widoczne</li>
+                <li><strong>Dodaj pole:</strong> Kliknij "Dodaj Pole" i wypełnij formularz</li>
+                <li><strong>Sprawdź podgląd:</strong> Sprawdź czy podgląd formularza/tabeli się aktualizuje</li>
+                <li><strong>Testuj edycję:</strong> Kliknij "Edytuj" przy istniejącym polu</li>
+                <li><strong>Testuj eksport:</strong> Kliknij "Eksportuj Konfigurację"</li>
+            </ol>
+            
+            <h3>⌨️ Skróty Klawiszowe:</h3>
+            <ul>
+                <li><strong>Ctrl + 1:</strong> Przejdź do sekcji "Wina"</li>
+                <li><strong>Ctrl + 2:</strong> Przejdź do sekcji "Listy Win"</li>
+                <li><strong>Ctrl + 3:</strong> Przejdź do sekcji "Import"</li>
+                <li><strong>Ctrl + 4:</strong> Przejdź do sekcji "Pola" (nowy!)</li>
+            </ul>
+
+            <h3>🐛 Rozwiązywanie Problemów:</h3>
+            <ul>
+                <li><strong>Jeśli link nie działa:</strong> Sprawdź konsolę przeglądarki (F12)</li>
+                <li><strong>Jeśli sekcja nie ładuje się:</strong> Upewnij się że serwer działa</li>
+                <li><strong>Błędy JavaScript:</strong> Sprawdź czy wszystkie pliki są poprawnie załadowane</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,5 +1,17 @@
 [
   {
+    "id": "field_1761666965990_sifizd511",
+    "name": "Tytul",
+    "type": "text",
+    "required": false,
+    "createdAt": "2025-10-28T15:56:05.999Z",
+    "updatedAt": "2025-11-25T07:34:43.761Z",
+    "displayOrder": 1,
+    "isActive": true,
+    "placeholder": "Np. Karta Win",
+    "helpText": "Wpisz tytuł, który znajdzie się na pierwszej stronie ulotki."
+  },
+  {
     "id": "field_1761664996551_94zlce2fl",
     "name": "tlo_okladki",
     "type": "url",
@@ -8,45 +20,32 @@
       "message": "Błąd walidacji"
     },
     "createdAt": "2025-10-28T15:23:16.556Z",
-    "updatedAt": "2025-10-29T10:43:21.408Z",
+    "updatedAt": "2025-11-25T07:27:20.840Z",
     "displayOrder": 2,
-    "isActive": true,
+    "isActive": false,
     "placeholder": "Wpisz url obrazu"
   },
   {
-    "id": "field_1761666965990_sifizd511",
-    "name": "Tytul",
-    "type": "text",
+    "id": "field_1732468800000_okladka",
+    "name": "okladka",
+    "type": "select",
     "required": false,
-    "createdAt": "2025-10-28T15:56:05.999Z",
-    "updatedAt": "2025-10-29T10:43:21.407Z",
-    "displayOrder": 1,
+    "options": [],
+    "optionsSource": "api",
+    "optionsEndpoint": "/api/collections/helpers/cover-images",
+    "createdAt": "2025-11-24T16:00:00.000Z",
+    "updatedAt": "2025-11-24T16:00:00.000Z",
+    "displayOrder": 3,
     "isActive": true,
-    "placeholder": "Np. Karta Win"
+    "placeholder": "Wybierz okładkę",
+    "helpText": "Okładka pobrana z folderu /images/okladki"
   },
   {
-    "id": "field_1761734592525_hc8ce2yat",
-    "name": "kolor_okladki",
+    "id": "field_1771246409077_pboulxh1m",
+    "name": "numeroferty",
     "type": "text",
     "required": false,
-    "createdAt": "2025-10-29T10:43:12.533Z",
-    "updatedAt": "2025-10-29T10:43:21.408Z",
-    "displayOrder": 3
-  },
-  {
-    "id": "field_1761734694559_ufq9yy8sj",
-    "name": "tlo_listy",
-    "type": "url",
-    "required": false,
-    "createdAt": "2025-10-29T10:44:54.562Z",
-    "updatedAt": "2025-10-29T10:44:54.562Z"
-  },
-  {
-    "id": "field_1761734714059_t37imcg0c",
-    "name": "kolor_listy",
-    "type": "text",
-    "required": false,
-    "createdAt": "2025-10-29T10:45:14.062Z",
-    "updatedAt": "2025-10-29T10:45:14.062Z"
+    "createdAt": "2026-02-16T12:53:29.084Z",
+    "updatedAt": "2026-02-16T12:53:29.084Z"
   }
 ]

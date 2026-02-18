@@ -17,6 +17,8 @@ import { createCollectionRoutes } from './routes/collections';
 import { createCollectionFieldsRoutes } from './routes/collectionFields';
 import { createTemplateEditorRoutes } from './routes/templateEditor';
 import { createCustomFormatsRoutes } from './routes/customFormats';
+import { createThemeSettingsRoutes } from './routes/themeSettings';
+import { createSettingsRoutes } from './routes/settings';
 import { errorHandler, notFoundHandler, requestLogger } from './middleware/errorHandler';
 import { BackupMonitoringService } from './services/backupMonitoringService';
 import logger from './utils/logger';
@@ -131,6 +133,21 @@ export class WineManagementApp {
       
       this.app.use('/api/', limiter);
       this.app.use('/api/', speedLimiter);
+    } else {
+      // Development mode - much higher limits
+      const devLimiter = rateLimit({
+        windowMs: 60 * 1000, // 1 minute
+        max: 1000, // 1000 requests per minute
+        message: {
+          success: false,
+          error: 'Too many requests (dev mode).',
+        },
+        standardHeaders: true,
+        legacyHeaders: false,
+      });
+      
+      this.app.use('/api/', devLimiter);
+      logger.info('Development mode: Rate limiting relaxed (1000 req/min)');
     }
 
     // Request logging
@@ -177,6 +194,9 @@ export class WineManagementApp {
     this.app.use('/api/pdf', createPDFRoutes(this.dataStore));
     this.app.use('/api/custom-formats', createCustomFormatsRoutes(this.dataStore));
     this.app.use('/api/template-editor', createTemplateEditorRoutes(this.dataStore, this.pdfService));
+    this.app.use('/api/theme-settings', createThemeSettingsRoutes());
+    this.app.use('/theme-settings', createThemeSettingsRoutes()); // Alias bez /api dla kompatybilności
+    this.app.use('/api/settings', createSettingsRoutes());
 
     // Health check
     this.app.get('/api/health', (req, res) => {
