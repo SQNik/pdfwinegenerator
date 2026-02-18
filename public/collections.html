@@ -300,10 +300,10 @@
                         </select>
                         
                         <div style="display: flex; gap: 4px; background: var(--ds-color-neutral-100); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--ds-color-neutral-200);">
-                            <button class="ds-btn ds-btn-ghost ds-btn-icon" id="viewCollectionsCards" title="Widok kart" style="min-width: 40px; height: 40px;">
+                            <button class="ds-btn ds-btn-ghost ds-btn-icon active" id="viewCollectionsCards" title="Widok kart" style="min-width: 40px; height: 40px;">
                                 <i class="bi bi-grid-3x3-gap" style="font-size: 1.125rem;"></i>
                             </button>
-                            <button class="ds-btn ds-btn-ghost ds-btn-icon active" id="viewCollectionsTable" title="Widok tabeli" style="min-width: 40px; height: 40px;">
+                            <button class="ds-btn ds-btn-ghost ds-btn-icon" id="viewCollectionsTable" title="Widok tabeli" style="min-width: 40px; height: 40px;">
                                 <i class="bi bi-table" style="font-size: 1.125rem;"></i>
                             </button>
                         </div>
@@ -312,7 +312,7 @@
             </div>
 
             <!-- Collections Cards View -->
-            <div id="collectionsCardsView" class="d-none">
+            <div id="collectionsCardsView">
                 <div id="collectionsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: var(--space-lg);">
                     <!-- Populated dynamically -->
                 </div>
@@ -328,7 +328,7 @@
             </div>
 
             <!-- Collections Table View -->
-            <div class="ds-card" id="collectionsTableView">
+            <div class="ds-card d-none" id="collectionsTableView">
                 <div class="modern-table-container">
                     <table class="modern-table">
                         <thead>
@@ -338,8 +338,6 @@
                                 <th>Status</th>
                                 <th>Liczba Win</th>
                                 <th>Data utworzenia</th>
-                                <th>Ostatnie PDF</th>
-                                <th>Szablon PDF</th>
                                 <th style="text-align: right;">Akcje</th>
                             </tr>
                         </thead>
