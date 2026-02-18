@@ -275,9 +275,7 @@
     // Export init function to window for external access
     window.initNavigationComponent = init;
 
-    // Auto-initialize if navigation already loaded
-    if (document.getElementById('main-navigation')) {
-        init();
-    }
+    // Note: Initialization is now handled by navigation-loader.js
+    // to prevent double initialization
 
 })();
