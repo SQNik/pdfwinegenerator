@@ -9,34 +9,92 @@
     function initNavigation() {
         const navToggle = document.getElementById('nav-toggle');
         const navMenu = document.getElementById('nav-menu');
+        const navOverlay = document.getElementById('nav-overlay');
         const navLinks = document.querySelectorAll('.nav-link');
+        const mainNav = document.querySelector('.main-nav');
 
-        console.log('Navigation elements:', { navToggle, navMenu, navLinksCount: navLinks.length });
+        console.log('Navigation elements:', { 
+            navToggle, 
+            navMenu, 
+            navOverlay,
+            navLinksCount: navLinks.length,
+            mainNav 
+        });
+
+        // Scroll detection for sticky nav styling
+        let lastScrollY = window.scrollY;
+        
+        function handleScroll() {
+            const currentScrollY = window.scrollY;
+            
+            if (currentScrollY > 10) {
+                mainNav?.classList.add('scrolled');
+            } else {
+                mainNav?.classList.remove('scrolled');
+            }
+            
+            lastScrollY = currentScrollY;
+        }
+
+        // Debounce scroll handler for performance
+        let scrollTimer;
+        window.addEventListener('scroll', function() {
+            if (scrollTimer) {
+                clearTimeout(scrollTimer);
+            }
+            scrollTimer = setTimeout(handleScroll, 10);
+        }, { passive: true });
+
+        // Initial scroll check
+        handleScroll();
 
         // Toggle mobile menu
-        if (navToggle) {
+        if (navToggle && navMenu && navOverlay) {
             navToggle.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Hamburger menu clicked');
-                navToggle.classList.toggle('active');
+                
+                const isActive = navToggle.classList.toggle('active');
                 navMenu.classList.toggle('active');
-                console.log('Menu state:', { 
-                    toggleActive: navToggle.classList.contains('active'),
+                navOverlay.classList.toggle('active');
+                
+                // Update ARIA attributes
+                navToggle.setAttribute('aria-expanded', isActive);
+                navOverlay.setAttribute('aria-hidden', !isActive);
+                
+                // Prevent body scroll when menu is open
+                document.body.style.overflow = isActive ? 'hidden' : '';
+                
+                console.log('Menu toggled:', { 
+                    toggleActive: isActive,
                     menuActive: navMenu.classList.contains('active')
                 });
             });
+
+            // Close menu when clicking overlay
+            navOverlay.addEventListener('click', function() {
+                closeMenu();
+            });
         } else {
-            console.warn('Nav toggle button not found!');
+            console.warn('Nav toggle, menu, or overlay not found!');
+        }
+
+        // Close mobile menu helper function
+        function closeMenu() {
+            if (navToggle && navMenu && navOverlay) {
+                navToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+                navOverlay.classList.remove('active');
+                navToggle.setAttribute('aria-expanded', 'false');
+                navOverlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
         }
 
         // Close mobile menu when clicking a link
         navLinks.forEach(link => {
             link.addEventListener('click', function() {
-                if (navToggle && navMenu) {
-                    navToggle.classList.remove('active');
-                    navMenu.classList.remove('active');
-                }
+                closeMenu();
             });
         });
 
@@ -44,11 +102,27 @@
         document.addEventListener('click', function(event) {
             const isClickInsideNav = event.target.closest('.main-nav');
             if (!isClickInsideNav && navMenu && navMenu.classList.contains('active')) {
-                if (navToggle) {
-                    navToggle.classList.remove('active');
-                }
-                navMenu.classList.remove('active');
+                closeMenu();
             }
+        });
+
+        // Handle escape key to close menu
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && navMenu && navMenu.classList.contains('active')) {
+                closeMenu();
+                navToggle?.focus();
+            }
+        });
+
+        // Close menu on window resize to desktop size
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                if (window.innerWidth > 768 && navMenu?.classList.contains('active')) {
+                    closeMenu();
+                }
+            }, 250);
         });
     }
 
@@ -57,12 +131,27 @@
         const currentPath = window.location.pathname;
         const navLinks = document.querySelectorAll('.nav-link');
         
+        console.log('Setting active page for path:', currentPath);
+        
         navLinks.forEach(link => {
             const linkPath = new URL(link.href).pathname;
-            if (linkPath === currentPath || 
+            
+            // Remove any existing active classes
+            link.classList.remove('current-page', 'active');
+            
+            // Check if this is the current page
+            const isCurrentPage = 
+                linkPath === currentPath || 
                 (currentPath === '/' && linkPath === '/') ||
-                (currentPath.includes('index.html') && linkPath === '/')) {
+                (currentPath === '/index.html' && linkPath === '/') ||
+                (currentPath.includes('index.html') && linkPath === '/');
+            
+            if (isCurrentPage) {
                 link.classList.add('current-page');
+                link.setAttribute('aria-current', 'page');
+                console.log('Active page set:', linkPath);
+            } else {
+                link.removeAttribute('aria-current');
             }
         });
     }

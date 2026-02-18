@@ -1,38 +1,42 @@
 <!-- Navigation Component -->
-<nav id="main-navigation" class="main-nav">
+<div class="nav-overlay" id="nav-overlay" aria-hidden="true"></div>
+<nav id="main-navigation" class="main-nav" role="navigation" aria-label="Main navigation">
     <div class="nav-container">
         <!-- Logo -->
         <div class="nav-logo">
-            <a href="/" id="logo-link">
+            <a href="/" id="logo-link" aria-label="Homepage">
                 <img id="logo-image" src="" alt="Logo" style="display: none;">
                 <span id="logo-text">Wine Management</span>
             </a>
         </div>
 
         <!-- Hamburger Menu (Mobile) -->
-        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
-            <span class="hamburger"></span>
-            <span class="hamburger"></span>
-            <span class="hamburger"></span>
+        <button class="nav-toggle" 
+                id="nav-toggle" 
+                aria-label="Toggle navigation menu"
+                aria-expanded="false"
+                aria-controls="nav-menu">
+            <span class="hamburger" aria-hidden="true"></span>
+            <span class="hamburger" aria-hidden="true"></span>
+            <span class="hamburger" aria-hidden="true"></span>
         </button>
 
         <!-- Navigation Links -->
-        <ul class="nav-menu" id="nav-menu">
-            <li class="nav-item">
-                <a href="/" class="nav-link">Dashboard</a>
+        <ul class="nav-menu" id="nav-menu" role="menubar">
+            <li class="nav-item" role="none">
+                <a href="/" class="nav-link" role="menuitem">Dashboard</a>
             </li>
-            <li class="nav-item">
-                <a href="/wines.html" class="nav-link">Wina</a>
+            <li class="nav-item" role="none">
+                <a href="/wines.html" class="nav-link" role="menuitem">Wina</a>
             </li>
-            <li class="nav-item">
-                <a href="/collections.html" class="nav-link">Kolekcje</a>
+            <li class="nav-item" role="none">
+                <a href="/collections.html" class="nav-link" role="menuitem">Kolekcje</a>
             </li>
-            <li class="nav-item">
-                <a href="/template-editor.html" class="nav-link">Edytor</a>
+            <li class="nav-item" role="none">
+                <a href="/template-editor.html" class="nav-link" role="menuitem">Edytor</a>
             </li>
-            <li class="nav-item">
-                <a href="/settings/index.html" class="nav-link">Ustawienia</a>
-            </li>
+            <li class="nav-item" role="none">
+                <a href="/settings/index.html" class="nav-link" role="menuitem">Ustawienia</a>
         </ul>
     </div>
 </nav>
