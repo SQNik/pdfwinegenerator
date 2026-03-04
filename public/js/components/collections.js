@@ -13,7 +13,7 @@ class CollectionsManager {
             status: '',
             tags: []
         };
-        this.currentSort = 'name';
+        this.currentSort = 'updated';
         this.isLoading = false;
         this.initialized = false;
         
@@ -67,7 +67,7 @@ class CollectionsManager {
             }, 300));
         }
 
-        const statusFilter = document.getElementById('collectionsStatusFilter');
+        const statusFilter = document.getElementById('statusFilter');
         if (statusFilter) {
             statusFilter.addEventListener('change', (e) => {
                 this.currentFilters.status = e.target.value;
@@ -79,14 +79,29 @@ class CollectionsManager {
         if (sortSelect) {
             sortSelect.addEventListener('change', (e) => {
                 this.currentSort = e.target.value;
+                this.updateSortIndicators();
                 this.applyFilters();
             });
         }
 
+        // Table header sorting
+        document.addEventListener('click', (e) => {
+            const header = e.target.closest('.sortable-header');
+            if (header) {
+                const sortKey = header.getAttribute('data-sort');
+                if (sortKey) {
+                    this.handleHeaderSort(sortKey);
+                }
+            }
+        });
+
         // Collection actions
         const createBtn = document.getElementById('createCollectionBtn');
         if (createBtn) {
-            createBtn.addEventListener('click', () => this.showCreateModal());
+            createBtn.addEventListener('click', () => {
+                // Redirect to wizard creator page
+                window.location.href = 'kreator.html';
+            });
         }
 
         const saveCollectionBtn = document.getElementById('saveCollectionBtn');
@@ -110,45 +125,12 @@ class CollectionsManager {
             addFieldBtn.addEventListener('click', () => this.showCreateFieldModal());
         }
 
-        // View toggle buttons
-        const viewCardsBtn = document.getElementById('viewCollectionsCards');
-        const viewTableBtn = document.getElementById('viewCollectionsTable');
-        
-        if (viewCardsBtn && viewTableBtn) {
-            viewCardsBtn.addEventListener('click', () => this.switchView('cards'));
-            viewTableBtn.addEventListener('click', () => this.switchView('table'));
-        }
-
-        // Modal events
-        const collectionModal = document.getElementById('collectionModal');
-        if (collectionModal) {
-            // Obsługa zamykania modalu przez backdrop z sprawdzaniem niezapisanych zmian
-            collectionModal.addEventListener('hide.bs.modal', (e) => {
-                if (this.hasUnsavedChanges) {
-                    const confirmClose = confirm('Masz niezapisane zmiany w wyborze win. Czy na pewno chcesz zamknąć modal bez zapisywania?');
-                    if (!confirmClose) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        return false;
-                    }
-                }
-            });
-
-            collectionModal.addEventListener('hidden.bs.modal', () => {
-                this.resetCollectionForm();
-                this.cleanupModalBackdrop(); // Dodano czyszczenie backdrop
-            });
-        }
+        // View toggle buttons removed - using table view only
 
         // Listen for collection fields updates
         document.addEventListener('collectionFieldsConfigChanged', async (e) => {
             console.log('CollectionsManager: Pola kolekcji się zmieniły');
             await this.loadCollectionFields();
-            // Jeśli modal jest otwarty, odśwież pola dynamiczne
-            const modal = document.getElementById('collectionModal');
-            if (modal && modal.classList.contains('show')) {
-                this.populateDynamicFields(this.currentCollection);
-            }
         });
 
         const fieldModal = document.getElementById('collectionFieldModal');
@@ -158,36 +140,6 @@ class CollectionsManager {
                 this.cleanupModalBackdrop(); // Dodano czyszczenie backdrop
             });
         }
-
-        // Event listenery dla przycisków zamykających modalów
-        // Przyciski z data-bs-dismiss="modal" w collectionModal - dodano sprawdzanie niezapisanych zmian
-        const collectionModalCloseButtons = document.querySelectorAll('#collectionModal [data-bs-dismiss="modal"]');
-        collectionModalCloseButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                console.log('CollectionsManager: Close button clicked for collectionModal');
-                
-                // Sprawdź niezapisane zmiany i zapytaj użytkownika
-                if (this.hasUnsavedChanges) {
-                    const confirmClose = confirm('Masz niezapisane zmiany w wyborze win. Czy na pewno chcesz zamknąć modal bez zapisywania?');
-                    if (!confirmClose) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        return false;
-                    }
-                }
-                
-                setTimeout(() => this.cleanupModalBackdrop(), 300);
-            });
-        });
-
-        // Przyciski z data-bs-dismiss="modal" w collectionFieldsModal
-        const fieldsModalCloseButtons = document.querySelectorAll('#collectionFieldsModal [data-bs-dismiss="modal"]');
-        fieldsModalCloseButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                console.log('CollectionsManager: Close button clicked for collectionFieldsModal');
-                setTimeout(() => this.cleanupModalBackdrop(), 300);
-            });
-        });
     }
 
     /**
@@ -292,23 +244,86 @@ class CollectionsManager {
         }
 
         // Sort
+        const isAscending = this.currentSort.startsWith('-');
+        const sortKey = this.currentSort.replace('-', '');
+        
         filtered.sort((a, b) => {
-            switch (this.currentSort) {
+            let result = 0;
+            switch (sortKey) {
                 case 'name':
-                    return a.name.localeCompare(b.name);
+                    result = a.name.localeCompare(b.name);
+                    break;
                 case 'created':
-                    return new Date(b.createdAt) - new Date(a.createdAt);
+                    result = new Date(b.createdAt) - new Date(a.createdAt);
+                    break;
                 case 'updated':
-                    return new Date(b.updatedAt) - new Date(a.updatedAt);
+                    result = new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt);
+                    break;
                 case 'wines_count':
-                    return (b.wines?.length || 0) - (a.wines?.length || 0);
+                    result = (b.wines?.length || 0) - (a.wines?.length || 0);
+                    break;
                 default:
-                    return 0;
+                    result = 0;
             }
+            // Reverse for ascending
+            return isAscending ? -result : result;
         });
 
         this.filteredCollections = filtered;
-        // renderCollections() jest wywoływane z refresh()
+        
+        // Render po filtrowaniu
+        this.renderCollections();
+        this.renderCollectionsTable();
+        this.updateStats();
+    }
+    
+    /**
+     * Handle sorting when clicking table headers
+     */
+    handleHeaderSort(sortKey) {
+        // Toggle sort direction if same column, otherwise set to desc
+        if (this.currentSort === sortKey) {
+            // Toggle direction by adding '-' prefix for ascending
+            if (this.currentSort.startsWith('-')) {
+                this.currentSort = sortKey; // Remove prefix = descending
+            } else {
+                this.currentSort = '-' + sortKey; // Add prefix = ascending
+            }
+        } else {
+            this.currentSort = sortKey; // Default to descending
+        }
+        
+        // Update dropdown to match
+        const sortSelect = document.getElementById('collectionsSortBy');
+        if (sortSelect) {
+            // Remove '-' prefix for dropdown value
+            const selectValue = this.currentSort.replace('-', '');
+            sortSelect.value = selectValue;
+        }
+        
+        this.updateSortIndicators();
+        this.applyFilters();
+        this.renderCollections();
+        this.renderCollectionsTable();
+    }
+    
+    /**
+     * Update visual indicators on table headers
+     */
+    updateSortIndicators() {
+        const headers = document.querySelectorAll('.sortable-header');
+        const isAscending = this.currentSort.startsWith('-');
+        const activeSort = this.currentSort.replace('-', '');
+        
+        headers.forEach(header => {
+            const sortKey = header.getAttribute('data-sort');
+            header.classList.remove('sort-active', 'sort-asc', 'sort-desc');
+            
+            if (sortKey === activeSort) {
+                header.classList.add('sort-active');
+                header.classList.add(isAscending ? 'sort-asc' : 'sort-desc');
+            }
+        });
     }
     
     filterCollections() {
@@ -329,27 +344,7 @@ class CollectionsManager {
         }
     }
 
-    switchView(viewType) {
-        const cardsView = document.getElementById('collectionsCardsView');
-        const tableView = document.getElementById('collectionsTableView');
-        const cardsBtn = document.getElementById('viewCollectionsCards');
-        const tableBtn = document.getElementById('viewCollectionsTable');
-        
-        if (!cardsView || !tableView || !cardsBtn || !tableBtn) return;
-        
-        if (viewType === 'cards') {
-            cardsView.classList.remove('d-none');
-            tableView.classList.add('d-none');
-            cardsBtn.classList.add('active');
-            tableBtn.classList.remove('active');
-        } else {
-            cardsView.classList.add('d-none');
-            tableView.classList.remove('d-none');
-            cardsBtn.classList.remove('active');
-            tableBtn.classList.add('active');
-            this.renderCollectionsTable();
-        }
-    }
+    // switchView method removed - using table view only
 
     renderCollectionsTable() {
         const tbody = document.getElementById('collectionsTableBody');
@@ -358,7 +353,7 @@ class CollectionsManager {
         if (this.filteredCollections.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="8" style="text-align: center; padding: var(--space-xl); color: var(--ds-color-neutral-600);">
+                    <td colspan="9" style="text-align: center; padding: var(--space-xl); color: var(--ds-color-neutral-600);">
                         <i class="bi bi-folder-x" style="font-size: 2.5rem; opacity: 0.3; margin-bottom: var(--space-md); display: block;"></i>
                         <div style="font-weight: 600; margin-bottom: 4px;">Brak kolekcji</div>
                         <div style="font-size: 0.875rem;">Kliknij "Nowa kolekcja" aby utworzyć pierwszą kolekcję</div>
@@ -372,6 +367,15 @@ class CollectionsManager {
             const wineCount = collection.wines ? collection.wines.length : 0;
             const statusBadge = this.getStatusBadge(collection.status);
             const createdDate = new Date(collection.createdAt).toLocaleDateString('pl-PL');
+            const updatedDate = collection.updatedAt ? new Date(collection.updatedAt).toLocaleDateString('pl-PL') : createdDate;
+            const updatedTime = collection.updatedAt ? new Date(collection.updatedAt).toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'}) : '';
+            
+            // Check if collection was edited after last PDF generation
+            const pdfNeedsRegeneration = collection.lastGeneratedPdf && collection.updatedAt && 
+                new Date(collection.updatedAt) > new Date(collection.lastGeneratedPdf.generatedAt);
+            
+            // Check if collection is active (only active collections can generate PDFs)
+            const canGeneratePdf = collection.status === 'active';
             
             return `
                 <tr>
@@ -387,6 +391,14 @@ class CollectionsManager {
                         </span>
                     </td>
                     <td style="color: var(--ds-color-neutral-600); font-size: 0.875rem;">${createdDate}</td>
+                    <td style="color: var(--ds-color-neutral-600); font-size: 0.875rem;">
+                        ${collection.updatedAt ? `
+                            <span title="${new Date(collection.updatedAt).toLocaleString('pl-PL')}">
+                                ${updatedDate}
+                                ${updatedTime ? `<br><small style="color: var(--ds-color-neutral-500);">${updatedTime}</small>` : ''}
+                            </span>
+                        ` : '<span style="color: var(--ds-color-neutral-500);">—</span>'}
+                    </td>
                     <td style="color: var(--ds-color-neutral-600); font-size: 0.875rem;">
                         ${collection.lastGeneratedPdf ? `
                             <span title="${new Date(collection.lastGeneratedPdf.generatedAt).toLocaleString('pl-PL')}">
@@ -416,18 +428,31 @@ class CollectionsManager {
                                     title="Edytuj">
                                 <i class="bi bi-pencil"></i>
                             </button>
-                            ${collection.lastGeneratedPdf ? `
+                            ${collection.lastGeneratedPdf && !pdfNeedsRegeneration ? `
                                 <button type="button" class="ds-btn ds-btn-sm ds-btn-primary" 
                                         onclick="window.open('${collection.lastGeneratedPdf.url}', '_blank')" 
                                         title="Pobierz ostatnie PDF (${new Date(collection.lastGeneratedPdf.generatedAt).toLocaleString('pl-PL')})">
                                     <i class="bi bi-file-earmark-pdf-fill"></i>
                                 </button>
                             ` : ''}
-                            <button type="button" class="ds-btn ds-btn-sm ds-btn-ghost" 
-                                    onclick="window.collectionsApp.managers.collections.showPDFModal('${collection.id}')" 
-                                    title="Generuj nowe PDF">
-                                <i class="bi bi-file-pdf"></i>
-                            </button>
+                            ${pdfNeedsRegeneration ? `
+                                <button type="button" class="ds-btn ds-btn-sm ds-btn-warning" 
+                                        onclick="window.collectionsApp.managers.collections.showPDFModal('${collection.id}')" 
+                                        title="${canGeneratePdf ? 'Kolekcja zmieniona - wymagane nowe wygenerowanie PDF' : 'Zmień status na Aktywny, aby wygenerować PDF'}"
+                                        style="${!canGeneratePdf ? 'opacity: 0.5; cursor: not-allowed;' : ''}"
+                                        ${!canGeneratePdf ? 'disabled' : ''}>
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                    <i class="bi bi-file-pdf"></i>
+                                </button>
+                            ` : `
+                                <button type="button" class="ds-btn ds-btn-sm ${collection.metadata?.templateId ? 'ds-btn-primary' : 'ds-btn-ghost'}" 
+                                        onclick="window.collectionsApp.managers.collections.showPDFModal('${collection.id}')" 
+                                        title="${!canGeneratePdf ? 'Zmień status na Aktywny, aby wygenerować PDF' : (collection.metadata?.templateId ? 'Generuj PDF (szablon zapisany)' : 'Generuj PDF (wybierz szablon)')}"
+                                        style="${!canGeneratePdf ? 'opacity: 0.5; cursor: not-allowed;' : ''}"
+                                        ${!canGeneratePdf ? 'disabled' : ''}>
+                                    <i class="bi bi-file-pdf"></i>
+                                </button>
+                            `}
                             <button type="button" class="ds-btn ds-btn-sm ds-btn-ghost" 
                                     onclick="window.collectionsApp.managers.collections.exportCollection('${collection.id}')" 
                                     title="Eksportuj JSON">
@@ -444,45 +469,14 @@ class CollectionsManager {
                 </tr>
             `;
         }).join('');
+        
+        // Update sort indicators after rendering
+        this.updateSortIndicators();
     }
 
     renderCollections() {
-        console.log('renderCollections: Renderuję', this.filteredCollections.length, 'kolekcji');
-        
-        const container = document.getElementById('collectionsContainer');
-        if (!container) return;
-
-        if (this.filteredCollections.length === 0) {
-            container.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-xl) * 2;">
-                    <i class="bi bi-folder2-open" style="font-size: 4rem; color: var(--color-text-tertiary); margin-bottom: var(--space-lg);"></i>
-                    <h5 style="color: var(--color-text-secondary); font-size: 1.25rem; margin-bottom: var(--space-sm);">Brak kolekcji</h5>
-                    <p style="color: var(--color-text-tertiary); font-size: 0.875rem;">Kliknij "Nowa kolekcja" aby utworzyć pierwszą kolekcję win.</p>
-                </div>
-            `;
-            return;
-        }
-
-        container.innerHTML = this.filteredCollections.map(collection => this.renderCollectionCard(collection)).join('');
-        
-        // Debug: Log każdej karty kolekcji
-        this.filteredCollections.forEach(collection => {
-            const wineCount = collection.wines ? collection.wines.length : 0;
-            console.log(`renderCollections: Karta "${collection.name}" powinna pokazywać ${wineCount} win`);
-        });
-        
-        // Debug: Sprawdź rzeczywisty HTML w kontenerze
-        console.log('renderCollections: Aktualny HTML kontenera:', container.innerHTML.substring(0, 500) + '...');
-        
-        // WYMUSZENIE ODŚWIEŻENIA - usuń i dodaj ponownie kontener
-        const parent = container.parentNode;
-        const containerClone = container.cloneNode(false);
-        containerClone.innerHTML = container.innerHTML;
-        parent.removeChild(container);
-        containerClone.id = 'collectionsContainer';
-        parent.appendChild(containerClone);
-        
-        console.log('renderCollections: Wymuszono przebudowę DOM');
+        console.log('renderCollections: Renderuję', this.filteredCollections.length, 'kolekcji w widoku tabeli');
+        this.renderCollectionsTable();
     }
 
     renderCollectionCard(collection) {
@@ -491,6 +485,9 @@ class CollectionsManager {
         
         const statusBadge = this.getStatusBadge(collection.status);
         const tags = collection.tags ? collection.tags.map(tag => `<span class="modern-badge modern-badge-secondary" style="margin-right: 4px;">${tag}</span>`).join('') : '';
+        
+        // Check if collection is active (only active collections can generate PDFs)
+        const canGeneratePdf = collection.status === 'active';
         
         // Render dynamic fields
         const dynamicFieldsHtml = this.renderDynamicFields(collection.dynamicFields);
@@ -528,9 +525,11 @@ class CollectionsManager {
                             <i class="bi bi-eye"></i>
                             Zobacz
                         </button>
-                        <button type="button" class="modern-btn modern-btn-sm modern-btn-secondary" 
+                        <button type="button" class="modern-btn modern-btn-sm ${collection.metadata?.templateId ? 'modern-btn-primary' : 'modern-btn-secondary'}" 
                                 onclick="window.collectionsApp.managers.collections.showPDFModal('${collection.id}')"
-                                style="font-size: 0.8125rem;">
+                                title="${!canGeneratePdf ? 'Zmień status na Aktywny, aby wygenerować PDF' : `Generuj PDF ${collection.metadata?.templateId ? '(szablon zapisany)' : '(wybierz szablon)'}`}"
+                                style="font-size: 0.8125rem;${!canGeneratePdf ? ' opacity: 0.5; cursor: not-allowed;' : ''}"
+                                ${!canGeneratePdf ? 'disabled' : ''}>
                             <i class="bi bi-file-pdf"></i>
                             Generuj PDF
                         </button>
@@ -630,9 +629,9 @@ class CollectionsManager {
     }
 
     updateStats() {
-        const totalElement = document.getElementById('totalCollections');
-        const activeElement = document.getElementById('activeCollections');
-        const totalWinesElement = document.getElementById('totalWinesInCollections');
+        const totalElement = document.getElementById('statsTotal');
+        const activeElement = document.getElementById('statsActive');
+        const totalWinesElement = document.getElementById('statsTotalWines');
 
         if (totalElement) {
             totalElement.textContent = this.collections.length;
@@ -651,12 +650,6 @@ class CollectionsManager {
         }
     }
 
-    showCreateModal() {
-        this.currentCollection = null;
-        this.populateCollectionForm();
-        this.showModal('collectionModal');
-    }
-
     async showPDFModal(collectionId) {
         try {
             // Get collection details
@@ -666,17 +659,88 @@ class CollectionsManager {
                 return;
             }
 
-            // Get available templates from Template Editor
-            const templatesResponse = await api.getTemplateEditorTemplates();
-            if (!templatesResponse.success || !templatesResponse.data) {
-                this.showNotification('Błąd podczas ładowania szablonów PDF', 'error');
+            const collection = collectionResponse.data;
+            
+            // Check if collection is active
+            if (collection.status !== 'active') {
+                this.showNotification('Tylko aktywne kolekcje mogą generować PDF. Zmień status na "Aktywny" w ustawieniach kolekcji.', 'warning');
                 return;
             }
+            
+            // Check if collection has a template saved in metadata
+            const savedTemplateId = collection.metadata?.templateId;
+            
+            if (savedTemplateId) {
+                // Generate PDF directly with saved template
+                console.log('Using saved template:', savedTemplateId);
+                await this.generatePDFDirectly(collection, savedTemplateId);
+            } else {
+                // No saved template - show modal to select one
+                console.log('No saved template - showing selection modal');
+                
+                // Get available templates from Template Editor
+                const templatesResponse = await api.getTemplateEditorTemplates();
+                if (!templatesResponse.success || !templatesResponse.data) {
+                    this.showNotification('Błąd podczas ładowania szablonów PDF', 'error');
+                    return;
+                }
 
-            this.showPDFGenerationModal(collectionResponse.data, templatesResponse.data);
+                this.showPDFGenerationModal(collection, templatesResponse.data);
+            }
         } catch (error) {
             console.error('Failed to load PDF modal data:', error);
             this.showNotification('Błąd podczas ładowania danych dla PDF', 'error');
+        }
+    }
+
+    async generatePDFDirectly(collection, templateId) {
+        try {
+            // Show loading notification
+            this.showNotification('Generowanie PDF...', 'info');
+            
+            // Prepare data for PDF generation
+            const pdfData = {
+                collectionId: collection.id,
+                customTitle: collection.name,
+                format: 'A4'
+            };
+            
+            console.log('Generating PDF with template:', templateId, pdfData);
+            
+            // Generate PDF using api.js method (handles both blob and JSON responses)
+            const result = await api.generateCollectionTemplate(templateId, pdfData);
+            
+            // Check if result is error object (JSON) or blob (PDF)
+            if (result instanceof Blob) {
+                // Success - got PDF blob
+                this.showNotification('PDF wygenerowany pomyślnie!', 'success');
+                
+                const pdfUrl = URL.createObjectURL(result);
+                
+                // Open PDF in new window/tab
+                const pdfWindow = window.open(pdfUrl, '_blank');
+                
+                // Clean up the URL after window is opened
+                if (pdfWindow) {
+                    pdfWindow.onload = () => {
+                        URL.revokeObjectURL(pdfUrl);
+                    };
+                } else {
+                    URL.revokeObjectURL(pdfUrl);
+                    throw new Error('Nie udało się otworzyć okna PDF');
+                }
+                
+                // Refresh collections to update lastGeneratedPdf
+                await this.refresh();
+            } else if (result.success === false) {
+                // Error response (JSON)
+                throw new Error(result.error || 'Nieznany błąd podczas generowania PDF');
+            } else {
+                throw new Error('Nieprawidłowa odpowiedź z serwera');
+            }
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            this.showNotification('Błąd podczas generowania PDF: ' + error.message, 'error');
         }
     }
 
@@ -942,23 +1006,8 @@ class CollectionsManager {
     }
 
     async editCollection(id) {
-        try {
-            console.log('Editing collection with ID:', id);
-            const response = await api.getCollection(id, true);
-            console.log('API response:', response);
-            if (response.success && response.data) {
-                console.log('Collection data:', response.data);
-                this.currentCollection = response.data;
-                this.populateCollectionForm(response.data);
-                this.showModal('collectionModal');
-            } else {
-                console.error('No data in response or response not successful:', response);
-                this.showNotification('Nie znaleziono kolekcji do edycji', 'error');
-            }
-        } catch (error) {
-            console.error('Failed to load collection for editing:', error);
-            this.showNotification('Błąd podczas ładowania kolekcji do edycji', 'error');
-        }
+        // Redirect to wizard/kreator with edit mode
+        window.location.href = `kreator.html?edit=${id}`;
     }
 
     setupModalForCollection(triggerElement) {
@@ -1951,50 +2000,85 @@ class CollectionsManager {
 
     populateDynamicFields(collection) {
         console.log('🎨 populateDynamicFields called with collection:', collection);
-        const container = document.getElementById('dynamicCollectionFields');
-        const noFieldsMsg = document.getElementById('noCustomFields');
-        if (!container) {
-            console.error('❌ Container #dynamicCollectionFields not found!');
-            return;
-        }
-
+        
         const dynamicFields = collection ? (collection.dynamicFields || {}) : {};
         console.log('📋 Dynamic fields from collection:', dynamicFields);
-        console.log('🔧 Available field definitions:', this.collectionFields.map(f => ({ id: f.id, name: f.name })));
+        console.log('🔧 Available field definitions:', this.collectionFields.map(f => ({ id: f.id, name: f.name, step: f.step })));
 
-        // Pokaż/ukryj komunikat "brak pól"
-        if (this.collectionFields.length === 0) {
-            if (container) container.style.display = 'none';
-            if (noFieldsMsg) noFieldsMsg.style.display = 'block';
-            console.log('ℹ️ No custom fields configured');
-            return;
-        } else {
-            if (container) container.style.display = 'grid';
-            if (noFieldsMsg) noFieldsMsg.style.display = 'none';
+        // Pogrupuj pola według kroków
+        const fieldsByStep = {
+            1: [],
+            2: [],
+            3: [],
+            4: []
+        };
+
+        this.collectionFields.forEach(field => {
+            const step = field.step || 2; // Domyślnie krok 2
+            if (fieldsByStep[step]) {
+                fieldsByStep[step].push(field);
+            }
+        });
+
+        // Renderuj pola dla każdego kroku
+        for (let step = 1; step <= 4; step++) {
+            const container = document.getElementById(`dynamicCollectionFieldsStep${step}`);
+            if (!container) {
+                console.warn(`❌ Container #dynamicCollectionFieldsStep${step} not found!`);
+                continue;
+            }
+
+            const fieldsForStep = fieldsByStep[step];
+            
+            if (fieldsForStep.length === 0) {
+                container.style.display = 'none';
+                console.log(`ℹ️ No fields configured for step ${step}`);
+                continue;
+            }
+
+            container.style.display = 'grid';
+
+            // Użyj nowego systemu helperów jeśli jest dostępny
+            if (window.CollectionFieldsHelpers) {
+                console.log(`✨ Using CollectionFieldsHelpers for step ${step}`);
+                container.innerHTML = fieldsForStep.map(field => {
+                    const value = dynamicFields[field.id] || field.defaultValue || '';
+                    console.log(`  🔹 Field "${field.name}" (${field.id}) in step ${step}: value = "${value}"`);
+                    return window.CollectionFieldsHelpers.generateFormField(field, value, {
+                        showLabel: true,
+                        showHelpText: true,
+                        additionalClasses: 'collection-dynamic-field'
+                    });
+                }).join('');
+            } else {
+                // Fallback do starej metody
+                console.log(`📝 Using fallback renderFieldInput for step ${step}`);
+                container.innerHTML = fieldsForStep.map(field => {
+                    const value = dynamicFields[field.id] || field.defaultValue || '';
+                    console.log(`  🔹 Field "${field.name}" (${field.id}) in step ${step}: value = "${value}"`);
+                    return this.renderFieldInput(field, value);
+                }).join('');
+            }
         }
 
-        // Użyj nowego system helperów jeśli jest dostępny
-        if (window.CollectionFieldsHelpers) {
-            console.log('✨ Using CollectionFieldsHelpers');
-            container.innerHTML = this.collectionFields.map(field => {
-                const value = dynamicFields[field.id] || field.defaultValue || '';
-                console.log(`  🔹 Field "${field.name}" (${field.id}): value = "${value}"`);
-                return window.CollectionFieldsHelpers.generateFormField(field, value, {
-                    showLabel: true,
-                    showHelpText: true,
-                    additionalClasses: 'collection-dynamic-field'
-                });
-            }).join('');
-        } else {
-            // Fallback do starej metody
-            console.log('📝 Using fallback renderFieldInput');
-            container.innerHTML = this.collectionFields.map(field => {
-                const value = dynamicFields[field.id] || field.defaultValue || '';
-                console.log(`  🔹 Field "${field.name}" (${field.id}): value = "${value}"`);
-                return this.renderFieldInput(field, value);
-            }).join('');
+        // Obsługa starego kontenera dla kompatybilności wstecznej (krok 2)
+        const oldContainer = document.getElementById('dynamicCollectionFields');
+        if (oldContainer) {
+            oldContainer.style.display = 'none'; // Ukryj stary kontener
         }
-        console.log('✅ Dynamic fields populated');
+
+        // Pokaż/ukryj komunikat "brak pól" w kroku 2
+        const noFieldsMsg = document.getElementById('noCustomFields');
+        const totalFields = this.collectionFields.length;
+        if (noFieldsMsg) {
+            if (totalFields === 0) {
+                noFieldsMsg.style.display = 'block';
+            } else {
+                noFieldsMsg.style.display = 'none';
+            }
+        }
+
+        console.log('✅ Dynamic fields populated across all steps');
     }
 
     renderFieldInput(field, value = '') {
@@ -2184,10 +2268,21 @@ class CollectionsManager {
         
         // Użyj CollectionFieldsHelpers.getFormValues jeśli dostępny
         if (window.CollectionFieldsHelpers) {
-            const container = document.getElementById('dynamicCollectionFields');
-            if (container) {
-                dynamicFields = window.CollectionFieldsHelpers.getFormValues(container, this.collectionFields);
-                console.log('✅ Zebrano pola przez CollectionFieldsHelpers:', dynamicFields);
+            // Zbierz pola ze wszystkich kroków (1-4)
+            for (let step = 1; step <= 4; step++) {
+                const container = document.getElementById(`dynamicCollectionFieldsStep${step}`);
+                if (container) {
+                    const stepFields = window.CollectionFieldsHelpers.getFormValues(container, this.collectionFields);
+                    Object.assign(dynamicFields, stepFields);
+                    console.log(`✅ Zebrano pola z kroku ${step}:`, stepFields);
+                }
+            }
+            
+            // Zbierz także ze starego kontenera dla kompatybilności
+            const oldContainer = document.getElementById('dynamicCollectionFields');
+            if (oldContainer) {
+                const oldFields = window.CollectionFieldsHelpers.getFormValues(oldContainer, this.collectionFields);
+                Object.assign(dynamicFields, oldFields);
             }
         } else {
             // Fallback - zbieraj manualnie z ID dynamic_
@@ -2234,6 +2329,7 @@ class CollectionsManager {
             status: statusSelect?.value || 'active',
             tags: tagsInput?.value ? tagsInput.value.split(',').map(tag => tag.trim()).filter(Boolean) : [],
             wines: selectedWines,
+            coverImage: selectedCover || '', // ✅ FIX: Dodaj coverImage jako główne pole kolekcji
             dynamicFields
         };
     }
@@ -2822,10 +2918,22 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         if (typeof window !== 'undefined') {
             window.collectionsManager = new CollectionsManager();
+            // Alias dla kompatybilności z różnymi odwołaniami w kodzie
+            window.collectionsApp = {
+                managers: {
+                    collections: window.collectionsManager
+                }
+            };
         }
     });
 } else {
     if (typeof window !== 'undefined') {
         window.collectionsManager = new CollectionsManager();
+        // Alias dla kompatybilności z różnymi odwołaniami w kodzie
+        window.collectionsApp = {
+            managers: {
+                collections: window.collectionsManager
+            }
+        };
     }
 }

@@ -10,6 +10,28 @@
 
 ## 🏗️ Krytyczne Decyzje Architektoniczne
 
+### 0. 🚨 System Budowania HTML (NAJWAŻNIEJSZA ZASADA)
+**KRYTYCZNE**: Projekt używa automatycznego systemu budowania HTML. **NIGDY** nie edytuj plików bezpośrednio w `public/` - zostaną nadpisane!
+
+**Przepływ Budowania**:
+```
+public/pages/*.html (ŹRÓDŁA - edytuj tutaj)
+       ↓
+   npm run build
+       ↓  
+public/*.html (WYGENEROWANE - NIE EDYTUJ!)
+```
+
+**Zawsze Edytuj**: `public/pages/index.html`, `public/pages/wines.html`, `public/pages/collections.html`, `public/pages/template-editor.html`
+
+**Nigdy Nie Edytuj**: `public/index.html`, `public/wines.html`, `public/collections.html`, `public/template-editor.html` (są generowane)
+
+**Wyjątki** (edytuj bezpośrednio): `public/pdf-editor.html`, `public/settings/index.html` - NIE są budowane
+
+**Po każdej edycji uruchom**: `npm run build:html` lub `npm run build`
+
+**Zobacz**: [DEVELOPMENT_RULES.md](DEVELOPMENT_RULES.md) dla szczegółów
+
 ### 1. Pola Dynamiczne Sterowane Serwerem (Wzorzec Główny)
 **ZASADA**: Wszystkie definicje pól pochodzą z serwera (`/api/fields/config`) — NIGDY nie hardkoduj pól.
 
@@ -74,7 +96,11 @@ Kolekcje mają własne pola dynamiczne (oddzielone od pól win). Zarządzane pop
 ### Budowanie i Uruchamianie
 ```bash
 npm run dev              # Rozwój z gorącym przeładowaniem (ts-node-dev)
-npm run build           # Kompilacja TypeScript → dist/
+npm run build           # Kompilacja TypeScript + HTML → dist/ i public/
+npm run build:ts        # Kompilacja tylko TypeScript
+npm run build:html      # Kompilacja tylko HTML (public/pages/ → public/)
+npm run watch:html      # Watch mode - auto-rebuild HTML przy zmianach
+npm run dev:all         # Development z watch (TypeScript + HTML)
 npm start               # Uruchomienie skompilowanego serwera
 npm run check-fields    # Walidacja synchronizacji pól (wines.json ↔ fields-config.json)
 npm run fix-fields      # Automatyczna naprawa niezgodności pól
@@ -179,11 +205,14 @@ generateFormField(field) { /* czyta z konfiguracji serwera */ }
 | [public/js/api.js](public/js/api.js) | Warstwa HTTP frontendu | api.getWines(), api.saveWine(), itd. |
 | [public/js/components/wines.js](public/js/components/wines.js) | Interfejs CRUD win | Klasy WineManager, WineFieldsManager |
 | [data/fields-config.json](data/fields-config.json) | Bieżące pola win | Tablica obiektów FieldConfig |
+| [public/pages/*.html](public/pages/) | Źródłowe pliki HTML | Pliki do edycji (budowane → public/) |
+| [scripts/build-html.js](scripts/build-html.js) | Skrypt budowania HTML | Kompilator HTML z include'ami |
 
 ---
 
 ## 🔗 Powiązana Dokumentacja
 
+- **[DEVELOPMENT_RULES.md](DEVELOPMENT_RULES.md)**: **PRZECZYTAJ NAJPIERW** - Zasady budowania HTML, edycji plików
 - **[DYNAMIC_FIELDS_SYSTEM.md](docs/DYNAMIC_FIELDS_SYSTEM.md)**: Głębokie zagłębienie się w architekturę pól, antywzorce
 - **[CATEGORY_MANAGEMENT.md](docs/CATEGORY_MANAGEMENT.md)**: Dynamiczny system kategorii i typów pól
 - **[COLLECTION_FIELDS_IMPLEMENTATION.md](docs/COLLECTION_FIELDS_IMPLEMENTATION.md)**: CRUD pół kolekcji

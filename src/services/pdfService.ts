@@ -2041,6 +2041,43 @@ processedHTML = processedHTML.replace(/\{\{!--[\s\S]*?--\}\}/g, '');
         htmlContent = await fs.readFile(templatePath, 'utf-8');
       }
       
+      // 🖼️ Convert relative image paths to base64 data URLs for Puppeteer
+      if (collectionData && collectionData.coverImage) {
+        const coverImagePath = collectionData.coverImage;
+        
+        // Check if it's a relative path starting with /
+        if (coverImagePath.startsWith('/') && !coverImagePath.startsWith('data:')) {
+          try {
+            // Convert to absolute path
+            const absolutePath = path.join(process.cwd(), 'public', coverImagePath);
+            
+            // Read image file
+            const imageBuffer = await fs.readFile(absolutePath);
+            
+            // Detect MIME type from extension
+            const ext = path.extname(coverImagePath).toLowerCase();
+            const mimeTypes: { [key: string]: string } = {
+              '.png': 'image/png',
+              '.jpg': 'image/jpeg',
+              '.jpeg': 'image/jpeg',
+              '.gif': 'image/gif',
+              '.webp': 'image/webp',
+              '.svg': 'image/svg+xml'
+            };
+            const mimeType = mimeTypes[ext] || 'image/png';
+            
+            // Convert to base64 data URL
+            const base64 = imageBuffer.toString('base64');
+            collectionData.coverImage = `data:${mimeType};base64,${base64}`;
+            
+            logger.info(`PDFService: ✅ Converted coverImage to base64 data URL (${coverImagePath} -> ${mimeType}, ${Math.round(base64.length/1024)}KB)`);
+          } catch (error) {
+            logger.error(`PDFService: ❌ Failed to load cover image: ${coverImagePath}`, error);
+            // Keep original path as fallback
+          }
+        }
+      }
+      
       // Wstrzyknij dane kolekcji
       if (collectionData) {
         htmlContent = this.injectCollectionDataToHTML(htmlContent, collectionData);
@@ -2280,6 +2317,10 @@ private injectCollectionDataToHTML(htmlContent: string, collectionData: any): st
   // ✅ Strip Handlebars comments (silnik ich nie obsługuje, potrafią trafić do PDF)
   processedHTML = processedHTML.replace(/\{\{!--[\s\S]*?--\}\}/g, '');
 
+  // 🔍 DEBUG: Log collection metadata
+  logger.info('PDFService: injectCollectionDataToHTML - collectionData.metadata:', collectionData?.metadata);
+  logger.info('PDFService: injectCollectionDataToHTML - categoryNames:', collectionData?.metadata?.categoryNames);
+
   try {
     // 🔥 DETECT CUSTOM PAGINATION from meta tag
     const paginationMatch = htmlContent.match(
@@ -2457,15 +2498,38 @@ private injectCollectionDataToHTML(htmlContent: string, collectionData: any): st
         logger.warn('PDFService: No wines found in collection for category grouping');
         processedHTML = processedHTML.substring(0, categoryMatch.start) + '' + processedHTML.substring(categoryMatch.end);
       } else {
+        // Get custom wine categories from metadata (set in wizard when user moves wines between categories)
+        const customWineCategories = collectionData?.metadata?.wineCategories || {};
+        logger.info(`PDFService: Custom wine categories from wizard:`, customWineCategories);
+        
         // 1) Group wines by category (✅ trim usuwa "różowe" vs "różowe ")
+        // ✅ Use custom category for GROUPING (section placement), but keep original wine.category intact
         const winesByCategory: { [key: string]: any[] } = {};
         winesArr.forEach((wine: any) => {
-          const category = (wine.category || 'Inne').trim();
-          if (!winesByCategory[category]) winesByCategory[category] = [];
-          winesByCategory[category].push(wine);
+          // Check if this wine has a custom category set in wizard (for section placement)
+          const customCategory = customWineCategories[wine.catalogNumber];
+          const sectionCategory = (customCategory || wine.category || 'Inne').trim();
+          
+          // ✅ Keep original wine data intact - do NOT override wine.category
+          // This way {{this.category}} in template shows original category (e.g., "białe")
+          // but wine appears in the section it was moved to (e.g., "różowe")
+          const wineForSection = {
+            ...wine,
+            // Add sectionCategory field if needed for reference, but don't override category
+            _movedToSection: customCategory ? sectionCategory : undefined
+          };
+          
+          if (!winesByCategory[sectionCategory]) winesByCategory[sectionCategory] = [];
+          winesByCategory[sectionCategory].push(wineForSection);
         });
 
         logger.info(`PDFService: Processing ${Object.keys(winesByCategory).length} categories`);
+        logger.info(`PDFService: Categories found:`, Object.keys(winesByCategory));
+        
+        // Log wine count per category
+        Object.entries(winesByCategory).forEach(([cat, wines]) => {
+          logger.info(`PDFService: Category "${cat}" has ${wines.length} wines`);
+        });
 
         // 2) Build pages per category (3 wines per page)
         const pagesByCategory: { [key: string]: any[][] } = {};
@@ -2482,7 +2546,24 @@ private injectCollectionDataToHTML(htmlContent: string, collectionData: any): st
           .map(([category, wines]) => {
             let catHTML = template;
 
-            catHTML = catHTML.replace(/\{\{category\}\}/g, category);
+            // Use custom category name if available, otherwise use default category name
+            const customCategoryNames = collectionData?.metadata?.categoryNames || {};
+            const displayCategoryName = customCategoryNames[category] || category;
+
+            logger.info(`PDFService: ====== Processing category: "${category}" ======`);
+            logger.info(`PDFService: Available custom category names:`, customCategoryNames);
+            logger.info(`PDFService: Display name will be: "${displayCategoryName}"`);
+            logger.info(`PDFService: Template contains {{category}}: ${catHTML.includes('{{category}}')}`);
+            
+            // Count how many times {{category}} appears
+            const categoryMatches = catHTML.match(/\{\{category\}\}/g);
+            logger.info(`PDFService: Found ${categoryMatches ? categoryMatches.length : 0} instances of {{category}} to replace`);
+
+            catHTML = catHTML.replace(/\{\{category\}\}/g, displayCategoryName);
+            
+            // Verify replacement worked
+            logger.info(`PDFService: After replacement, {{category}} still exists: ${catHTML.includes('{{category}}')}`);
+            
             catHTML = catHTML.replace(/\{\{categoryWineCount\}\}/g, String(wines.length));
 
           // jeśli szablon ma {{#each pages}} ... {{/each}}
@@ -2527,10 +2608,12 @@ if (catHTML.includes(pagesStartTag)) {
               wineHTML = wineHTML.replace(/\{\{this\.(\w+)\}\}/g, (_m: string, field: string) => wine[field] || '');
               wineHTML = wineHTML.replace(/\{\{wine\.(\w+)\}\}/g, (_m: string, field: string) => wine[field] || '');
 
-              // {{#if this.field}} ... {{/if}}
+              // {{#if this.field}} ... {{else}} ... {{/if}} - obsługa z else
               wineHTML = wineHTML.replace(
-                /\{\{#if this\.(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g,
-                (_ifm: string, field: string, content: string) => (wine[field] ? content : '')
+                /\{\{#if this\.(\w+)\}\}([\s\S]*?)(?:\{\{else\}\}([\s\S]*?))?\{\{\/if\}\}/g,
+                (_ifm: string, field: string, ifContent: string, elseContent: string = '') => {
+                  return wine[field] ? ifContent : elseContent;
+                }
               );
 
               return wineHTML;
@@ -2558,6 +2641,15 @@ if (catHTML.includes(pagesStartTag)) {
         let wineHTML = wineTemplate;
         wineHTML = wineHTML.replace(/\{\{wine\.(\w+)\}\}/g, (_m: string, field: string) => wine[field] || '');
         wineHTML = wineHTML.replace(/\{\{this\.(\w+)\}\}/g, (_m: string, field: string) => wine[field] || '');
+        
+        // {{#if this.field}} ... {{else}} ... {{/if}} - obsługa z else
+        wineHTML = wineHTML.replace(
+          /\{\{#if this\.(\w+)\}\}([\s\S]*?)(?:\{\{else\}\}([\s\S]*?))?\{\{\/if\}\}/g,
+          (_ifm: string, field: string, ifContent: string, elseContent: string = '') => {
+            return wine[field] ? ifContent : elseContent;
+          }
+        );
+        
         return wineHTML;
       })
       .join('');
@@ -2585,6 +2677,71 @@ ${catHTML}
         fs.writeFileSync('debug-categories-output.html', processedHTML, 'utf-8');
         logger.info(`PDFService: DEBUG - Saved generated HTML to debug-categories-output.html`);
       }
+    }
+
+    // === Handle {{#each winePages}} === 
+    // Support for templates that directly iterate over winePages (e.g., "A4 składane w V")
+    const winePagesStartTag = '{{#each winePages}}';
+    let winePagesMatch = findMatchingEach(processedHTML, winePagesStartTag);
+
+    if (winePagesMatch) {
+      logger.info('PDFService: Found {{#each winePages}} in template');
+      const winePages = collectionData.winePages || [];
+      logger.info(`PDFService: winePages has ${winePages.length} pages`);
+
+      const pageTemplate = winePagesMatch.template;
+      
+      const renderedPagesHTML = winePages.map((winesInPage: any[], pageIndex: number) => {
+        logger.info(`PDFService: Rendering page ${pageIndex + 1} with ${winesInPage.length} wines`);
+        let onePageHTML = pageTemplate;
+
+        // Handle nested {{#each this}} for wines in this page
+        const thisStartTag = '{{#each this}}';
+        
+        while (onePageHTML.includes(thisStartTag)) {
+          const thisMatch = findMatchingEach(onePageHTML, thisStartTag);
+          
+          if (!thisMatch) {
+            logger.warn('PDFService: Could not find matching {{/each}} for {{#each this}} in winePages loop');
+            break;
+          }
+
+          const wineTemplate = thisMatch.template;
+          
+          const winesHTML = winesInPage.map((wine: any, wineIndex: number) => {
+            logger.info(`PDFService: Rendering wine ${wineIndex + 1}: ${wine.name || 'unnamed'}`);
+            let wineHTML = wineTemplate;
+
+            // Replace {{this.field}} and {{wine.field}}
+            wineHTML = wineHTML.replace(/\{\{this\.(\w+)\}\}/g, (_m: string, field: string) => {
+              const value = wine[field] || '';
+              return value;
+            });
+            
+            wineHTML = wineHTML.replace(/\{\{wine\.(\w+)\}\}/g, (_m: string, field: string) => {
+              const value = wine[field] || '';
+              return value;
+            });
+
+            // Handle {{#if this.field}} ... {{else}} ... {{/if}}
+            wineHTML = wineHTML.replace(
+              /\{\{#if this\.(\w+)\}\}([\s\S]*?)(?:\{\{else\}\}([\s\S]*?))?\{\{\/if\}\}/g,
+              (_ifm: string, field: string, ifContent: string, elseContent: string = '') => {
+                return wine[field] ? ifContent : elseContent;
+              }
+            );
+
+            return wineHTML;
+          }).join('');
+
+          onePageHTML = onePageHTML.substring(0, thisMatch.start) + winesHTML + onePageHTML.substring(thisMatch.end);
+        }
+
+        return onePageHTML;
+      }).join('');
+
+      processedHTML = processedHTML.substring(0, winePagesMatch.start) + renderedPagesHTML + processedHTML.substring(winePagesMatch.end);
+      logger.info('PDFService: Successfully rendered {{#each winePages}}');
     }
 
     // Reszta Twojej funkcji (winePages / firstPageWines / restPages / eachPatterns / ifPattern / date)

@@ -1,0 +1,110 @@
+[
+  {
+    "id": "528ed260-a96e-40f0-9838-c8a6f37deba8",
+    "name": "Etykieta Mała",
+    "description": "Mały format do etykiet",
+    "width": 105,
+    "height": 148,
+    "unit": "mm",
+    "orientation": "portrait",
+    "margins": {
+      "top": 5,
+      "right": 5,
+      "bottom": 5,
+      "left": 5
+    },
+    "isActive": false,
+    "createdAt": "2025-10-22T13:38:17.669Z",
+    "updatedAt": "2025-10-29T11:23:50.574Z"
+  },
+  {
+    "id": "5e5b16fe-edc6-4795-90b0-24c14deec5f1",
+    "name": "Test Format z Opisem",
+    "description": "To jest testowy format stworzony z pełnym opisem",
+    "width": 200,
+    "height": 300,
+    "unit": "mm",
+    "orientation": "portrait",
+    "margins": {
+      "top": 15,
+      "right": 15,
+      "bottom": 15,
+      "left": 15
+    },
+    "isActive": false,
+    "createdAt": "2025-10-22T15:17:55.330Z",
+    "updatedAt": "2025-10-29T11:23:57.157Z"
+  },
+  {
+    "id": "72af14a2-3716-49f3-8369-b059d4793e60",
+    "name": "Wkladka-A4/2-spady2mm",
+    "description": "",
+    "width": 109,
+    "height": 301,
+    "unit": "mm",
+    "orientation": "portrait",
+    "margins": {
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "left": 0
+    },
+    "isActive": true,
+    "createdAt": "2025-10-22T15:35:00.619Z",
+    "updatedAt": "2025-10-29T11:23:40.887Z"
+  },
+  {
+    "id": "b779930c-c569-44f3-9fdd-3b6fc545a4b0",
+    "name": "A4-moj",
+    "description": "",
+    "width": 210,
+    "height": 297,
+    "unit": "mm",
+    "orientation": "portrait",
+    "margins": {
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "left": 0
+    },
+    "isActive": false,
+    "createdAt": "2025-10-23T16:05:15.833Z",
+    "updatedAt": "2025-10-29T11:24:03.930Z"
+  },
+  {
+    "id": "357f4dfa-a976-4668-99c6-6a97f6fcbdf4",
+    "name": "A4-druk-spady2mm",
+    "description": "",
+    "width": 214,
+    "height": 301,
+    "unit": "mm",
+    "orientation": "landscape",
+    "margins": {
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "left": 0
+    },
+    "isActive": true,
+    "createdAt": "2025-10-27T10:21:43.054Z",
+    "updatedAt": "2025-10-27T10:34:51.407Z"
+  },
+  {
+    "id": "4be2cac9-1add-47eb-bd53-f257dd7417d7",
+    "name": "550x300",
+    "description": "",
+    "width": 550,
+    "height": 300,
+    "unit": "mm",
+    "orientation": "portrait",
+    "margins": {
+      "top": 10,
+      "right": 10,
+      "bottom": 10,
+      "left": 10
+    },
+    "isActive": true,
+    "createdAt": "2025-11-20T17:05:49.460Z",
+    "updatedAt": "2025-11-20T17:05:49.460Z"
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "backupEnabled": true,
+  "backupSchedule": "daily",
+  "backupRetentionDays": 30,
+  "backupLocation": "./backups",
+  "maintenanceMode": false,
+  "debugMode": false,
+  "logLevel": "info",
+  "maxFileSize": 10,
+  "allowedFileTypes": [
+    ".json",
+    ".csv",
+    ".xlsx",
+    ".png",
+    ".jpg",
+    ".svg"
+  ],
+  "apiRateLimit": 100,
+  "databaseOptimization": true,
+  "cacheEnabled": true,
+  "cacheTTL": 3600
+}

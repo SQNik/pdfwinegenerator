@@ -1,0 +1,359 @@
+[
+  {
+    "id": "collection_1771862858896_wzr4a4zt1",
+    "name": "Oferta nr. 554466",
+    "description": "Kolekcja utworzona przez kreator",
+    "wines": [
+      "181006",
+      "040626",
+      "630142",
+      "600120",
+      "1630114",
+      "230104",
+      "080441",
+      "680706",
+      "630140"
+    ],
+    "tags": [],
+    "status": "active",
+    "coverImage": "/images/okladki/okladka-wilczy.png",
+    "dynamicFields": {
+      "field_1761666965990_sifizd511": ""
+    },
+    "metadata": {
+      "templateId": "4238c437-8a37-4827-98be-700ff6a3585c",
+      "wineDetails": {
+        "181006": {
+          "price": "109.90",
+          "volume": "750"
+        },
+        "230104": {
+          "price": "62.90",
+          "volume": "750"
+        },
+        "600120": {
+          "price": "62.90",
+          "volume": "750"
+        },
+        "630140": {
+          "price": "60.00",
+          "volume": "750"
+        },
+        "630142": {
+          "price": "11.90",
+          "volume": "750"
+        },
+        "680706": {
+          "price": "55.00",
+          "volume": "750"
+        },
+        "1630114": {
+          "price": "69.90",
+          "volume": "750"
+        },
+        "040626": {
+          "price": "11.50",
+          "volume": "750"
+        },
+        "080441": {
+          "price": "419.00",
+          "volume": "750"
+        }
+      },
+      "categoryNames": {},
+      "wineCategories": {},
+      "wizardData": {
+        "coverImagePath": "/images/okladki/okladka-wilczy.png",
+        "coverImageFilename": "okladka-wilczy.png",
+        "coverUrl": "/images/okladki/okladka-wilczy.png",
+        "collectionFields": {
+          "field_1761666965990_sifizd511": ""
+        },
+        "categoryNames": {}
+      }
+    },
+    "createdAt": "2026-02-23T16:07:38.896Z",
+    "updatedAt": "2026-02-23T20:16:46.995Z",
+    "lastGeneratedPdf": {
+      "url": "/pdfs/collections/Oferta_nr__554466_Oferta_2026_2026-02-23.pdf",
+      "filename": "Oferta_nr__554466_Oferta_2026_2026-02-23.pdf",
+      "templateId": "4238c437-8a37-4827-98be-700ff6a3585c",
+      "templateName": "Oferta 2026",
+      "generatedAt": "2026-02-23T20:16:46.995Z"
+    }
+  },
+  {
+    "id": "collection_1771864067431_ppmuvymo8",
+    "name": "10produktow",
+    "description": "Kolekcja utworzona przez kreator",
+    "wines": [
+      "600120",
+      "181006",
+      "080441",
+      "040626",
+      "1630114",
+      "230104"
+    ],
+    "tags": [],
+    "status": "active",
+    "coverImage": "/images/okladki/okladka-wilczy.png",
+    "dynamicFields": {
+      "field_1761666965990_sifizd511": ""
+    },
+    "metadata": {
+      "templateId": "4082fd40-ccd5-4df1-bffa-23d652ef5c26",
+      "wineDetails": {
+        "181006": {
+          "price": "109.90",
+          "volume": "750"
+        },
+        "230104": {
+          "price": "62.90",
+          "volume": "350"
+        },
+        "600120": {
+          "price": "110",
+          "volume": "450"
+        },
+        "1630114": {
+          "price": "69.90",
+          "volume": "750"
+        },
+        "080441": {
+          "price": "250.00",
+          "volume": "750"
+        },
+        "040626": {
+          "price": "54.90",
+          "volume": "750"
+        }
+      },
+      "categoryNames": {
+        "białe": "Deserowe",
+        "czerwone": "Luksusowe czerwone"
+      },
+      "wineCategories": {},
+      "wizardData": {
+        "coverImagePath": "/images/okladki/okladka-wilczy.png",
+        "coverImageFilename": "okladka-wilczy.png",
+        "coverUrl": "/images/okladki/okladka-wilczy.png",
+        "collectionFields": {
+          "field_1761666965990_sifizd511": ""
+        },
+        "categoryNames": {
+          "białe": "Deserowe",
+          "czerwone": "Luksusowe czerwone"
+        }
+      }
+    },
+    "createdAt": "2026-02-23T16:27:47.431Z",
+    "updatedAt": "2026-02-23T18:33:49.834Z",
+    "lastGeneratedPdf": {
+      "url": "/pdfs/collections/10produktow_A4_sk_adane_w_V_2026-02-23.pdf",
+      "filename": "10produktow_A4_sk_adane_w_V_2026-02-23.pdf",
+      "templateId": "4082fd40-ccd5-4df1-bffa-23d652ef5c26",
+      "templateName": "A4 składane w V",
+      "generatedAt": "2026-02-23T18:33:49.834Z"
+    }
+  },
+  {
+    "id": "collection_1771864792149_qdy3cauge",
+    "name": "Testowa",
+    "description": "Kolekcja utworzona przez kreator",
+    "wines": [
+      "080441",
+      "181006",
+      "600120",
+      "040626",
+      "1630114",
+      "230104",
+      "230119",
+      "630141"
+    ],
+    "tags": [],
+    "status": "active",
+    "coverImage": "/images/okladki/okladka-wilczy.png",
+    "dynamicFields": {
+      "field_1761666965990_sifizd511": ""
+    },
+    "metadata": {
+      "templateId": "4238c437-8a37-4827-98be-700ff6a3585c",
+      "wineDetails": {
+        "080441": {
+          "price": "419.00"
+        }
+      },
+      "categoryNames": {},
+      "wineCategories": {},
+      "wizardData": {
+        "coverImagePath": "/images/okladki/okladka-wilczy.png",
+        "coverImageFilename": "okladka-wilczy.png",
+        "coverUrl": "/images/okladki/okladka-wilczy.png",
+        "collectionFields": {
+          "field_1761666965990_sifizd511": ""
+        },
+        "categoryNames": {}
+      }
+    },
+    "createdAt": "2026-02-23T16:39:52.149Z",
+    "updatedAt": "2026-02-23T16:40:56.629Z",
+    "lastGeneratedPdf": {
+      "url": "/pdfs/collections/Testowa_Oferta_2026_2026-02-23.pdf",
+      "filename": "Testowa_Oferta_2026_2026-02-23.pdf",
+      "templateId": "4238c437-8a37-4827-98be-700ff6a3585c",
+      "templateName": "Oferta 2026",
+      "generatedAt": "2026-02-23T16:40:56.629Z"
+    }
+  },
+  {
+    "id": "collection_1771865101309_g9u0ffoag",
+    "name": "Testowa",
+    "description": "Kolekcja utworzona przez kreator",
+    "wines": [
+      "080441",
+      "181006",
+      "600120",
+      "040626",
+      "1630114",
+      "230104"
+    ],
+    "tags": [],
+    "status": "active",
+    "coverImage": "/images/okladki/okladka-wilczy.png",
+    "dynamicFields": {
+      "field_1761666965990_sifizd511": ""
+    },
+    "metadata": {
+      "templateId": "4238c437-8a37-4827-98be-700ff6a3585c",
+      "wineDetails": {
+        "181006": {
+          "price": "109.90",
+          "volume": "750"
+        },
+        "230104": {
+          "price": "62.90",
+          "volume": "750"
+        },
+        "600120": {
+          "price": "62.90",
+          "volume": "750"
+        },
+        "1630114": {
+          "price": "869.90",
+          "volume": "750"
+        },
+        "080441": {
+          "price": "419.00",
+          "volume": "750"
+        },
+        "040626": {
+          "price": "54.90",
+          "volume": "750"
+        }
+      },
+      "categoryNames": {},
+      "wineCategories": {},
+      "wizardData": {
+        "coverImagePath": "/images/okladki/okladka-wilczy.png",
+        "coverImageFilename": "okladka-wilczy.png",
+        "coverUrl": "/images/okladki/okladka-wilczy.png",
+        "collectionFields": {
+          "field_1761666965990_sifizd511": ""
+        },
+        "categoryNames": {}
+      }
+    },
+    "createdAt": "2026-02-23T16:45:01.309Z",
+    "updatedAt": "2026-02-23T16:46:18.291Z",
+    "lastGeneratedPdf": {
+      "url": "/pdfs/collections/Testowa_Oferta_2026_2026-02-23.pdf",
+      "filename": "Testowa_Oferta_2026_2026-02-23.pdf",
+      "templateId": "4238c437-8a37-4827-98be-700ff6a3585c",
+      "templateName": "Oferta 2026",
+      "generatedAt": "2026-02-23T16:46:18.291Z"
+    }
+  },
+  {
+    "id": "collection_1771878305158_sxunq7vw9",
+    "name": "Oferta nr. 666",
+    "description": "Kolekcja utworzona przez kreator",
+    "wines": [
+      "600120",
+      "1630114",
+      "230104",
+      "080441",
+      "680706",
+      "630140",
+      "181006",
+      "040626",
+      "630142"
+    ],
+    "tags": [],
+    "status": "active",
+    "coverImage": "/images/okladki/okladka-wilczy.png",
+    "dynamicFields": {
+      "field_1761666965990_sifizd511": "To jest miejsce na uwagi. Maksymalna ilość znaków 300"
+    },
+    "metadata": {
+      "templateId": "4238c437-8a37-4827-98be-700ff6a3585c",
+      "wineDetails": {
+        "181006": {
+          "price": "109.90",
+          "volume": "750"
+        },
+        "230104": {
+          "price": "62.90",
+          "volume": "750"
+        },
+        "600120": {
+          "price": "62.90",
+          "volume": "750"
+        },
+        "630140": {
+          "price": "",
+          "volume": "750"
+        },
+        "630142": {
+          "price": "54.90",
+          "volume": "750"
+        },
+        "680706": {
+          "price": "",
+          "volume": "750"
+        },
+        "1630114": {
+          "price": "69.90",
+          "volume": "750"
+        },
+        "080441": {
+          "price": "419.00",
+          "volume": "750"
+        },
+        "040626": {
+          "price": "54.90",
+          "volume": "750"
+        }
+      },
+      "categoryNames": {},
+      "wineCategories": {},
+      "wizardData": {
+        "coverImagePath": "/images/okladki/okladka-wilczy.png",
+        "coverImageFilename": "okladka-wilczy.png",
+        "coverUrl": null,
+        "collectionFields": {
+          "field_1761666965990_sifizd511": "To jest miejsce na uwagi. Maksymalna ilość znaków 300"
+        },
+        "categoryNames": {}
+      }
+    },
+    "createdAt": "2026-02-23T20:25:05.158Z",
+    "updatedAt": "2026-02-23T20:25:39.650Z",
+    "lastGeneratedPdf": {
+      "url": "/pdfs/collections/Oferta_nr__666_Oferta_2026_2026-02-23.pdf",
+      "filename": "Oferta_nr__666_Oferta_2026_2026-02-23.pdf",
+      "templateId": "4238c437-8a37-4827-98be-700ff6a3585c",
+      "templateName": "Oferta 2026",
+      "generatedAt": "2026-02-23T20:25:39.650Z"
+    }
+  }
+]

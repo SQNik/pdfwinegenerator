@@ -103,6 +103,18 @@
     border-color: var(--ds-color-success-dark);
 }
 
+/* Warning Button */
+.ds-btn-warning {
+    background: var(--ds-color-warning);
+    color: white;
+    border-color: var(--ds-color-warning);
+}
+
+.ds-btn-warning:hover {
+    background: var(--ds-color-warning-dark);
+    border-color: var(--ds-color-warning-dark);
+}
+
 /* Outline Variants */
 .ds-btn-outline-primary {
     background: transparent;

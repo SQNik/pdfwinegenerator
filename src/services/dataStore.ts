@@ -30,6 +30,7 @@ import logger from '../utils/logger';export class DataStore {
   private templateCategories: Map<string, TemplateCategory> = new Map();
   private customFormats: Map<string, CustomPDFFormat> = new Map();
   private dataDir: string;
+  private saveQueue: Promise<void> = Promise.resolve(); // Queue for sequential saves
 
   constructor(dataDir = 'data') {
     this.dataDir = dataDir;
@@ -343,6 +344,7 @@ import logger from '../utils/logger';export class DataStore {
       wines: data.wines || [],
       tags: data.tags || [],
       status: data.status || 'active',
+      coverImage: data.coverImage || '', // ✅ FIX: Include coverImage from wizard (empty string if undefined)
       dynamicFields: data.dynamicFields || {},
       metadata: data.metadata || {},
       createdAt: now,
@@ -529,19 +531,50 @@ import logger from '../utils/logger';export class DataStore {
   }
 
   private async saveHTMLTemplates(): Promise<void> {
-    try {
-      const filePath = path.join(this.dataDir, 'html-templates.json');
-      const templates = Array.from(this.htmlTemplates.values());
-      await fs.writeFile(filePath, JSON.stringify(templates, null, 2), 'utf-8');
+    // Queue saves to prevent concurrent file access
+    this.saveQueue = this.saveQueue.then(async () => {
+      const maxRetries = 3;
+      let attempt = 0;
       
-      // Create backup
-      const backupPath = path.join(this.dataDir, 'html-templates.json.backup');
-      await fs.copyFile(filePath, backupPath);
-      
-    } catch (error) {
-      logger.error('Error saving HTML templates:', error);
-      throw error;
-    }
+      while (attempt < maxRetries) {
+        try {
+          const filePath = path.join(this.dataDir, 'html-templates.json');
+          const templates = Array.from(this.htmlTemplates.values());
+          
+          // Write to temporary file first
+          const tempPath = path.join(this.dataDir, 'html-templates.json.tmp');
+          await fs.writeFile(tempPath, JSON.stringify(templates, null, 2), 'utf-8');
+          
+          // Atomic rename (much safer than direct write)
+          await fs.rename(tempPath, filePath);
+          
+          // Create backup after successful write
+          const backupPath = path.join(this.dataDir, 'html-templates.json.backup');
+          try {
+            await fs.copyFile(filePath, backupPath);
+          } catch (backupError) {
+            logger.warn('Failed to create backup, but main save succeeded:', backupError);
+          }
+          
+          logger.info('HTML templates saved successfully');
+          return; // Success, exit retry loop
+          
+        } catch (error) {
+          attempt++;
+          logger.warn(`Error saving HTML templates (attempt ${attempt}/${maxRetries}):`, error);
+          
+          if (attempt >= maxRetries) {
+            logger.error('Failed to save HTML templates after all retries:', error);
+            throw error;
+          }
+          
+          // Wait before retry (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, 100 * attempt));
+        }
+      }
+    });
+    
+    return this.saveQueue;
   }
 
   getHTMLTemplates(): HTMLTemplate[] {

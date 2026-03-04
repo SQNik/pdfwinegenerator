@@ -10,11 +10,13 @@
     "region": "Veneto",
     "poj": "0,75 l",
     "alcohol": "15%",
-    "price1": "........",
+    "price1": "44,73",
     "price2": ".........",
     "id": "e055f380-951a-453c-9752-f2494b4ad402",
     "createdAt": "2025-10-16T12:13:02.737Z",
-    "updatedAt": "2025-10-16T12:13:02.737Z"
+    "updatedAt": "2026-02-26T18:01:23.829Z",
+    "producent": "Bertani",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "680728",
@@ -83,23 +85,6 @@
     "id": "9198ab02-6fbf-4e3b-b66b-d5a85e3d8ef3",
     "createdAt": "2025-10-16T12:13:02.754Z",
     "updatedAt": "2025-10-16T12:13:02.754Z"
-  },
-  {
-    "catalogNumber": "680706",
-    "image": "/images/680706.jpg",
-    "name": "BERTAROSE LINEA CLASSICA",
-    "description": "Barwa bladoróżowa, w kolorze owoców lychee. Bukiet świeży, z akcentami owocu granatu i czerwonych porzeczek. Smak zdecydowany, dobra struktura i kwasowość.",
-    "type": "wytrawne",
-    "category": "różowe",
-    "szczepy": "Molinara, Merlot",
-    "region": "Veneto",
-    "poj": "0,75 l",
-    "alcohol": "12%",
-    "price1": "........",
-    "price2": ".........",
-    "id": "5664fd1c-0fb4-44fa-9873-fcfa7d9b1f77",
-    "createdAt": "2025-10-16T12:13:02.758Z",
-    "updatedAt": "2025-10-16T12:13:02.758Z"
   },
   {
     "catalogNumber": "680714",
@@ -193,15 +178,17 @@
     "description": "Winogrona są starannie wybierane i zbierane w połowie września, a następnie pozostawiane do wyschnięcia w specjalnych suszarniach(fruttaio) przez około 3 miesiące. W tym czasie kiście tracą około 25-30% swojej wagi, co pozwala na skoncentrowanie substancji w winogronach. Po tłoczeniuw połowie stycznia rozpoczyna się fermentacja alkoholowa w zbiornikach stalowych, trwająca około 25-30 dni w kontrolowanej temperaturze. Regularne wdzieranie się jest przeprowadzane w celu wspierania ekstrakcji koloru i tanin. Po zakończeniu fermentacji wino jest przenoszone do francuskich beczek dębowych, gdzie odbywa się fermentacja malolaktyczna, nadająca winu miękkość. Wino ma intensywny czerwony kolor. W nosie ujawnia owoce z nutami jeżyn i ciemnej czekolady. Na podniebieniu to Amarone jest eleganckie i wyrafinowane, z jedwabistymi taninami.",
     "type": "wytrawne",
     "category": "czerwone",
-    "szczepy": "Corvina, Rondinella,\nCorvinone, Negrara",
+    "szczepy": "Corvina, Rondinella,Corvinone, Negrara",
     "region": "Veneto",
     "poj": "0,75 l",
     "alcohol": "15%",
-    "price1": "........",
-    "price2": ".........",
+    "price1": "54,90",
+    "price2": "",
     "id": "1a709f40-7458-44aa-9d44-1786d8bba065",
     "createdAt": "2025-10-16T12:13:02.782Z",
-    "updatedAt": "2025-10-16T12:13:02.782Z"
+    "updatedAt": "2026-02-26T18:00:32.135Z",
+    "producent": "Pasqua",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "040627",
@@ -248,11 +235,14 @@
     "region": "Veneto",
     "poj": "0,75 l",
     "alcohol": "12,50%",
-    "price1": "",
-    "price2": "",
+    "price1": "419,00",
+    "price2": "...",
     "id": "b665f46f-aa6c-4aef-93ed-f131a1542013",
     "createdAt": "2025-10-16T12:13:02.797Z",
-    "updatedAt": "2025-11-19T17:20:17.506Z"
+    "updatedAt": "2026-02-26T17:53:32.973Z",
+    "producent": "Pasqua",
+    "producer": "prod1",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "080405",
@@ -571,11 +561,13 @@
     "region": "Veneto",
     "poj": "0,75 l",
     "alcohol": "12%",
-    "price1": "........",
+    "price1": "46,90",
     "price2": ".........",
     "id": "566d900d-be88-4928-80a0-eb7d28f77187",
     "createdAt": "2025-10-16T12:13:02.925Z",
-    "updatedAt": "2025-10-16T12:13:02.925Z"
+    "updatedAt": "2026-02-26T18:01:15.827Z",
+    "producent": "Pasqua",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "1630114",
@@ -588,11 +580,13 @@
     "region": "Veneto",
     "poj": "0,75 l",
     "alcohol": "11%",
-    "price1": "........",
-    "price2": ".........",
+    "price1": "69,90",
+    "price2": "",
     "id": "bb8bc838-bd26-4af8-9d8c-549700f33863",
     "createdAt": "2025-10-16T12:13:02.933Z",
-    "updatedAt": "2025-10-16T12:13:02.933Z"
+    "updatedAt": "2026-02-26T18:00:36.901Z",
+    "producent": "Loredan Gasparini",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "1630115",
@@ -792,11 +786,13 @@
     "region": "Veneto",
     "poj": "0,75 l",
     "alcohol": "11%",
-    "price1": "........",
+    "price1": "29,90",
     "price2": ".........",
     "id": "2dc9c767-e3b7-40b4-bb87-2cecbe8a37e0",
     "createdAt": "2025-10-16T12:13:03.044Z",
-    "updatedAt": "2025-10-16T12:13:03.044Z"
+    "updatedAt": "2026-02-27T08:21:27.430Z",
+    "producent": "Tosti 1820",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "230103",
@@ -843,11 +839,13 @@
     "region": "Piemonte",
     "poj": "0,75 l",
     "alcohol": "7%",
-    "price1": "........",
+    "price1": "62,90",
     "price2": ".........",
     "id": "dae1fafe-01c7-41d2-b89b-6bda252b5ffe",
     "createdAt": "2025-10-16T12:13:03.076Z",
-    "updatedAt": "2025-10-16T12:13:03.076Z"
+    "updatedAt": "2026-02-26T18:00:41.125Z",
+    "producent": "Tosti 1820",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "230119",
@@ -860,11 +858,13 @@
     "region": "Piemonte",
     "poj": "0,75 l",
     "alcohol": "11%",
-    "price1": "........",
-    "price2": ".........",
+    "price1": "39,90",
+    "price2": "",
     "id": "b91e7247-b318-4baa-b9e5-9a2e04d32762",
     "createdAt": "2025-10-16T12:13:03.087Z",
-    "updatedAt": "2025-10-17T08:29:32.268Z"
+    "updatedAt": "2026-02-26T18:00:44.873Z",
+    "producent": "Tosti 1820",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "230113",
@@ -877,11 +877,13 @@
     "region": "Piemonte",
     "poj": "0,75 l",
     "alcohol": "7%",
-    "price1": "........",
+    "price1": "38,90",
     "price2": ".........",
     "id": "789f4bf3-e8a8-4175-bbae-0b842cdb7df0",
     "createdAt": "2025-10-16T12:13:03.098Z",
-    "updatedAt": "2025-10-16T12:13:03.098Z"
+    "updatedAt": "2026-02-27T08:21:24.218Z",
+    "producent": "Tosti 1820",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "230110",
@@ -894,11 +896,13 @@
     "region": "Piemonte",
     "poj": "0,2l",
     "alcohol": "7%",
-    "price1": "........",
+    "price1": "38,90",
     "price2": ".........",
     "id": "4b0b251d-0026-4dae-895d-cc02742133da",
     "createdAt": "2025-10-16T12:13:03.109Z",
-    "updatedAt": "2025-10-16T12:13:03.109Z"
+    "updatedAt": "2026-02-27T08:21:18.190Z",
+    "producent": "Tosti 1820",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "111105",
@@ -928,11 +932,13 @@
     "region": "Piemonte",
     "poj": "0,75 l",
     "alcohol": "14%",
-    "price1": "........",
+    "price1": "29,90",
     "price2": ".........",
     "id": "dd7ee194-0078-408c-bf5c-51c027821eef",
     "createdAt": "2025-10-16T12:13:03.132Z",
-    "updatedAt": "2025-10-16T12:13:03.132Z"
+    "updatedAt": "2026-02-26T18:01:19.616Z",
+    "producent": "Scarpa",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "111106",
@@ -945,11 +951,13 @@
     "region": "Piemonte",
     "poj": "0,75 l",
     "alcohol": "14%",
-    "price1": "........",
+    "price1": "39,90",
     "price2": ".........",
     "id": "ef1e2885-ce6f-43cc-a7ea-f8bfbe75d19b",
     "createdAt": "2025-10-16T12:13:03.143Z",
-    "updatedAt": "2025-10-16T12:13:03.143Z"
+    "updatedAt": "2026-02-26T18:00:59.074Z",
+    "producent": "Scarpa",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "111101",
@@ -962,11 +970,13 @@
     "region": "Piemonte",
     "poj": "0,75 l",
     "alcohol": "15%",
-    "price1": "........",
+    "price1": "119,90",
     "price2": ".........",
     "id": "820e3904-efab-41b1-99c6-3c5d3b37238f",
     "createdAt": "2025-10-16T12:13:03.155Z",
-    "updatedAt": "2025-10-16T12:13:03.155Z"
+    "updatedAt": "2026-02-26T18:01:12.380Z",
+    "producent": "Scarpa",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "111102",
@@ -979,11 +989,13 @@
     "region": "Piemonte",
     "poj": "0,75 l",
     "alcohol": "14%",
-    "price1": "........",
+    "price1": "399,00",
     "price2": ".........",
     "id": "a4bb74be-0bde-4976-aaa2-ded124224ca9",
     "createdAt": "2025-10-16T12:13:03.167Z",
-    "updatedAt": "2025-10-16T12:13:03.167Z"
+    "updatedAt": "2026-02-26T18:01:03.908Z",
+    "producent": "Scarpa",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "111103",
@@ -1081,11 +1093,13 @@
     "region": "Trentino–Alto Adige",
     "poj": "0,75 l",
     "alcohol": "12,50%",
-    "price1": "........",
+    "price1": "59,90",
     "price2": ".........",
     "id": "1556c13e-ebd8-4510-ac72-e7cdfb5c14dc",
     "createdAt": "2025-10-16T12:13:03.242Z",
-    "updatedAt": "2025-10-16T12:13:03.242Z"
+    "updatedAt": "2026-02-27T08:21:14.244Z",
+    "producent": "Madonna delle Vittorie",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "710172",
@@ -1608,11 +1622,14 @@
     "region": "Puglia",
     "poj": "0,75 l",
     "alcohol": "13,50%",
-    "price1": "........",
-    "price2": ".........",
+    "price1": "109,90",
+    "price2": "",
     "id": "f7d12bd1-8151-4149-ab31-76c9365624c9",
     "createdAt": "2025-10-16T12:13:03.748Z",
-    "updatedAt": "2025-10-16T12:13:03.748Z"
+    "updatedAt": "2026-02-26T17:53:39.530Z",
+    "producer": "prod2",
+    "producent": "Rivera",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "181002",
@@ -1897,11 +1914,13 @@
     "region": "Calabria",
     "poj": "0,75 l",
     "alcohol": "13%",
-    "price1": "........",
+    "price1": "29,90",
     "price2": ".........",
     "id": "2a2d7037-a451-468d-937e-5a63393f604d",
     "createdAt": "2025-10-16T12:13:04.105Z",
-    "updatedAt": "2025-10-16T12:13:04.105Z"
+    "updatedAt": "2026-02-27T08:21:10.185Z",
+    "producent": "Librandi",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "2350102",
@@ -2509,11 +2528,13 @@
     "region": "Lombardia",
     "poj": "0,75 l",
     "alcohol": "12%",
-    "price1": "........",
-    "price2": ".........",
+    "price1": "54,90",
+    "price2": "",
     "id": "7f4ff3bc-30f9-4f4d-81c2-16940f4ef00c",
     "createdAt": "2025-10-16T12:13:04.980Z",
-    "updatedAt": "2025-10-16T12:13:04.980Z"
+    "updatedAt": "2026-02-26T18:00:55.201Z",
+    "producent": "Monteverdi",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "630134",
@@ -2560,11 +2581,13 @@
     "region": "Lombardia",
     "poj": "0,75 l",
     "alcohol": "12%",
-    "price1": "........",
-    "price2": ".........",
+    "price1": "54,90",
+    "price2": "",
     "id": "8a46aa17-338d-458c-817a-77d0b92c2f5f",
     "createdAt": "2025-10-16T12:13:05.064Z",
-    "updatedAt": "2025-10-16T12:13:05.064Z"
+    "updatedAt": "2026-02-26T18:00:49.167Z",
+    "producent": "Monteverdi",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "630112",
@@ -2594,11 +2617,13 @@
     "region": "Piemonte",
     "poj": "0,75 l",
     "alcohol": "12,50%",
-    "price1": "........",
+    "price1": "69,90",
     "price2": ".........",
     "id": "feeecaa2-1bca-430d-83b9-2c1f0f0b5ad1",
     "createdAt": "2025-10-16T12:13:05.119Z",
-    "updatedAt": "2025-10-16T12:13:05.119Z"
+    "updatedAt": "2026-02-26T18:01:08.434Z",
+    "producent": "Monteverdi",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "630111",
@@ -2679,11 +2704,13 @@
     "region": "Emilia–Romagna",
     "poj": "0,75 l",
     "alcohol": "9%",
-    "price1": "........",
-    "price2": ".........",
+    "price1": "62,90",
+    "price2": "",
     "id": "c6193d61-b3fc-49ae-8d43-b3ec79f2cbd3",
     "createdAt": "2025-10-16T12:13:05.259Z",
-    "updatedAt": "2025-10-16T12:13:05.259Z"
+    "updatedAt": "2026-02-26T18:00:26.919Z",
+    "producent": "Poletti",
+    "poj2": "150ml"
   },
   {
     "catalogNumber": "600110",

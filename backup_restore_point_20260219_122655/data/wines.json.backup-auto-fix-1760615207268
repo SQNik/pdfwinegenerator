@@ -1,0 +1,28 @@
+[
+  {
+    "id": "wine_1760615048401_7254cc18",
+    "createdAt": "2025-10-16T11:44:08.402Z",
+    "updatedAt": "2025-10-16T11:44:08.402Z",
+    "catalogNumber": "TESTDYN001",
+    "image": "/images/test1.jpg",
+    "name": "Test Wine Dynamic 1",
+    "description": "Opis testowego wina z mapowaniem",
+    "type": "wytrawne",
+    "category": "Czerwone",
+    "region": "Toskania",
+    "alcohol": "13.5%"
+  },
+  {
+    "id": "wine_1760615048408_9a6406c1",
+    "createdAt": "2025-10-16T11:44:08.408Z",
+    "updatedAt": "2025-10-16T11:44:08.408Z",
+    "catalogNumber": "TESTDYN002",
+    "image": "/images/test2.jpg",
+    "name": "Test Wine Dynamic 2",
+    "description": "Drugie wino testowe",
+    "type": "półwytrawne",
+    "category": "Białe",
+    "region": "Piemont",
+    "alcohol": "12%"
+  }
+]

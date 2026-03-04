@@ -1,0 +1,19 @@
+[
+  {
+    "id": "field_1761666965990_sifizd511",
+    "name": "uwagi",
+    "type": "textarea",
+    "required": false,
+    "createdAt": "2025-10-28T15:56:05.999Z",
+    "updatedAt": "2026-02-23T20:20:57.243Z",
+    "displayOrder": 1,
+    "isActive": true,
+    "placeholder": "Wpisz uwagi, które będą widoczne w stopce stron z produktami",
+    "helpText": "Wpisz tytuł, który znajdzie się na pierwszej stronie ulotki.",
+    "validation": {
+      "min": 0,
+      "max": 300,
+      "message": "Tekst jest za długi maksymalna ilość znaków to 300"
+    }
+  }
+]

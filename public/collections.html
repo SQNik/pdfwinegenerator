@@ -11,6 +11,7 @@
     
     <!-- Design System 2.0 -->
     <link rel="stylesheet" href="css/design-tokens.css">
+    <link rel="stylesheet" href="css/navigation.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/modern-admin.css">
     
@@ -43,60 +44,6 @@
             display: block !important;
         }
         
-        /* Step Indicator */
-        .step-indicator {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-        }
-        
-        .step-number {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--ds-color-neutral-100);
-            border: 2px solid var(--ds-color-neutral-200);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: var(--ds-color-neutral-600);
-            transition: all 0.3s ease;
-        }
-        
-        .step-indicator.active .step-number {
-            background: var(--ds-color-primary);
-            border-color: var(--ds-color-primary);
-            color: white;
-            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
-        }
-        
-        .step-indicator.completed .step-number {
-            background: var(--ds-color-success);
-            border-color: var(--ds-color-success);
-            color: white;
-        }
-        
-        .step-label {
-            font-size: 0.8125rem;
-            color: var(--ds-color-neutral-600);
-            font-weight: 500;
-        }
-        
-        .step-indicator.active .step-label {
-            color: var(--ds-color-primary);
-            font-weight: 600;
-        }
-        
-        .step-connector {
-            width: 80px;
-            height: 2px;
-            background: var(--ds-color-neutral-200);
-            margin-top: 20px;
-        }
-        
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -106,6 +53,40 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+        
+        /* Sortable Table Headers */
+        .sortable-header {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        .sortable-header:hover {
+            background: rgba(124, 58, 237, 0.05);
+            color: var(--ds-color-primary);
+        }
+        
+        .sortable-header::after {
+            content: '⇅';
+            position: absolute;
+            right: 8px;
+            opacity: 0.3;
+            font-size: 0.875rem;
+        }
+        
+        .sortable-header.sort-active::after {
+            opacity: 1;
+            color: var(--ds-color-primary);
+        }
+        
+        .sortable-header.sort-asc::after {
+            content: '↑';
+        }
+        
+        .sortable-header.sort-desc::after {
+            content: '↓';
         }
         
         /* Empty State */
@@ -292,60 +273,68 @@
                             </div>
                         </div>
                         
-                        <select class="ds-select" id="statusFilter" style="min-width: 150px;">
-                            <option value="">Wszystkie statusy</option>
-                            <option value="active">Aktywne</option>
-                            <option value="archived">Archiwalne</option>
-                            <option value="draft">Robocze</option>
-                        </select>
+                        <div class="ds-form-group" style="margin: 0;">
+                            <label class="ds-label" style="font-weight: 600;">
+                                <i class="bi bi-sort-down"></i> Sortuj
+                            </label>
+                            <select class="ds-select" id="collectionsSortBy" style="min-width: 180px;">
+                                <option value="updated">Ostatnio edytowane</option>
+                                <option value="created">Ostatnio utworzone</option>
+                                <option value="name">Nazwa (A-Z)</option>
+                                <option value="wines_count">Liczba win</option>
+                            </select>
+                        </div>
                         
-                        <div style="display: flex; gap: 4px; background: var(--ds-color-neutral-100); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--ds-color-neutral-200);">
-                            <button class="ds-btn ds-btn-ghost ds-btn-icon active" id="viewCollectionsCards" title="Widok kart" style="min-width: 40px; height: 40px;">
-                                <i class="bi bi-grid-3x3-gap" style="font-size: 1.125rem;"></i>
-                            </button>
-                            <button class="ds-btn ds-btn-ghost ds-btn-icon" id="viewCollectionsTable" title="Widok tabeli" style="min-width: 40px; height: 40px;">
-                                <i class="bi bi-table" style="font-size: 1.125rem;"></i>
-                            </button>
+                        <div class="ds-form-group" style="margin: 0;">
+                            <label class="ds-label" style="font-weight: 600;">
+                                <i class="bi bi-funnel"></i> Status
+                            </label>
+                            <select class="ds-select" id="statusFilter" style="min-width: 150px;">
+                                <option value="">Wszystkie statusy</option>
+                                <option value="active">Aktywne</option>
+                                <option value="archived">Archiwalne</option>
+                                <option value="draft">Robocze</option>
+                            </select>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Collections Cards View -->
-            <div id="collectionsCardsView">
-                <div id="collectionsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: var(--space-lg);">
-                    <!-- Populated dynamically -->
-                </div>
-                <div id="emptyState" class="d-none" style="text-align: center; padding: var(--space-xl); color: var(--ds-color-neutral-600);">
-                    <i class="bi bi-folder-x" style="font-size: 4rem; opacity: 0.3; margin-bottom: var(--space-md);"></i>
-                    <h3 style="font-weight: 600; margin-bottom: var(--space-sm);">Brak kolekcji</h3>
-                    <p>Rozpocznij od utworzenia swojej pierwszej kolekcji win</p>
-                    <button type="button" class="ds-btn ds-btn-primary" onclick="document.getElementById('createCollectionBtn').click();" style="margin-top: var(--space-md);">
-                        <i class="bi bi-plus-circle"></i>
-                        Utwórz kolekcję
-                    </button>
+            <!-- Collections Table View -->
+            <div id="collectionsContainer">
+                <div class="ds-card" id="collectionsTableView">
+                    <div class="modern-table-container">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable-header" data-sort="name">Nazwa</th>
+                                    <th>Opis</th>
+                                    <th>Status</th>
+                                    <th class="sortable-header" data-sort="wines_count">Liczba Win</th>
+                                    <th class="sortable-header" data-sort="created">Utworzono</th>
+                                    <th class="sortable-header sort-active sort-desc" data-sort="updated">Edytowano</th>
+                                    <th>Wygenerowano</th>
+                                    <th>Użyty szablon</th>
+                                    <th style="text-align: right;">Akcje</th>
+                                </tr>
+                            </thead>
+                            <tbody id="collectionsTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-
-            <!-- Collections Table View -->
-            <div class="ds-card d-none" id="collectionsTableView">
-                <div class="modern-table-container">
-                    <table class="modern-table">
-                        <thead>
-                            <tr>
-                                <th>Nazwa</th>
-                                <th>Opis</th>
-                                <th>Status</th>
-                                <th>Liczba Win</th>
-                                <th>Data utworzenia</th>
-                                <th style="text-align: right;">Akcje</th>
-                            </tr>
-                        </thead>
-                        <tbody id="collectionsTableBody">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="d-none" style="text-align: center; padding: var(--space-xl); color: var(--ds-color-neutral-600);">
+                <i class="bi bi-inbox" style="font-size: 4rem; opacity: 0.3; margin-bottom: var(--space-md); display: block;"></i>
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--space-sm);">Brak kolekcji</h3>
+                <p style="margin-bottom: var(--space-lg);">Nie masz jeszcze żadnych kolekcji. Stwórz pierwszą!</p>
+                <button type="button" class="ds-btn ds-btn-primary" onclick="document.getElementById('createCollectionBtn').click()">
+                    <i class="bi bi-plus-circle"></i>
+                    Utwórz Pierwszą Kolekcję
+                </button>
             </div>
         </div>
 
@@ -383,6 +372,7 @@
                                     <th>Klucz</th>
                                     <th>Etykieta</th>
                                     <th>Typ</th>
+                                    <th>Krok</th>
                                     <th>Wymagane</th>
                                     <th>Opis</th>
                                     <th style="text-align: right;">Akcje</th>
@@ -393,150 +383,6 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Collection Modal - Improved UX -->
-    <div class="modal fade" id="collectionModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content" style="border-radius: var(--radius-lg); border: none; box-shadow: var(--shadow-xl);">
-                <div class="modal-header" style="border-bottom: 1px solid var(--ds-color-neutral-200); padding: var(--space-lg); background: linear-gradient(135deg, var(--ds-color-primary) 0%, #667eea 100%); color: white;">
-                    <h5 class="modal-title" style="font-weight: 600; font-size: 1.5rem;">
-                        <i class="bi bi-folder-plus"></i>
-                        <span id="modalTitle">Nowa Kolekcja</span>
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" style="padding: var(--space-xl); background: var(--color-bg-primary);">
-                    <form id="collectionForm">
-                        <!-- Step Indicator -->
-                        <div style="display: flex; justify-content: center; gap: var(--space-md); margin-bottom: var(--space-xl);">
-                            <div class="step-indicator active" data-step="1">
-                                <div class="step-number">1</div>
-                                <div class="step-label">Podstawowe</div>
-                            </div>
-                            <div class="step-connector"></div>
-                            <div class="step-indicator" data-step="2">
-                                <div class="step-number">2</div>
-                                <div class="step-label">Dodatkowe</div>
-                            </div>
-                            <div class="step-connector"></div>
-                            <div class="step-indicator" data-step="3">
-                                <div class="step-number">3</div>
-                                <div class="step-label">Okładka</div>
-                            </div>
-                            <div class="step-connector"></div>
-                            <div class="step-indicator" data-step="4">
-                                <div class="step-number">4</div>
-                                <div class="step-label">Wybór Win</div>
-                            </div>
-                        </div>
-
-                        <!-- Step 1: Basic Info -->
-                        <div class="form-step active" data-step="1">
-                            <h4 style="font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-lg); color: var(--color-text-primary);">
-                                <i class="bi bi-info-circle"></i> Podstawowe Informacje
-                            </h4>
-                            
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="ds-form-group">
-                                        <label class="ds-label">Nazwa kolekcji <span style="color: var(--color-danger);">*</span></label>
-                                        <input type="text" class="ds-input" id="collectionName" required placeholder="np. Kolekcja Bordeaux 2020">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="ds-form-group">
-                                        <label class="ds-label">Status</label>
-                                        <select class="ds-select" id="collectionStatus">
-                                            <option value="active">✓ Aktywna</option>
-                                            <option value="archived">📦 Archiwalna</option>
-                                            <option value="draft">📝 Wersja robocza</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="ds-form-group">
-                                <label class="ds-label">Opis kolekcji</label>
-                                <textarea class="ds-input" id="collectionDescription" rows="4" placeholder="Opisz swoją kolekcję..."></textarea>
-                            </div>
-                        </div>
-
-                        <!-- Step 2: Dynamic Fields -->
-                        <div class="form-step d-none" data-step="2">
-                            <h4 style="font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-lg); color: var(--color-text-primary);">
-                                <i class="bi bi-sliders"></i> Dodatkowe Pola
-                            </h4>
-                            <div id="dynamicCollectionFields" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-md);">
-                                <!-- Populated dynamically based on collection field configuration -->
-                            </div>
-                            <div id="noCustomFields" class="text-center" style="padding: var(--space-xl); color: var(--ds-color-neutral-600);">
-                                <i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.3; margin-bottom: var(--space-md);"></i>
-                                <p>Brak niestandardowych pól. Dodaj je w zakładce "Pola Kolekcji".</p>
-                            </div>
-                        </div>
-
-                        <!-- Step 3: Cover Image Selection -->
-                        <div class="form-step d-none" data-step="3">
-                            <h4 style="font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-lg); color: var(--color-text-primary);">
-                                <i class="bi bi-image"></i> Wybierz Okładkę
-                            </h4>
-                            <div id="coverImageGallery" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-md); max-height: 500px; overflow-y: auto; padding: var(--space-md); background: var(--ds-color-neutral-50); border-radius: var(--radius-md);">
-                                <!-- Populated dynamically with cover images -->
-                            </div>
-                            <div id="noCoverImages" class="text-center" style="padding: var(--space-xl); color: var(--ds-color-neutral-600); display: none;">
-                                <i class="bi bi-image" style="font-size: 3rem; opacity: 0.3; margin-bottom: var(--space-md);"></i>
-                                <p>Brak dostępnych okładek w folderze /images/okladki</p>
-                            </div>
-                        </div>
-
-                        <!-- Step 4: Wine Selection -->
-                        <div class="form-step d-none" data-step="4">
-                            <h4 style="font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-md); color: var(--color-text-primary);">
-                                <i class="bi bi-bottle"></i> Wybierz Wina
-                                <span id="selectedWineCount" style="font-size: 0.875rem; color: var(--color-text-tertiary); font-weight: 400; margin-left: var(--space-sm);">(0 wybranych)</span>
-                            </h4>
-                            
-                            <div class="ds-form-group">
-                                <div style="position: relative;">
-                                    <input type="text" class="ds-input" id="wineSearchInput" placeholder="Szukaj win po nazwie, szczepie, regionie..." style="padding-left: 40px;">
-                                    <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ds-color-neutral-600); font-size: 1.125rem;"></i>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; gap: var(--space-xs); margin-bottom: var(--space-md);">
-                                <button type="button" class="ds-btn ds-btn-sm ds-btn-ghost" onclick="window.collectionsApp.managers.collections.selectAllWines()">
-                                    <i class="bi bi-check-all"></i> Zaznacz wszystkie
-                                </button>
-                                <button type="button" class="ds-btn ds-btn-sm ds-btn-ghost" onclick="window.collectionsApp.managers.collections.deselectAllWines()">
-                                    <i class="bi bi-x-circle"></i> Odznacz wszystkie
-                                </button>
-                            </div>
-                            
-                            <div id="collectionWinesSelection" style="max-height: 400px; overflow-y: auto; border: 1px solid var(--ds-color-neutral-200); border-radius: var(--radius-md); padding: var(--space-md); background: var(--ds-color-neutral-100);">
-                                <!-- Populated dynamically with wine checkboxes -->
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer" style="border-top: 1px solid var(--ds-color-neutral-200); padding: var(--space-lg); gap: var(--space-sm); background: var(--ds-color-neutral-100);">
-                    <button type="button" class="ds-btn ds-btn-ghost" id="prevStepBtn" style="display: none;">
-                        <i class="bi bi-arrow-left"></i>
-                        Wstecz
-                    </button>
-                    <div style="flex: 1;"></div>
-                    <button type="button" class="ds-btn ds-btn-ghost" data-bs-dismiss="modal">Anuluj</button>
-                    <button type="button" class="ds-btn ds-btn-secondary" id="nextStepBtn">
-                        Dalej
-                        <i class="bi bi-arrow-right"></i>
-                    </button>
-                    <button type="button" class="ds-btn ds-btn-primary" id="saveCollectionBtn" style="display: none;">
-                        <i class="bi bi-check-circle"></i>
-                        Zapisz Kolekcję
-                    </button>
                 </div>
             </div>
         </div>
@@ -582,6 +428,19 @@
                                 <option value="url">🔗 URL</option>
                                 <option value="email">✉️ Email</option>
                             </select>
+                        </div>
+
+                        <div class="ds-form-group">
+                            <label class="ds-label">
+                                <i class="bi bi-signpost-split"></i>
+                                Przypisz do kroku wizarda
+                            </label>
+                            <select class="ds-select" id="collectionFieldStep" name="fieldStep">
+                                <option value="1" selected>Krok 1: Wybierz szablon</option>
+                                <option value="2">Krok 2: Wybierz okładkę</option>
+                                <option value="3">Krok 3: Wybierz produkty</option>
+                            </select>
+                            <small class="modern-text-tertiary">Wybierz, w którym kroku ma się wyświetlać to pole</small>
                         </div>
 
                         <div class="ds-form-group" id="collectionFieldOptionsContainer" style="display: none;">

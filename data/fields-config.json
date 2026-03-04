@@ -226,7 +226,7 @@
     },
     "formOrder": 11,
     "tableOrder": 11,
-    "displayInTable": false,
+    "displayInTable": true,
     "displayInForm": true,
     "displayInCards": false,
     "required": false,
@@ -253,5 +253,43 @@
     "searchable": true,
     "filterable": false,
     "isSystemField": true
+  },
+  {
+    "key": "producent",
+    "label": "Producent",
+    "type": "text",
+    "group": "basic",
+    "placeholder": "",
+    "validation": {
+      "min": "0",
+      "max": "99"
+    },
+    "formOrder": 0,
+    "tableOrder": 3,
+    "displayInTable": true,
+    "displayInForm": true,
+    "displayInCards": false,
+    "required": false,
+    "searchable": true,
+    "filterable": false
+  },
+  {
+    "key": "poj2",
+    "label": "Poj2",
+    "type": "text",
+    "group": "basic",
+    "placeholder": "",
+    "validation": {
+      "min": "0",
+      "max": "5"
+    },
+    "formOrder": 0,
+    "tableOrder": 9,
+    "displayInTable": true,
+    "displayInForm": true,
+    "displayInCards": false,
+    "required": false,
+    "searchable": true,
+    "filterable": false
   }
 ]

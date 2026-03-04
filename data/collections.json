@@ -1,102 +1,195 @@
 [
   {
-    "id": "collection_1761906234546_3wa5jo0dq",
-    "name": "10produktow",
-    "description": "",
+    "id": "collection_1772183077532_aj9crn3hw",
+    "name": "Oferta nr. 666",
+    "description": "Kolekcja utworzona przez kreator",
     "wines": [
+      "181006",
+      "040626",
       "600120",
       "1630114",
       "230104",
-      "230119",
-      "181006",
-      "040626",
-      "111106",
-      "111102",
-      "630103",
+      "630142",
       "080441",
-      "080422",
-      "2120107",
-      "181001"
+      "630140",
+      "710170"
     ],
     "tags": [],
     "status": "active",
+    "coverImage": "/images/okladki/A4-Karta-win_okladka1.png",
     "dynamicFields": {
-      "field_1761666965990_sifizd511": "Karta Win Białych",
-      "field_1732468800000_okladka": "/images/okladki/okladka-placeholder.png",
-      "field_1771246409077_pboulxh1m": null
+      "field_1761666965990_sifizd511": "Tutaj uwagi w stopce",
+      "field_1772120516814_n93witp7g": ""
     },
-    "metadata": {},
-    "createdAt": "2025-10-31T10:23:54.546Z",
-    "updatedAt": "2026-02-17T18:58:52.060Z",
+    "metadata": {
+      "templateId": "f85e7af7-cba5-44c3-b5e2-57392acccefe",
+      "wineDetails": {
+        "181006": {
+          "price": "2000",
+          "volume": "750",
+          "price2": "",
+          "volume2": "150"
+        },
+        "230104": {
+          "price": "62.90",
+          "volume": "750",
+          "price2": "",
+          "volume2": "150"
+        },
+        "600120": {
+          "price": "250",
+          "volume": "750",
+          "price2": "",
+          "volume2": "150"
+        },
+        "630140": {
+          "price": "29.90",
+          "volume": "750",
+          "price2": "",
+          "volume2": "150"
+        },
+        "630142": {
+          "price": "54.90",
+          "volume": "750",
+          "price2": "",
+          "volume2": "150"
+        },
+        "710170": {
+          "price": "59.90",
+          "volume": "750",
+          "price2": "",
+          "volume2": "150"
+        },
+        "1630114": {
+          "price": "300",
+          "volume": "750",
+          "price2": "",
+          "volume2": "150"
+        },
+        "040626": {
+          "price": "300",
+          "volume": "750",
+          "price2": "",
+          "volume2": "150"
+        },
+        "080441": {
+          "price": "419.00",
+          "volume": "750",
+          "price2": "",
+          "volume2": "150"
+        }
+      },
+      "categoryNames": {
+        "czerwone": "deserowe"
+      },
+      "wineCategories": {
+        "230104": "czerwone",
+        "600120": "czerwone",
+        "1630114": "czerwone"
+      },
+      "wizardData": {
+        "coverImagePath": "/images/okladki/A4-Karta-win_okladka1.png",
+        "coverImageFilename": "A4-Karta-win_okladka1.png",
+        "coverUrl": "/images/okladki/A4-Karta-win_okladka1.png",
+        "collectionFields": {
+          "field_1761666965990_sifizd511": "Tutaj uwagi w stopce",
+          "field_1772120516814_n93witp7g": ""
+        },
+        "categoryNames": {
+          "czerwone": "deserowe"
+        }
+      }
+    },
+    "createdAt": "2026-02-27T09:04:37.532Z",
+    "updatedAt": "2026-02-27T09:07:06.856Z",
     "lastGeneratedPdf": {
-      "url": "/pdfs/collections/10produktow_A4_sk_adane_w_V_2026-02-17.pdf",
-      "filename": "10produktow_A4_sk_adane_w_V_2026-02-17.pdf",
-      "templateId": "4082fd40-ccd5-4df1-bffa-23d652ef5c26",
-      "templateName": "A4 składane w V",
-      "generatedAt": "2026-02-17T18:58:52.060Z"
-    },
-    "coverImage": ""
+      "url": "/pdfs/collections/Oferta_nr__666_Oferta_2026___A4_2026-02-27.pdf",
+      "filename": "Oferta_nr__666_Oferta_2026___A4_2026-02-27.pdf",
+      "templateId": "f85e7af7-cba5-44c3-b5e2-57392acccefe",
+      "templateName": "Oferta 2026 - A4",
+      "generatedAt": "2026-02-27T09:07:06.856Z"
+    }
   },
   {
-    "id": "collection_1763726135763_ce9zywto2",
-    "name": "Karta wkładka",
-    "description": "Karta wkładka",
+    "id": "collection_1772183646800_ngu7o9aju",
+    "name": "Test-tla2",
+    "description": "Kolekcja utworzona przez kreator",
     "wines": [
-      "630103",
-      "111102",
-      "630142",
+      "080441",
+      "181006",
+      "600120",
       "040626",
+      "1630114",
       "230104"
     ],
     "tags": [],
     "status": "active",
+    "coverImage": "/images/okladki/Karta-win_okladka3_265x287.png",
     "dynamicFields": {
-      "field_1761666965990_sifizd511": "Karta Win dla firmy xxx",
-      "field_1732468800000_okladka": "/images/okladki/okladka-placeholder.png",
-      "field_1771246409077_pboulxh1m": "500"
+      "field_1761666965990_sifizd511": "",
+      "field_1772120516814_n93witp7g": ""
     },
-    "metadata": {},
-    "createdAt": "2025-11-21T11:55:35.763Z",
-    "updatedAt": "2026-02-17T12:31:07.601Z",
-    "lastGeneratedPdf": {
-      "url": "/pdfs/collections/Karta_wk_adka_Karta_wk_adka_2026-02-17.pdf",
-      "filename": "Karta_wk_adka_Karta_wk_adka_2026-02-17.pdf",
-      "templateId": "2a33410e-6621-4af1-a21c-25be2d7aada4",
-      "templateName": "Karta wkładka",
-      "generatedAt": "2026-02-17T12:31:07.601Z"
-    }
-  },
-  {
-    "id": "collection_1771326235981_7k6cau0nd",
-    "name": "Oferta 3 kategorie",
-    "description": "",
-    "wines": [
-      "600120",
-      "230119",
-      "555505",
-      "040626",
-      "111101",
-      "680701",
-      "230113",
-      "2120103",
-      "230116"
-    ],
-    "tags": [],
-    "status": "active",
-    "dynamicFields": {
-      "field_1761666965990_sifizd511": "Oferta 9 win",
-      "field_1732468800000_okladka": null,
-      "field_1771246409077_pboulxh1m": null
+    "metadata": {
+      "templateId": "4082fd40-ccd5-4df1-bffa-23d652ef5c26",
+      "wineDetails": {
+        "181006": {
+          "price": "109.90",
+          "volume": "750",
+          "price2": "60",
+          "volume2": "150"
+        },
+        "230104": {
+          "price": "62.90",
+          "volume": "750",
+          "price2": "320",
+          "volume2": "150"
+        },
+        "600120": {
+          "price": "62.90",
+          "volume": "750",
+          "price2": "80",
+          "volume2": "150"
+        },
+        "1630114": {
+          "price": "69.90",
+          "volume": "750",
+          "price2": "100",
+          "volume2": "150"
+        },
+        "080441": {
+          "price": "419.00",
+          "volume": "750",
+          "price2": "50",
+          "volume2": "150"
+        },
+        "040626": {
+          "price": "54.90",
+          "volume": "750",
+          "price2": "70",
+          "volume2": "150"
+        }
+      },
+      "categoryNames": {},
+      "wineCategories": {},
+      "wizardData": {
+        "coverImagePath": "/images/okladki/Karta-win_okladka3_265x287.png",
+        "coverImageFilename": "Karta-win_okladka3_265x287.png",
+        "coverUrl": "/images/okladki/Karta-win_okladka3_265x287.png",
+        "collectionFields": {
+          "field_1761666965990_sifizd511": "",
+          "field_1772120516814_n93witp7g": ""
+        },
+        "categoryNames": {}
+      }
     },
-    "metadata": {},
-    "createdAt": "2026-02-17T11:03:55.981Z",
-    "updatedAt": "2026-02-17T15:56:09.935Z",
+    "createdAt": "2026-02-27T09:14:06.800Z",
+    "updatedAt": "2026-02-27T09:14:47.730Z",
     "lastGeneratedPdf": {
-      "url": "/pdfs/collections/Oferta_3_kategorie_Oferta_z_okladka_2026-02-17.pdf",
-      "filename": "Oferta_3_kategorie_Oferta_z_okladka_2026-02-17.pdf",
-      "templateId": "83d6c543-14f6-482a-9462-d6ed1d33de61",
-      "templateName": "Oferta z okladka",
-      "generatedAt": "2026-02-17T15:56:09.935Z"
+      "url": "/pdfs/collections/Test_tla2_A4_sk_adane_w_V_2026-02-27.pdf",
+      "filename": "Test_tla2_A4_sk_adane_w_V_2026-02-27.pdf",
+      "templateId": "4082fd40-ccd5-4df1-bffa-23d652ef5c26",
+      "templateName": "A4 składane w V",
+      "generatedAt": "2026-02-27T09:14:47.730Z"
     }
   }
 ]
