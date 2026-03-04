@@ -107,3 +107,7 @@ coverage/
 *.njsproj
 *.sln
 *.sw?
+
+# Large backup files
+*.zip
+pdfwinegenerator*.zip
